@@ -4,9 +4,15 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$user_info_db = "user_login_information"; //changed based on local or server sql database name
+$database = "user_login_information"; //changed based on local or server sql database name
+$port = 3306; //port number for sql database
 
-//create instance of the sql database connection
-$user_info_conn = new mysqli($host, $username, $password, $user_info_db);
+// Create connection
+$conn = new mysqli($host, $username, $password, $database, $port);
 
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+echo "Connected successfully!";
 ?>
