@@ -4,7 +4,7 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$user_info_db = "user_login_information";
+$user_info_db = "user_login_information"; //changed based on local or server sql database name
 
 //create instance of the sql database connection
 $user_info_conn = new mysqli($host, $username, $password, $user_info_db);
