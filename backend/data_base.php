@@ -1,5 +1,6 @@
 <?php
 //database connection information for phpadmin sql database
+//will need to be changed when connecting to live server
 $host = "localhost";
 $username = "root";
 $password = "";
