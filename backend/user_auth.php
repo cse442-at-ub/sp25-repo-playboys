@@ -12,8 +12,8 @@ function register($user_info_conn, $data) {
     //trim and grab data sent from json object from router.php
     $email = trim($data["email"]);
     $username = trim($data["username"]);
-    $password = trim($data["password"]);
-    $confirm_password = trim($data["confirm_password"]);
+    $password = $data["password"];
+    $confirm_password = $data["confirm_password"];
 
     //check if password and confirm password matches
     if($password != $confirm_password) {
@@ -26,7 +26,6 @@ function register($user_info_conn, $data) {
 
 
     try {
-        
         //prepare sql statement and bind parameters
         $insert_new_user = $user_info_conn->prepare("INSERT INTO register (email, username, password) VALUES (?, ?, ?)");
         $insert_new_user->bind_param("sss", $email, $username, $password);
@@ -56,17 +55,41 @@ function register($user_info_conn, $data) {
 
 //login function
 function login($user_info_conn, $data) {
+     //check if all required data is present
+    if(!isset($data["username"]) || !isset($data["password"])) {
+        echo json_encode(["status" => "error", "message" => "All fields are required."]);
+        exit();
+    }
+    //trim and grab data sent from json object from router.php
+    $username = trim($data["username"]);
+    $password = $data["password"];
 
+
+    //prepare sql statement and bind parameters
+    $login_user = $user_info_conn->prepare("SELECT * FROM register WHERE username = ?");
+    $login_user->bind_param("s", $username);
+    $login_user->execute();
+    $result = $login_user->get_result();
+    
+    //check if user exists
+    if($result->num_rows === 0) {
+        echo json_encode(["status" => "error", "message" => "User does not exist."]);
+        exit();
+    }
+
+    //fetch user data
+    $user = $result->fetch_assoc();
+
+
+    //compare password hashes
+    if(password_verify($password, $user["password"])) {
+        echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
+    }
+    else {
+        echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
+    }
 }
 
 
-
-
-
-
-
-
-
-//Login Get Request 
 
 ?>
