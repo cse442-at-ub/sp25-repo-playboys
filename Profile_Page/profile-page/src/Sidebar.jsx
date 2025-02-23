@@ -1,69 +1,116 @@
 import React from 'react';
 
 function Sidebar() {
+
+// Handle functions for each section
+  const handleFriendsClick = () => {
+    console.log('Friends section clicked');
+    //'Implementation for Friends
+  };
+
+  const handleCommunityClick = () => {
+    console.log('Community section clicked');
+    //'Implementation for Community
+  };
+
+  const handleMyArtistClick = () => {
+    console.log('My Artist section clicked');
+    //'Implementation for My Artist
+  };
   const sections = [
-    { title: 'Friends', count: 8 },
-    { title: 'Community', count: 8 },
-    { title: 'My Artist', count: 8 }
+    { title: 'Friends', count: 8, handleClick: handleFriendsClick },
+    { title: 'Community', count: 8, handleClick: handleCommunityClick },
+    { title: 'My Artist', count: 8, handleClick: handleMyArtistClick }
   ];
 
+
+
+    // Menu item handler functions (as before)
+    const handleExploreClick = () => {
+        console.log('Explore clicked');
+        };
+
+    const handleMyStatClick = () => {
+        console.log('My Stat clicked');
+    };
+
+    const handleMyProfileClick = () => {
+        console.log('My Profile clicked');
+    };
+
+    const handleSettingClick = () => {
+        console.log('Setting clicked');
+    };
+
   const menuItems = [
-    { icon: './static/ExploreIcon.png', text: 'Explore' },
-    { icon: './static/StatisticIcon.png', text: 'My Stat' },
-    { icon: './static/ProfileIcon.png', text: 'My Profile' },
-    { icon: './static/SettingIcon.png', text: 'Setting' }
+    { icon: './static/ExploreIcon.png', text: 'Explore', handleClick: handleExploreClick },
+    { icon: './static/StatisticIcon.png', text: 'My Stat', handleClick: handleMyStatClick },
+    { icon: './static/ProfileIcon.png', text: 'My Profile', handleClick: handleMyProfileClick },
+    { icon: './static/SettingIcon.png', text: 'Setting', handleClick: handleSettingClick }
   ];
 
   return (
-    <div className="mt-4"
-    style={{
+    <div 
+      className="sidebar d-none d-xxl-block"
+      style={{
         position: "fixed",
         width: "450px",
-        maxwidth: "450px", // Fixed width
+        maxWidth: "450px",
         top: "0",
         right: "0",
         height: "100vh",
         overflowY: "auto",
-        borderLeft: "2px solid gray", // Black vertical line
+        borderLeft: "2px solid gray",
         display: "flex",
-        flexDirection: "column", // Ensures items stay in place
-    }}
+        backgroundColor: "#ffffff",
+        flexDirection: "column",
+        opacity: 1
+      }}
     >
-    <div className="bg-secondary text-white p-3 mb-4 text-center">
+      <div className="bg-secondary text-white p-3 mb-4 text-center">
         <h3>Logo</h3>
+      </div>
+      {sections.map((section, index) => (
+        <SidebarSection key={index} title={section.title} count={section.count} handleClick={section.handleClick} />
+      ))}
+      <hr className="my-4 border-3" style={{ width: "100%", margin: "auto" }} />
+
+      {menuItems.map((item, index) => (
+        <MenuItem key={index} icon={item.icon} text={item.text} handleClick={item.handleClick} />
+      ))}
     </div>
-    {sections.map((section, index) => (
-        <SidebarSection key={index} title={section.title} count={section.count} />
-    ))}
-    <hr className="my-4 border-light" />
-    {menuItems.map((item, index) => (
-        <MenuItem key={index} icon={item.icon} text={item.text} />
-    ))}
-    </div>
-    );
+  );
 }
 
-function SidebarSection({ title, count }) {
+function SidebarSection({ title, count, handleClick }) {
   return (
     <div className="mb-4">
       <h4>{title}</h4>
       <div className="d-flex flex-wrap gap-2">
         {[...Array(count)].map((_, i) => (
-          <button key={i} className="bg-secondary rounded-circle mr-2 mb-2" style={{width: '100px', height: '100px'}} />
+          <button 
+            key={i} 
+            className="bg-secondary rounded-circle mb-2" 
+            style={{ width: '100px', height: '100px' }} 
+            onClick={handleClick} // Call the handleClick function on button click
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function MenuItem({ icon, text }) {
-    return (
-      <button className="d-flex align-items-center mb-3 w-90 btn btn-light" style={{ border: "none", textAlign: "left" }}>
-        <img src={icon} className="mr-3" style={{ width: "40px", height: "40px" }} alt={text} />
-        <span style={{ fontSize: "30px", fontWeight: "bold" }}>{text}</span>
-      </button>
-    );
-  }
-  
+function MenuItem({ icon, text, handleClick }) {
+  return (
+    <button 
+      className="d-flex align-items-center mb-3 w-90 btn" 
+      style={{ border: "none", textAlign: "left" }} 
+      onClick={handleClick}
+    >
+      <img src={icon} className="mr-3" style={{ width: "40px", height: "40px" }} alt={text} />
+      <span style={{ fontSize: "35px" }}>{text}</span>
+    </button>
+  );
+}
 
 export default Sidebar;
