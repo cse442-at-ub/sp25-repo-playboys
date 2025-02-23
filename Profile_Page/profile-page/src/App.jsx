@@ -7,6 +7,7 @@ import Sidebar from './Sidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TopArtistsView from './TopArtistsView';
 import EditProfile from './EditProfile';
+import PlaylistsView from './PlaylistsView';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Routes>
               <Route path="/" element={[<ProfileHeader />, <TopArtists />, <Playlists />]} />
               <Route path="/top-artists" element={<TopArtistsView />} />
+              <Route path="/playlist-view" element={<PlaylistsView />} />
               <Route path="/edit-profile" element={<EditProfile />} />
             </Routes>
           </div>

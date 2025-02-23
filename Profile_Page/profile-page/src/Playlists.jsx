@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Playlists() {
     const artists = [
@@ -6,12 +7,11 @@ function Playlists() {
         { name: 'Ado', image: './static/Adopfp.png' },
         { name: 'Beatles', image: './static/TheBeatlespfp.png' }
       ];
-      const showAllBtn = "Show all";
     
-    
+      const navigate = useNavigate();
       const handleShowAllClick = () => {
         console.log("Show all clicked");
-        // Add logic for "Show all" button
+        navigate('/playlist-view')
       };
     
       return (
@@ -54,18 +54,6 @@ function Playlists() {
           <h3 style={{ fontSize: "20px", fontWeight: "bold" }}>{artist.name}</h3>
         </button>
       );
-
-
-
-
-/*
-  return (
-    <div className="mt-5 d-flex justify-content-between align-items-center">
-      <h2 className="display-4 font-weight-bold">♬ Playlists</h2>
-      <button className="btn btn-link text-dark h4">Show all</button>
-    </div>
-  );
-*/
 }
 
 export default Playlists;
