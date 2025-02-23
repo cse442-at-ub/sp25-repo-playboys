@@ -2,9 +2,28 @@
 
 //register function
 function register($user_info_conn, $data) {
-    //check if all required data is present
-    if(!isset($data["email"]) || !isset($data["username"]) || !isset($data["password"]) || !isset($data["confirm_password"])) {
-        echo json_encode(["status" => "error", "message" => "All fields are required."]);
+    $missingFields = [];
+
+    // Check each required field
+    if (empty($data["email"])) {
+        $missingFields[] = "email";
+    }
+    if (empty($data["username"])) {
+        $missingFields[] = "username";
+    }
+    if (empty($data["password"])) {
+        $missingFields[] = "password";
+    }
+    if (empty($data["confirm_password"])) {
+        $missingFields[] = "confirm_password";
+    }
+
+    // If any fields are missing, return a detailed error message
+    if (!empty($missingFields)) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "The following fields are required: " . implode(", ", $missingFields)
+        ]);
         exit();
     }
 
@@ -27,7 +46,7 @@ function register($user_info_conn, $data) {
 
     try {
         //prepare sql statement and bind parameters
-        $insert_new_user = $user_info_conn->prepare("INSERT INTO register (email, username, password) VALUES (?, ?, ?)");
+        $insert_new_user = $user_info_conn->prepare("INSERT INTO user_login_data (email, username, password) VALUES (?, ?, ?)");
         $insert_new_user->bind_param("sss", $email, $username, $password);
     
         //insert newly registered user into database
@@ -47,9 +66,7 @@ function register($user_info_conn, $data) {
         else {
             echo json_encode(["status" => "error", "message" => "An error occurred. Please try again."]);
         }
-
     }
-
 }
 
 

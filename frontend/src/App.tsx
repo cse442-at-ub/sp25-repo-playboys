@@ -1,25 +1,23 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Box } from './components/Box';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import  Register  from "./login_screens/register/register";
+import  Login  from "./login_screens/login/login";
+import  Forgot from "./login_screens/forgot/forgot";
+
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Box></Box>
-        <p>Register</p>
-        <input type="text" placeholder="Email" />
-        <input type="text" placeholder="Username" />
-        <input type="text" placeholder="Password" />
-        <input type="text" placeholder="Confirm Password" />
-        <button>Register</button>
-        <p>Login</p>
-        <input type="text" placeholder="Username" />
-        <input type="text" placeholder="Password" />
-        <button>Login</button>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot" element={<Forgot />} />
+      </Routes>
+    </Router>
   );
 }
 
