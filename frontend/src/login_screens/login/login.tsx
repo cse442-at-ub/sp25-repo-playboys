@@ -19,14 +19,16 @@ const Login: React.FC = () => {
             },
             body: JSON.stringify(data),
         })
-        const result = await response;
+        const result = await response.json();
         console.log(result);
-        // console.log(result["status"]);
+        console.log(result["status"]);
 
-        // if (result["status"] === "success") {
-        //     window.location.href = "/";
-
-        // }
+        if (result["status"] === "success") {
+            window.location.href = "/";
+        }
+        else {
+            setError(result["message"]);
+        }
     };
 
 
@@ -43,6 +45,7 @@ const Login: React.FC = () => {
                 <a href="/forgot">Forgot password?</a>
      
                 <button type="submit">Submit</button>
+                {error && <p className="error-message">{error}</p>}
             </form>
         
             <div className="social-login">

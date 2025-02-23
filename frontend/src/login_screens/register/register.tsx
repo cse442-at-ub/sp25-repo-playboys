@@ -29,6 +29,9 @@ const Register: React.FC = () => {
         if (result["status"] === "success") {
             window.location.href = "/login";
         }
+        else {
+            setError(result["message"]);
+        }
 
     };
         
@@ -50,6 +53,7 @@ const Register: React.FC = () => {
                 <label>Confirm Password</label>
                 <input type="password" placeholder="Reenter your password" value={confirm_password} onChange={(e) => setconfirm_password(e.target.value)} />
                 <button type="submit" >Register</button>
+                {error && <p className="error-message">{error}</p>}
             </form>
         </div>
     </div>

@@ -163,3 +163,14 @@
     margin-right: 10px;
   }
   
+  /* Error message styling */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    background: #ffe6e6;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid red;
+}
