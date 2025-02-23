@@ -70,41 +70,36 @@ function register($user_info_conn, $data) {
 }
 
 
-//login function
 function login($user_info_conn, $data) {
-     //check if all required data is present
-    if(!isset($data["username"]) || !isset($data["password"])) {
+    header("Content-Type: application/json"); // Ensure JSON response
+
+    if (!isset($data["username"]) || !isset($data["password"])) {
         echo json_encode(["status" => "error", "message" => "All fields are required."]);
         exit();
     }
-    //trim and grab data sent from json object from router.php
+
     $username = trim($data["username"]);
     $password = $data["password"];
 
-
-    //prepare sql statement and bind parameters
-    $login_user = $user_info_conn->prepare("SELECT * FROM register WHERE username = ?");
+    $login_user = $user_info_conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
     $login_user->bind_param("s", $username);
     $login_user->execute();
     $result = $login_user->get_result();
-    
-    //check if user exists
-    if($result->num_rows === 0) {
+
+    if ($result->num_rows === 0) {
         echo json_encode(["status" => "error", "message" => "User does not exist."]);
         exit();
     }
 
-    //fetch user data
     $user = $result->fetch_assoc();
 
-
-    //compare password hashes
-    if(password_verify($password, $user["password"])) {
+    if (password_verify($password, $user["password"])) {
         echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
-    }
-    else {
+    } else {
         echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
     }
+
+    exit();
 }
 
 

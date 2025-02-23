@@ -26,7 +26,7 @@ const Register: React.FC = () => {
         console.log(result);
         console.log(result["status"]);
 
-        if (result["status"] == "success") {
+        if (result["status"] === "success") {
             window.location.href = "/login";
         }
 
