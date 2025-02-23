@@ -33,10 +33,11 @@ function EditProfile() {
         };
 
   return (
+    
     <Container className="py-5">
+    <button className="btn btn-light btn-lg fs-2 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
-        <button className="btn btn-light btn-lg fs-2 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
           <h1 className="display-4 fw-bold">Edit Profile</h1>
           <Image
             src="./static/ProfilePlaceholder.png"

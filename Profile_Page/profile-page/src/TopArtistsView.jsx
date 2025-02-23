@@ -13,14 +13,19 @@ const artistData = [
 function ArtistCard({ name, image }) {
   return (
     <div className="text-center">
-      <img src={image} alt={`${name}'s profile`} className="img-fluid rounded-circle mb-3" />
+      <img
+        src={image}
+        alt={`${name}'s profile`}
+        className="img-fluid rounded-circle mb-3"
+        style={{ width: '100%', height: 'auto', maxWidth: '300px' }} // Set width to 100% and height to auto
+      />
       <h2 className="h5 fw-bold">{name}</h2>
     </div>
   );
 }
 
 function TopArtistsView() {
-  const navigate = useNavigate(); // Move the useNavigate hook here
+  const navigate = useNavigate();
 
   const handleBackButton = () => {
     console.log("Show all clicked");
@@ -30,12 +35,12 @@ function TopArtistsView() {
   return (
     <div className="container-fluid bg-white">
       <div className="row">
-        <div className="col-lg-9">
+        <div className="col-lg-12">
           <div className="mb-4">
-            <button className="btn btn-light btn-lg fs-2 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+            <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
             <h1 className="display-4 fw-bold">Your Top Artists</h1>
           </div>
-          <div className="row row-cols-1 row-cols-md-3 g-4">
+          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4"> {/* Adjust column count */}
             {artistData.map((artist, index) => (
               <div className="col" key={index}>
                 <ArtistCard name={artist.name} image={artist.image} />
@@ -43,7 +48,6 @@ function TopArtistsView() {
             ))}
           </div>
         </div>
-        <div className="col-lg-3"></div>
       </div>
     </div>
   );
