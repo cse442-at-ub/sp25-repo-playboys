@@ -1,2 +1,3 @@
 <?php
-include('backend/profile.php');
+echo "Hello World!";
+?>
