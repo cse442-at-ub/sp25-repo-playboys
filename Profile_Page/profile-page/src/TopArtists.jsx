@@ -54,9 +54,9 @@ function ArtistItem({ artist, onClick }) {
         src={artist.image}
         alt={`${artist.name} profile picture`}
         className="img-fluid rounded-circle mb-3"
-        style={{ width: "400px", height: "400px" }} //size
+        style={{ width: "250px", height: "250px" }} //size
       />
-      <h3 style={{ fontSize: "20px", fontWeight: "bold" }}>{artist.name}</h3>
+      <h3 style={{ fontSize: "15px", fontWeight: "bold" }}>{artist.name}</h3>
     </button>
   );
 }

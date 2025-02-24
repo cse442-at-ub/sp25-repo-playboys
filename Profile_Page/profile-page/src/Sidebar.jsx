@@ -54,8 +54,8 @@ function Sidebar() {
       className="sidebar d-none d-xxl-block"
       style={{
         position: "fixed",
-        width: "450px",
-        maxWidth: "450px",
+        width: "300px",
+        maxWidth: "300px",
         top: "0",
         right: "0",
         height: "100vh",
@@ -91,7 +91,7 @@ function SidebarSection({ title, count, handleClick }) {
           <button 
             key={i} 
             className="bg-secondary rounded-circle mb-2" 
-            style={{ width: '100px', height: '100px' }} 
+            style={{ width: '60px', height: '60px' }} 
             onClick={handleClick} // Call the handleClick function on button click
           />
         ))}
@@ -103,12 +103,12 @@ function SidebarSection({ title, count, handleClick }) {
 function MenuItem({ icon, text, handleClick }) {
   return (
     <button 
-      className="d-flex align-items-center mb-3 w-90 btn" 
+      className="d-flex align-items-center mb-3 w-70 btn" 
       style={{ border: "none", textAlign: "left" }} 
       onClick={handleClick}
     >
-      <img src={icon} className="mr-3" style={{ width: "40px", height: "40px" }} alt={text} />
-      <span style={{ fontSize: "35px" }}>{text}</span>
+      <img src={icon} className="mr-3" style={{ width: "30px", height: "30px" }} alt={text} />
+      <span style={{ fontSize: "25px" }}>{text}</span>
     </button>
   );
 }
