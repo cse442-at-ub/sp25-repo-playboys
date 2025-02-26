@@ -5,7 +5,7 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json");
 
 // Include database connection
-include 'db.php';
+include 'data_base.php';
 
 // Get the raw JSON data sent from the frontend
 $data = json_decode(file_get_contents("php://input"), true);
