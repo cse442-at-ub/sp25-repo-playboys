@@ -1,14 +1,13 @@
 <?php
-    require "backend/data_base.php";
-    require "backend/user_auth.php";
-    require "backend/updateProfile.php";
-    require "backend/getProfile.php";
 
-    // Set CORS headers at the top
-    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Origin: http://localhost:3000");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Allow-Credentials: true"); // Only if using cookies
     header("Content-Type: application/json"); // Ensure JSON response
+    require "backend/data_base.php";
+    require "backend/user_auth.php";
+
 
     // Handle preflight (OPTIONS) requests
     if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
@@ -49,9 +48,7 @@
     else if($requested_uri === "/login") {
         login($conn, $data);
     } 
-    else if($requested_uri === "/getProfile") {
-        updateProfile($profile_conn, $data);
-    }
+
  
 
 

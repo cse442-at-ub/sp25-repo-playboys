@@ -14,7 +14,7 @@ const Register: React.FC = () => {
         const data = {username, email, password, confirm_password};
         console.log(data);
 
-        const response = await fetch("http://localhost/register", {
+        const response = await fetch("http://localhost/backend/register.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -27,7 +27,7 @@ const Register: React.FC = () => {
         console.log(result["status"]);
 
         if (result["status"] === "success") {
-            window.location.href = "/login";
+            window.location.href = "#/login";
         }
         else {
             setError(result["message"]);

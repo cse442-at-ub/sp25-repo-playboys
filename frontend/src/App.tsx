@@ -1,23 +1,20 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import  Register  from "./login_screens/register/register";
-import  Login  from "./login_screens/login/login";
-import  Forgot from "./login_screens/forgot/forgot";
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import Register from "./login_screens/register/register";
+import Login from "./login_screens/login/login";
+import Forgot from "./login_screens/forgot/forgot";
 import UserProfile from './user_profile/userProfile';
 import TopArtistsView from './user_profile/TopArtistsView';
 import EditProfile from './user_profile/EditProfile';
 import PlaylistsView from './user_profile/PlaylistsView';
 
-
-
-
 function App() {
   return (
     <Router>
       <Routes>
-
+        <Route path="/" element={<Register />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
@@ -31,3 +28,4 @@ function App() {
 }
 
 export default App;
+

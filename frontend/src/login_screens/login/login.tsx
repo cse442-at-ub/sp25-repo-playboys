@@ -12,7 +12,7 @@ const Login: React.FC = () => {
         const data = {username, password};
         console.log(data);
 
-        const response = await fetch("http://localhost/login", {
+        const response = await fetch("http://localhost/backend/login.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         console.log(result["status"]);
 
         if (result["status"] === "success") {
-            window.location.href = "/";
+            window.location.href = "#/userprofile";
         }
         else {
             setError(result["message"]);
