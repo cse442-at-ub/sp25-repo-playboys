@@ -1,17 +1,14 @@
 <?php
-
-// Database connection details
-$host = "localhost";
-$user = "root"; 
-$pass = ""; 
-$dbname = "user_music_info"; // Change depenfing on if group decides we need more than one db
-$port = 8080;
+$servername = "localhost";
+$username = "root"; 
+$password = ""; 
+$dbname = "user_music_info";
 
 // Create connection
-$conn = new mysqli($host, $user, $pass, $dbname);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
 }
 ?>
