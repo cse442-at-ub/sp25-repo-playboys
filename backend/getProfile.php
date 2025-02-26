@@ -1,5 +1,6 @@
 ﻿<?php
 
+include "data_base.php";
 
 function updateProfile($conn, $data) {
     // Get the user ID from the request (default to 1 if not provided)
