@@ -1,6 +1,8 @@
 <?php
     require "backend/data_base.php";
     require "backend/user_auth.php";
+    require "backend/updateProfile.php";
+    require "backend/getProfile.php";
 
     // Set CORS headers at the top
     header("Access-Control-Allow-Origin: *");
@@ -23,7 +25,8 @@
     $allowed_route = [
         "/" => ["GET"],
         "/register" => ["POST"],
-        "/login" => ["POST"]
+        "/login" => ["POST"],
+        "/getProfile" => ["GET"]
     ];
 
     $method = $_SERVER["REQUEST_METHOD"]; // e.g. "POST"
@@ -46,6 +49,11 @@
     else if($requested_uri === "/login") {
         login($conn, $data);
     } 
+    else if($requested_uri === "/getProfile") {
+        updateProfile($profile_conn, $data);
+    }
+ 
+
 
 
 
