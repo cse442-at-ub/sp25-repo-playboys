@@ -32,10 +32,8 @@ const Register: React.FC = () => {
         else {
             setError(result["message"]);
         }
-
     };
         
-
   return (
     <div className="auth-container">
         <div className="login-box">
