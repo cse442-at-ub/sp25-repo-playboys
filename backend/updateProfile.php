@@ -1,36 +1,36 @@
 <?php
-// Sset allowed HTTP methods
+// Allow requests from any origin
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json");
 
 // Include database connection
 include 'data_base.php';
 
-// Get the raw JSON data sent from the frontend
+// Read input from frontend
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Check if required fields are set in the request
-if (isset($data['id'], $data['username'], $data['email'])) {
-    // Update user details
-    $sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $data['username'], $data['email'], $data['id']);
-    
-    // Execute query and send response
-    if ($stmt->execute()) {
-        echo json_encode(["message" => "Profile updated successfully"]);
-    } else {
-        echo json_encode(["error" => "Failed to update profile"]);
-    }
-    
-    // Close statement
-    $stmt->close();
-} else {
-    // Return an error if required data is missing
-    echo json_encode(["error" => "Invalid input"]);
+// Validate required fields
+if (!isset($data['id']) || !isset($data['username']) || !isset($data['email'])) {
+    die(json_encode(["error" => "Missing required fields"]));
 }
 
-// Close database connection
-$conn->close();
+// Sanitize inputs
+$username = mysqli_real_escape_string($conn, $data['username']);
+$email = mysqli_real_escape_string($conn, $data['email']);
+$profile_pic = isset($data['profile_pic']) ? mysqli_real_escape_string($conn, $data['profile_pic']) : "";
+
+// Update user profile in the database
+$sql = "UPDATE users SET 
+    email = '$email', 
+    profile_pic = '$profile_pic',
+    WHERE username = $uername";
+
+if (mysqli_query($conn, $sql)) {
+    echo json_encode(["success" => "Profile updated successfully"]);
+} else {
+    echo json_encode(["error" => "Failed to update profile: " . mysqli_error($conn)]);
+}
+
+// Close connection
+mysqli_close($conn);
 ?>
