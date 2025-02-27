@@ -12,7 +12,8 @@ const Login: React.FC = () => {
         const data = {username, password};
         console.log(data);
 
-        const response = await fetch("http://localhost/backend/login.php", {
+        //request sign in with global+/login.php as path
+        const response = await fetch(`${process.env.REACT_APP_API_URL}login.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

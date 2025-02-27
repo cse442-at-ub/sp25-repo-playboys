@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-include "db.php";
+
 
 
 // Get username from query string
