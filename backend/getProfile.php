@@ -2,33 +2,26 @@
 header('Content-Type: application/json');
 
 include "db.php";
+header('Content-Type: application/json');
+if (isset($_GET['username'])) {
+    $username = $_GET['username'];
 
-
-// Get username from query string
-if (!isset($_GET['username']) || empty($_GET['username'])) {
-    echo json_encode(["error" => "Username is required"]);
-    exit;
-}
-
-$username = $conn->real_escape_string($_GET['username']); // Prevent SQL Injection
-
-// Query to fetch user details
-$sql = "SELECT `email`, `profile_pic`, `friends_count`, `followers_count`, `following_count` 
-        FROM `users` 
-        WHERE `username` = '$username'"; 
-$result = $conn->query($sql);
-
-// Check if results exist
-if ($result->num_rows > 0) {
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
+    // Fetch user profile based on username
+    $stmt = $conn->prepare("SELECT username, email, friends, followers, following, top_songs, top_artists, recent_activity FROM user_profiles WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $profile = $result->fetch_assoc();
+        echo json_encode(["status" => "success", "profile" => $profile], JSON_PRETTY_PRINT);
+    } else {
+        echo json_encode(["status" => "error", "message" => "User not found"]);
     }
-    echo json_encode($data);
+
+    $stmt->close();
 } else {
-    echo json_encode(["message" => "No data found"]);
+    echo json_encode(["status" => "error", "message" => "No username provided"]);
 }
 
-// Close connection
-$conn->close();
 ?>
