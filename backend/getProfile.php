@@ -3,7 +3,7 @@ require __DIR__ . "/headers.php";
 require __DIR__ . "/cookieAuth.php";
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     echo json_encode(["status" => "error", "message" => "Invalid request method"]);
-    exit;
+    exit();
 }
 
 

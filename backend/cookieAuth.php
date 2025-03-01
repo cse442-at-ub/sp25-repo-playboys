@@ -13,15 +13,15 @@ try{
     $stmt_cookie = $conn->prepare("SELECT username FROM cookie_authentication WHERE auth_key = ?");
     $stmt_cookie->bind_param("s", $auth_token);
     $stmt_cookie->execute();
-    $result = $stmt->get_result();
-    if($result_cookie->num_rows == 0){
+    $result = $stmt_cookie->get_result();
+    if($result->num_rows == 0){
         echo json_encode(["status" => "error", "message" => "Please Login to view profile"]);
         //return to the homepage if cookies are invalid/not found in our database 
         exit();
     
     }
 }catch(Exception $e){
-    echo json_encode(["status" => "error", "message" => "Please Login to view profile"]);
+    echo json_encode(["status" => "error", "message" => "Please Login"]);
     //return to the homepage if cookies are invalid/not found in our database 
     exit();
 }
