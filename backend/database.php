@@ -2,7 +2,7 @@
 //database connection information for phpadmin sql database
 //will need to be changed when connecting to live server
 $host = "localhost";
-$username = "";
+$username = "root";
 $password = "";
 $database = "user_login_information"; //sql database name
 

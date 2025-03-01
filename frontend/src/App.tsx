@@ -5,9 +5,6 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 //import all the pages created in the frontend
 
-import Register from "./login_screens/register/register";
-import Login from "./login_screens/login/login";
-import Forgot from "./login_screens/forgot/forgot";
 import LandingPage from "./landing_page/landingPage";
 import UserProfile from './user_profile/userProfile';
 import TopArtistsView from './user_profile/TopArtistsView';

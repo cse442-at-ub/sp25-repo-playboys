@@ -35,6 +35,12 @@
     $username = trim($data["username"]);
     $password = $data["password"];
     $confirm_password = $data["confirm_password"];
+    $followers = 0;
+    $followings = 0;
+    $friends = 0;
+    $top_songs = "";
+    $top_artists = "";
+    $recent_activity = "";
 
     //check if password and confirm password matches
     if($password != $confirm_password) {
@@ -53,6 +59,11 @@
     
         //insert newly registered user into database
         $insert_new_user->execute();
+
+        //make new user profile table for new user
+        $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity) VALUES (?, ?, ? , ? , ? , ? , ? , ?)");
+        $insert_new_profile->bind_param("ssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity);
+        $insert_new_profile->execute();
         echo json_encode(["status" => "success", "message" => "User registered successfully"]);
     
         //garbage collection
