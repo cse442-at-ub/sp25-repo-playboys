@@ -12,7 +12,8 @@ const Login: React.FC = () => {
         const data = {username, password};
         console.log(data);
 
-        const response = await fetch("http://localhost/login", {
+        //request sign in with global+/login.php as path
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/login.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -24,7 +25,7 @@ const Login: React.FC = () => {
         console.log(result["status"]);
 
         if (result["status"] === "success") {
-            window.location.href = "/";
+            window.location.href = "#/userprofile";
         }
         else {
             setError(result["message"]);
@@ -39,10 +40,9 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 <label>Username</label>
                 <input type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />
-
                 <label>Password</label>
                 <input type="password" placeholder="Enter a password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                <a href="/forgot">Forgot password?</a>
+                <a href="#/forgot">Forgot password?</a>
      
                 <button type="submit">Submit</button>
                 {error && <p className="error-message">{error}</p>}
