@@ -13,7 +13,7 @@ const Login: React.FC = () => {
         console.log(data);
 
         //request sign in with global+/login.php as path
-        const response = await fetch(`${process.env.REACT_APP_API_URL}login.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/login.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -40,10 +40,9 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 <label>Username</label>
                 <input type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />
-
                 <label>Password</label>
                 <input type="password" placeholder="Enter a password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                <a href="/forgot">Forgot password?</a>
+                <a href="#/forgot">Forgot password?</a>
      
                 <button type="submit">Submit</button>
                 {error && <p className="error-message">{error}</p>}

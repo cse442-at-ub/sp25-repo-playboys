@@ -39,7 +39,7 @@ function Sidebar() {
     };
 
     const handleSettingClick = () => {
-        console.log('Setting clicked');
+        window.location.href = "#/settings";
     };
 
   const menuItems = [
