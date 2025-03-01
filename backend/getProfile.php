@@ -20,6 +20,7 @@ if (isset($_GET['username'])) {
     $stmt->close();
 } else {
     echo json_encode(["status" => "error", "message" => "No username provided"]);
+    echo json_encode(["status" => "error", "message" => "No username provided"]);
 }
 
 $conn->close();

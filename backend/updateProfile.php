@@ -24,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 } else {
     echo json_encode(["status" => "error", "message" => "Invalid request method"]);
+    echo json_encode(["status" => "error", "message" => "Invalid request method"]);
 }
 
+$conn->close();
 $conn->close();
 ?>
