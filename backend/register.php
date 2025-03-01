@@ -1,7 +1,9 @@
 <?php
 
-//register function
-function register($user_info_conn, $data) {
+    require __DIR__ . "/headers.php";
+
+    $method = $_SERVER["REQUEST_METHOD"]; // e.g. "POST"
+    $data = json_decode(file_get_contents("php://input"), true); // decode JSON body
     $missingFields = [];
 
     // Check each required field
@@ -46,7 +48,7 @@ function register($user_info_conn, $data) {
 
     try {
         //prepare sql statement and bind parameters
-        $insert_new_user = $user_info_conn->prepare("INSERT INTO user_login_data (email, username, password) VALUES (?, ?, ?)");
+        $insert_new_user = $conn->prepare("INSERT INTO user_login_data (email, username, password) VALUES (?, ?, ?)");
         $insert_new_user->bind_param("sss", $email, $username, $password);
     
         //insert newly registered user into database
@@ -55,7 +57,7 @@ function register($user_info_conn, $data) {
     
         //garbage collection
         $insert_new_user->close();
-        $user_info_conn->close(); 
+        $conn->close(); 
 
     }
     //catch duplicate entries
@@ -67,41 +69,4 @@ function register($user_info_conn, $data) {
             echo json_encode(["status" => "error", "message" => "An error occurred. Please try again."]);
         }
     }
-}
-
-
-function login($user_info_conn, $data) {
-    header("Content-Type: application/json"); // Ensure JSON response
-
-    if (!isset($data["username"]) || !isset($data["password"])) {
-        echo json_encode(["status" => "error", "message" => "All fields are required."]);
-        exit();
-    }
-
-    $username = trim($data["username"]);
-    $password = $data["password"];
-
-    $login_user = $user_info_conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
-    $login_user->bind_param("s", $username);
-    $login_user->execute();
-    $result = $login_user->get_result();
-
-    if ($result->num_rows === 0) {
-        echo json_encode(["status" => "error", "message" => "User does not exist."]);
-        exit();
-    }
-
-    $user = $result->fetch_assoc();
-
-    if (password_verify($password, $user["password"])) {
-        echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
-    } else {
-        echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
-    }
-
-    exit();
-}
-
-
-
 ?>

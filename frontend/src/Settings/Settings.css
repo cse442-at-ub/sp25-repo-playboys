@@ -1,4 +1,4 @@
-body {
+.settings-page {
   font-family: Arial, sans-serif;
   background-color: #f8f8f8;
   margin: 0;
@@ -10,7 +10,7 @@ body {
   overflow: hidden; /* Prevent scrollbars */
 }
 
-.container {
+.settings-container {
   width: 100vw; /* Full width */
   height: 100vh; /* Full height */
   background: white;
@@ -23,7 +23,7 @@ body {
   overflow: hidden; /* Prevent scrollbars */
 }
 
-.header {
+.settings-header {
   display: flex;
   align-items: center;
   justify-content: space-between; /* Spread items evenly */

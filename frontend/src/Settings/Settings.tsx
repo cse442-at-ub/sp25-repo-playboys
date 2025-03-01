@@ -12,24 +12,26 @@ const options = [
 
 const Settings = () => {
   return (
-    <div className="container">
-      <div className="header">
-        <div className="header-text">
-          <span className="menu-icon">☰</span>
-          <span>Settings</span>
+    <div className="settings-page">
+      <div className="settings-container">
+        <div className="settings-header">
+          <div className="header-text">
+            <span className="menu-icon">☰</span>
+            <span>Settings</span>
+          </div>
         </div>
-      </div>
 
-      <div className="option-container">
-        {options.map((option, index) => (
-          <button className="option-button"onClick={() => window.location.href = `/settings/${option.name.split(" ")[0].toLowerCase()}`}>
-            <div key={index} className="option-card">
-              <div className="icon">{option.icon}</div>
-              <p>{option.name}</p>
-            </div>
-        </button>
-          
-        ))}
+        <div className="option-container">
+          {options.map((option, index) => (
+            <button className="option-button"onClick={() => window.location.href = `#/settings/${option.name.split(" ")[0].toLowerCase()}`}>
+              <div key={index} className="option-card">
+                <div className="icon">{option.icon}</div>
+                <p>{option.name}</p>
+              </div>
+          </button>
+            
+          ))}
+        </div>
       </div>
     </div>
   );
