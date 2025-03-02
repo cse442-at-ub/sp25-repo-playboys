@@ -58,7 +58,12 @@ const EditProfile = () => {
       if (result.status === "success") {
         setMessage("Profile updated successfully!");
         setIsError(false);
-      } else {
+        navigate('/userProfile');
+      } else if (result.status === "same") {
+        setMessage(result.message || "Profile is the same.");
+        navigate('/userProfile');
+      }
+      else {
         setMessage(result.message || "Failed to update profile.");
         setIsError(true);
       }

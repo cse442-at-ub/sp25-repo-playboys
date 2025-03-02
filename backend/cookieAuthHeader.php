@@ -1,9 +1,10 @@
 <?php
+// Allow requests from any origin
 require __DIR__ . "/headers.php";
 
 
 if(!isset($_COOKIE["auth_token"])){
-    echo json_encode(["status" => "error", "message" => "Please Login to view profile"]);
+    echo json_encode(["status" => "error", "message" => "NO key, Please login"]);
     //return to the homepage if cookies are invalid/not found in our database 
     exit();    
 }
@@ -15,7 +16,7 @@ try{
     $stmt_cookie->execute();
     $result = $stmt_cookie->get_result();
     if($result->num_rows == 0){
-        echo json_encode(["status" => "error", "message" => "Please Login to view profile"]);
+        echo json_encode(["status" => "error", "message" => "Invalid Cookie"]);
         //return to the homepage if cookies are invalid/not found in our database 
         exit();
     

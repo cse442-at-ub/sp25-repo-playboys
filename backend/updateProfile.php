@@ -1,11 +1,13 @@
 <?php
-// Allow requests from any origin
+// Allow requests from any origin and check if user is logged in
 require __DIR__ . "/headers.php";
-require __DIR__ . "/cookieAuth.php";
+require __DIR__ . "/cookieAuthHeader.php";
 
 $user = $result->fetch_assoc();
 $username = $user["username"];
-
+$email = "";
+$data = json_decode(file_get_contents("php://input"), true); // decode JSON body
+//retreive user information from the database for update profile page
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try{
         $stmt = $conn->prepare("SELECT username, email FROM user_profiles WHERE username = ?");
@@ -13,6 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $stmt->execute();
         $result = $stmt->get_result();
         $user = $result->fetch_assoc();
+        if($result->num_rows == 0){
+            echo json_encode(["status" => "error", "message" => "Invalid Request Error"]);
+            exit();
+        }
+        $email = $user["email"];
         echo json_encode(["status" => "success", "data" => $user]);
         exit();
     }catch(Exception $e){
@@ -20,33 +27,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit();
     }
 
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+} 
 
-    $data = json_decode(file_get_contents("php://input"), true);
-    if (!isset($data["email"]) || !isset($data["username"])) {
-        echo json_encode(["status" => "error", "message" => "All fields are required."]);
-        exit();
-    }
+//update user profile information
+else if ($_SERVER['REQUEST_METHOD'] === 'POST') {  
     $newEmail = trim($data["email"]);
     $newUsername = trim($data["username"]);
-    $stmt = $conn->prepare("SELECT * FROM user_profiles WHERE username = ?");
-    $stmt->bind_param("s", $newUsername);
-    $stmt->execute();
-    $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        echo json_encode(["status" => "error", "message" => "User already exist. Please choose another username."]);
+    if ((!isset($data["email"]) || !isset($data["username"]))) {
+        echo json_encode(["status" => "success", "message" => "All input remains."]);
+        exit();
+    }
+    if(($newEmail == "" || $newUsername == "")){
+        echo json_encode(["status" => "same", "message" => "All input remains."]);
         exit();
     }
 
-    $stmt = $conn->prepare("SELECT * FROM user_profiles WHERE email = ?");
-    $stmt->bind_param("s", $newEmail);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        echo json_encode(["status" => "error", "message" => "Email already in use. Please choose another email."]);
+
+
+    //check if new email is the same as the old, if not check if it is in use
+    if($newEmail != $email){
+        $stmt = $conn->prepare("SELECT * FROM user_profiles WHERE email = ?");
+        $stmt->bind_param("s", $newEmail);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0 && $newUsername == $user["username"]) {
+            echo json_encode(["status" => "error", "message" => "Email already in use. Please choose another email."]);
+            exit();
+        }
+    
+    }
+
+    //check if new username is the same as the old, if not check if it is in use
+    if($newUsername != $username){
+        $stmt = $conn->prepare("SELECT * FROM user_profiles WHERE username = ?");
+        $stmt->bind_param("s", $newUsername);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            echo json_encode(["status" => "error", "message" => "User already exist. Please choose another username."]);
+            exit();
+        }
+    }
+
+
+    //check if new email and usernames are the same
+    if ($newEmail == $email && $newUsername == $username) {
+        echo json_encode(["status" => "success", "message" => "All input remains."]);
         exit();
     }
+
 
     try {
         $stmt = $conn->prepare("UPDATE user_profiles SET email = ?, username = ? WHERE username = ?");
@@ -71,11 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }else{
     echo json_encode(["status" => "error", "message" => "Invalid Request Method"]);
     exit();
-
-
 }
-
-
 
 
 ?>

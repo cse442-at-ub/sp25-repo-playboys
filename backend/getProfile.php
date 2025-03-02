@@ -1,6 +1,7 @@
 <?php
+// Allow requests from any origin and check if user is logged in
 require __DIR__ . "/headers.php";
-require __DIR__ . "/cookieAuth.php";
+require __DIR__ . "/cookieAuthHeader.php";
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     echo json_encode(["status" => "error", "message" => "Invalid request method"]);
     exit();
