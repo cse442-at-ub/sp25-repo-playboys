@@ -4,7 +4,7 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "user_login_information"; //sql database name
+$database = "cse442_2025_spring_team_ah_db"; //sql database name
 
 $port = 3306; //port number for sql database
 
