@@ -16,6 +16,7 @@ if (!isset($_GET['code'])) {
 
 $code = $_GET['code'];
 
+
 // 3. Exchange the authorization code for an access token
 $token_url = "https://accounts.spotify.com/api/token";
 $post_fields = http_build_query([
@@ -61,10 +62,9 @@ $user_response = curl_exec($ch);
 curl_close($ch);
 
 $user_info = json_decode($user_response, true);
-
 // Check required fields exist
 if (!isset($user_info['id'])) {
-    exit('Error retrieving user information.');
+     exit('Error retrieving user information.');
 }
 
 $spotify_id   = $user_info['id'];
@@ -72,14 +72,18 @@ $display_name = isset($user_info['display_name']) ? $user_info['display_name'] :
 $email        = isset($user_info['email']) ? $user_info['email'] : '';
 
 
-// check if user exists in database
-$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE email = ?");
-$login_user->bind_param("s", $email);
+
+// // check if user exists in database
+$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
+$login_user->bind_param("s", $display_name);
 $login_user->execute();
 $result = $login_user->get_result();
 
-// if user doesnt exist we register them
+
+// // if user doesnt exist we register them
 if ($result->num_rows === 0) {
+
+
     //prepare sql statement and bind parameters
     $insert_new_user = $conn->prepare("INSERT INTO user_login_data (access_token, email, username, spotify_id) VALUES (?, ?, ?, ?)");
     $insert_new_user->bind_param("ssss",$access_token, $email, $display_name, $spotify_id);
@@ -90,13 +94,13 @@ if ($result->num_rows === 0) {
 
     //garbage collection
     $insert_new_user->close();
-    $conn->close(); 
+    $conn->close();
 }
 // they were already registered so we log them in
 else{
+
     echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
 }
-
 // Redirect the user to a protected area or dashboard
 exit;
 ?>
