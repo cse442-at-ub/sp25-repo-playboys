@@ -14,17 +14,28 @@ import TopArtistsView from './user_profile/TopArtistsView';
 import EditProfile from './user_profile/EditProfile';
 import PlaylistsView from './user_profile/PlaylistsView';
 
+// Import mobile components
+import MobileLandingPage from './mobile_login_views/mobile_landing_page/mobile_landing_page'
+import MobileLogin from './mobile_login_views/mobile_login/mobile_login';
+import MobileForgotPassword from './mobile_login_views/mobile_forgot/mobile_forgot'
+import MobileRegister from './mobile_login_views/mobile_register/mobile_register'
+
+// Hook for detecting screen size
+import useMediaQuery from './mobile_login_views/useMediaQuery';
 
 function App() {
+
+  const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
+
   return (
     //add routes for each page created in the frontend
     <Router>
       <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot" element={<Forgot />} />
+        <Route path="/register" element={isMobile ? <MobileRegister/> : <Register />} />
+        <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
+        <Route path="/forgot" element={isMobile ? <MobileForgotPassword /> :<Forgot />} />
 
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={isMobile ? <MobileLandingPage/> : <LandingPage />} />
 
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/top-artists" element={<TopArtistsView />} />
