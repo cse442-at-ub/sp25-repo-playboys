@@ -13,32 +13,26 @@
                 <input type="email" name="email" placeholder="Enter your email here...">
                 <button type="submit" name="send">Send</button>
             </form>
-            <?php // error handling for email entered
+            <?php
                 if( isset( $_GET["error"] ) )
                 {
                     if( $_GET["error"] == "none" ) {
-                        echo "<p>Email sent.</p>";
+                        $email = $_GET["email"];
+                        echo "<p>Success! Code sent to $email.</p>";
                     }
-                    else if( $_GET["error"] == "emailenteredinvalid" ) {
-                        echo "<p>The email you have entered is invalid. Please try again.</p>";
+                    else if( $_GET["error"] == "emailenteredisnotvalid" ) {
+                        echo "<p>Error! The email you have entered is invalid. Please try again.</p>";
                     }
-                    else if( $_GET["error"] == "emailentereddoesnotexist" ) {
-                        echo "<p>The email you have entered does not belong to an account. Please try again.</p>";
+                    else if( $_GET["error"] == "emailenteredisnotindatabase" ) {
+                        echo "<p>Error! The email you have entered does not belong to an account. Please try again.</p>";
                     }
                 }
              ?>
-            <form action="forgot_password.verify_code.php" method="post"></form>
-                <input type="text" name="code" placeholder="Enter the oce you've received here...">
+            <form action="forgot_password.verify_code.php" method="post">
+                <input type="hidden" name="email" value="<?php echo $_GET["email"] ?>">
+                <input type="text" name="code" placeholder="Enter the code you've received here...">
                 <button type="submit" name="verify">Verify</button>
             </form>
-            <?php // error handling for code entered
-                if( isset( $_GET["error"] ) )
-                {
-                    // if( $_GET["error"] == "codeenteredincorrect" ) {
-                    //     echo "<p>The code you have entered is incorrect. Please try again.</p>";
-                    // }
-                }
-             ?>
         </div>
     </body>
 </html>

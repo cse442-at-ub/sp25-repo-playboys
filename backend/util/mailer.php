@@ -3,28 +3,38 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../vendor/autoload.php'; // Composer dependency
+require '../../vendor/autoload.php';
 
-function sendEmail($to, $subject, $message) {
-    // $mail = new PHPMailer(true);
-    // try {
-    //     $mail->isSMTP();
-    //     $mail->Host = 'smtp.example.com'; // Your SMTP server
-    //     $mail->SMTPAuth = true;
-    //     $mail->Username = 'your_email@example.com';
-    //     $mail->Password = 'your_password';
-    //     $mail->SMTPSecure = 'tls';
-    //     $mail->Port = 587;
+function sendEmail( $to, $subject, $message) 
+{
+    $mail = new PHPMailer(true);
 
-    //     $mail->setFrom('no-reply@example.com', 'Your App');
-    //     $mail->addAddress($to);
-    //     $mail->Subject = $subject;
-    //     $mail->Body = $message;
-    //     $mail->send();
+    try 
+    {
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
 
-    //     return true;
-    // } catch (Exception $e) {
-    //     return false;
-    // }
+        $mail->Host = 'smtp.gmail.com'; 
+        $mail->Username = 'emailer.teamplayboys@gmail.com';
+        $mail->Password = 'bama vtyb twre hddu';
+        
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom('mailer-teamplayboys@gmail.com', 'Team Playboys');
+        $mail->addAddress( $to );
+        $mail->isHTML( true );
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+
+        $mail->send();
+
+        return true;
+    } 
+    catch ( Exception $e ) 
+    {
+        return false;
+    }
 }
+echo "mailer.php included!"
 ?>

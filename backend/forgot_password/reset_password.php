@@ -10,8 +10,9 @@
         <div>
             <h2>Password reset</h2>
             <form action="reset_password.verify_password_reset_valid.php" method="post">
-                <input type="password" name="password" placeholder="Enter your new password...">
-                <input type="password" name="confirm_password" placeholder="Confirm your new password...">
+                <input type="hidden" name="email" value="<?php echo $_GET["email"] ?>">
+                <input type="password" name="password" placeholder="Enter your new password..."><br>
+                <input type="password" name="confirm_password" placeholder="Confirm your new password..."><br>
                 <button type="submit" name="confirm">Confirm</button>
             </form>
             <?php // error handling for password entered

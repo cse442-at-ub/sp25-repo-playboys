@@ -1,31 +1,51 @@
 <?php
 
-if( isset($_POST[ "send" ] ) ) // make sure we're coming from forgot_password.php
+include('forgot_password.php');
+include('../data_base.php');
+include('../util/mailer.php');
+
+if( isset( $_POST[ "send" ] ) ) 
 {
     $email = $_POST["email"];
 
-    // check for / test formatting
     if( !validEmail($email) ) 
     {
-        header("location: forgot_password.php?error=emailenteredinvalid");
+        header("location: forgot_password.php?error=emailenteredisnotvalid");
         exit();
     }
 
-    // check if email is in database
-    if( !emailExists($conn, $email) ) // do we have a connection??? Is this all I need?
+    $sql = "SELECT id FROM users WHERE email = '$email'";
+    $result = mysqli_query( $conn, $sql );
+
+    if ( mysqli_num_rows( $result ) > 0 ) 
     {
-        header("location: forgot_password.php?error=emailentereddoesnotexist");
+        $row = mysqli_fetch_assoc( $result );
+
+        $user_id = $row["id"];
+
+        $code = bin2hex(random_bytes(4)); // 16 -> 4
+
+        $expires = date("Y-m-d H:i:s", strtotime("+1 hour"));
+
+        $sql = "INSERT INTO password_resets (user_id, code, expires) 
+                VALUES ('$user_id', '$code', '$expires')";
+        $result = mysqli_query( $conn, $sql );
+
+        sendEmail(   $email, 
+                "Team Playboys Reset Password", 
+                "Your code is: '$code'\n\nExpires in 1 hour." );
+
+        header("location: forgot_password.php?error=none&email=" . $email);
+    } 
+    else 
+    {
+        header("location: forgot_password.php?error=emailenteredisnotindatabase");
         exit();
     }
-
-    // send a code to said email
-
-    // send us back
-    header("location:forgot_password.php?error=none"); // email sent
 }
 else // we're not, the url was likely modified by the user
 {
-    header("location: forgot_password.php"); // send them back
+    header("location:forgot_password.php"); // send them back
 }
 
 function validEmail($email) 
@@ -39,18 +59,4 @@ function validEmail($email)
         return true;
     }
     return false;
-}
-
-function emailExists($conn, $email)
-{
-    $email_exists_conn = $conn->prepare("SELECT * FROM register WHERE email = ?");
-    $email_exists_conn->bind_param("s", $email);
-    $email_exists_conn->execute();
-    $result = $email_exists_conn->get_result();
-    
-    if($result->num_rows === 0) {
-        return false;
-    }
-
-    return true;
 }
