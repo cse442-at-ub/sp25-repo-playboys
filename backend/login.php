@@ -17,13 +17,14 @@
     $login_user->execute();
     $result = $login_user->get_result();
 
+    // if user doesnt exist we return an error
     if ($result->num_rows === 0) {
         echo json_encode(["status" => "error", "message" => "User does not exist."]);
         exit();
     }
 
     $user = $result->fetch_assoc();
-
+    // if user exists we check if the password is correct and return a success message
     if (password_verify($password, $user["password"])) {
         echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
     } else {
