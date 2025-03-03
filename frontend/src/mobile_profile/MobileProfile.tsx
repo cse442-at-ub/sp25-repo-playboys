@@ -6,6 +6,7 @@ import MobilePlaylists from './MobilePlaylists';
 import MobileRecentActivity from './MobileProfileRecentActivity';
 import MobileNavigationBar from './MobileNavigationBar';
 import { Artist, Activity, Playlist } from './MobileProfileTypes';
+import { useNavigate } from 'react-router-dom';
 
 const topArtists: Artist[] = [
   { name: 'Drake', imageUrl: './static/Drakepfp.png' },
@@ -26,8 +27,10 @@ const recentActivities: Activity[] = [
 
 const MobileProfile: React.FC = () => {
 
+  const navigate = useNavigate();
   const handleEditProfile = () => {
     console.log('useNaviagate Edit Profile')
+    navigate('/edit-profile')
   };
 
   return (
