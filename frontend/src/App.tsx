@@ -13,6 +13,8 @@ import PlaylistsView from './user_profile/PlaylistsView';
 // Import mobile components
 import MobileProfile from './mobile_profile/MobileProfile';
 import MobileEditProfile from './mobile_profile/MobileEditProfile';
+import MobileTopArtistsPage from './mobile_profile/MobileTopArtistsView';
+import MobilePlaylistsView from './mobile_profile/MobilePlaylistsView';
 
 // Hook for detecting screen size
 import useMediaQuery from './mobile_profile/useMediaQuery';
@@ -24,8 +26,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={isMobile ? <MobileProfile /> : <UserProfile />} />
-        <Route path="/top-artists" element={isMobile ? <MobileProfile /> : <TopArtistsView />} />
-        <Route path="/playlist-view" element={isMobile ? <MobileProfile /> : <PlaylistsView />} />
+        <Route path="/userProfile" element={isMobile ? <MobileProfile /> : <UserProfile />} />
+        <Route path="/top-artists" element={isMobile ? <MobileTopArtistsPage /> : <TopArtistsView />} />
+        <Route path="/playlist-view" element={isMobile ? <MobilePlaylistsView /> : <PlaylistsView />} />
         <Route path="/edit-profile" element={isMobile ? <MobileEditProfile /> : <EditProfile />} />
       </Routes>
     </Router>

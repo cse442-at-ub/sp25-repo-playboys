@@ -30,11 +30,11 @@ function ArtistCard({ name, image }: ArtistCardProps) {
 }
 
 function TopArtistsView() {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const handleBackButton = () => {
-    console.log("Show all clicked");
-    navigate('/userProfile'); // Navigate to the desired route
+    //navigate('/');
+    navigate('/userProfile');
   };
 
   return (

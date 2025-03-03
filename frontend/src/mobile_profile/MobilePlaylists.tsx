@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { Playlist } from './MobileProfileTypes';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   playlists: Playlist[];
@@ -9,9 +10,11 @@ interface Props {
 
 const MobilePlaylists: React.FC<Props> = ({ playlists }) => {
 
-const handleShowAllPlaylists = () => {
-  console.log('useNaviagate Show all Playlists')
-};
+  const navigate = useNavigate();
+  const handleShowAllClick = () => {
+    console.log("Show all clicked");
+    navigate('/playlist-view')
+  };
 
   return (
     <>
@@ -25,7 +28,7 @@ const handleShowAllPlaylists = () => {
           <p className="ms-3 h4">{playlist.name}</p>
         </div>
       ))}
-      <Button variant="secondary" className="w-100 mb-3" onClick={handleShowAllPlaylists}>Show all playlists</Button>
+      <Button variant="secondary" className="w-100 mb-3" onClick={handleShowAllClick}>Show all playlists</Button>
     </>
   );
 };

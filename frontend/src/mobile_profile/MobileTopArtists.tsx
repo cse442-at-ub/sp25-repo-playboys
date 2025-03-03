@@ -3,6 +3,7 @@ import React from 'react';
 import { Col } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import { Artist } from './MobileProfileTypes';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   artists: Artist[];
@@ -10,9 +11,11 @@ interface Props {
 
 const MobileTopArtists: React.FC<Props> = ({ artists }) => {
 
-const handleShowAllArtists = () => {
-  console.log('useNaviagate Show all Playlists')
-};
+  const navigate = useNavigate();
+  const handleShowAllClick = () => {
+    console.log("Show all clicked");
+    navigate('/top-artists')
+  };
 
   return (
     <>
@@ -30,7 +33,7 @@ const handleShowAllArtists = () => {
           </Col>
         ))}
       </div>
-      <Button variant="secondary" className="w-100 mb-3" onClick={handleShowAllArtists}>Show all Artists</Button>
+      <Button variant="secondary" className="w-100 mb-3" onClick={handleShowAllClick}>Show all Artists</Button>
     </>
   );
 };

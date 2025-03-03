@@ -61,6 +61,7 @@ const MobileEditProfile: React.FC = () => {
 
   const handleCancel = () => {
     console.log('Edit cancelled');
+    //navigate('/userProfile')
     navigate('/')
   };
 
@@ -68,9 +69,16 @@ const MobileEditProfile: React.FC = () => {
     console.log('Change Picture Clicked');
   };
 
+  const handleBackButton = () => {
+    console.log("Show all clicked");
+    navigate('/');
+    //navigate('/userProfile');
+  };
+
   return (
     <div className="container-fluid bg-white p-4" style={{ maxWidth: '480px' }}>
-      <h1 className="fw-bold mb-4">Edit Profile</h1>
+      <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+      <h1 className="fw-bold mb-4 mt-4 mb-3">Edit Profile</h1>
       <div className="d-flex align-items-center mb-4">
         <img
           src="./static/ProfilePlaceholder.png"
