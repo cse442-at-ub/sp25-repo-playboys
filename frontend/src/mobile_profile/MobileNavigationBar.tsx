@@ -1,58 +1,51 @@
-// components/MobileNavigationBar.tsx
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import { FaCompass, FaChartBar, FaUser, FaCog, FaSearch } from 'react-icons/fa';
+
+// Define handler functions
+const MobileExploreHandler = () => {
+  console.log('Explore clicked');
+};
+
+const MobileStatisticHandler = () => {
+  console.log('Statistics clicked');
+};
+
+const MobileSearchHandler = () => {
+  console.log('Search clicked');
+};
+
+const MobileProfileHandler = () => {
+  console.log('Profile clicked');
+};
+
+const MobileSettingHandler = () => {
+  console.log('Settings clicked');
+};
 
 const MobileNavigationBar: React.FC = () => {
   return (
-    <Container className="d-flex justify-content-around py-3 border-top bg-white fixed-bottom">
-      <FaCompass size={24} />
-      <FaChartBar size={24} />
-      <FaSearch size={28} />
-      <FaUser size={24} />
-      <FaCog size={24} />
+    <Container className="mobile-nav-bar">
+      <button onClick={MobileExploreHandler} className="nav-button border-0">
+        <img src={'./static/ExploreIcon.png'} alt="Explore" className="nav-icon" />
+      </button>
+
+      <button onClick={MobileStatisticHandler} className="nav-button border-0">
+        <img src={'./static/StatisticIcon.png'} alt="Statistics" className="nav-icon" />
+      </button>
+
+      <button onClick={MobileSearchHandler} className="nav-button border-0">
+        <img src={'./static/MobileSearchIcon.png'} alt="Search" className="nav-icon" />
+      </button>
+
+      <button onClick={MobileProfileHandler} className="nav-button border-0">
+        <img src={'./static/ProfileIcon.png'} alt="Profile" className="nav-icon" />
+      </button>
+
+      <button onClick={MobileSettingHandler} className="nav-button border-0">
+        <img src={'./static/SettingIcon.png'} alt="Settings" className="nav-icon" />
+      </button>
     </Container>
   );
 };
 
 export default MobileNavigationBar;
-
-
-
-{/*}
-import React, { useState } from 'react';
-import { Container, Nav } from 'react-bootstrap';
-import { FaCompass, FaChartBar, FaUser, FaCog, FaSearch } from 'react-icons/fa';
-
-const MobileNavigationBar: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('home');
-
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
-
-  return (
-    <Container className="d-flex justify-content-around py-3 border-top bg-white fixed-bottom">
-      <Nav className="w-100 d-flex justify-content-around">
-        <Nav.Item onClick={() => handleTabClick('home')} className={`nav-link ${activeTab === 'home' ? 'active' : ''}`}>
-          <FaCompass size={24} />
-        </Nav.Item>
-        <Nav.Item onClick={() => handleTabClick('analytics')} className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`}>
-          <FaChartBar size={24} />
-        </Nav.Item>
-        <Nav.Item onClick={() => handleTabClick('search')} className={`nav-link ${activeTab === 'search' ? 'active' : ''}`}>
-          <FaSearch size={28} />
-        </Nav.Item>
-        <Nav.Item onClick={() => handleTabClick('profile')} className={`nav-link ${activeTab === 'profile' ? 'active' : ''}`}>
-          <FaUser size={24} />
-        </Nav.Item>
-        <Nav.Item onClick={() => handleTabClick('settings')} className={`nav-link ${activeTab === 'settings' ? 'active' : ''}`}>
-          <FaCog size={24} />
-        </Nav.Item>
-      </Nav>
-    </Container>
-  );
-};
-
-export default MobileNavigationBar;
-*/}

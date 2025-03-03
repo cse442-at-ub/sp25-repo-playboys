@@ -8,9 +8,9 @@ import MobileNavigationBar from './MobileNavigationBar';
 import { Artist, Activity, Playlist } from './MobileProfileTypes';
 
 const topArtists: Artist[] = [
-  { name: 'Drake', imageUrl: 'https://via.placeholder.com/80' },
-  { name: 'Ado', imageUrl: 'https://via.placeholder.com/80' },
-  { name: 'Beatles', imageUrl: 'https://via.placeholder.com/80' },
+  { name: 'Drake', imageUrl: './static/Drakepfp.png' },
+  { name: 'Ado', imageUrl: './static/Adopfp.png' },
+  { name: 'Beatles', imageUrl: './static/TheBeatlespfp.png' },
 ];
 
 const playlists: Playlist[] = [
@@ -25,21 +25,26 @@ const recentActivities: Activity[] = [
 ];
 
 const MobileProfile: React.FC = () => {
+
+  const handleEditProfile = () => {
+    console.log('useNaviagate Edit Profile')
+  };
+
   return (
     <Container className="py-5">
       {/* Profile Header */}
-      <Row className="mb-4 text-center">
+      <Row className="mb-5 text-center">
         <Col>
           <Image
-            src="https://via.placeholder.com/100"
+            src="./static/ProfilePlaceholder.png"
             roundedCircle
             fluid
-            className="mb-2"
+            className="mb-2 profile-img"
           />
-          <h2>John Doe</h2>
-          <p className="text-muted">@john_doe</p>
-          <p><strong>10</strong> Followers <strong>∞</strong> Following</p>
-          <Button variant="secondary" size="sm">🖋️ Edit Profile</Button>
+          <h1>John Doe</h1>
+          <p className="text-muted h2">@john_doe</p>
+          <p className="h5"><strong>10</strong> Followers <strong>∞</strong> Following</p>
+          <Button variant="secondary" size="lg" onClick={handleEditProfile}>🖋️ Edit Profile</Button>
         </Col>
       </Row>
 
