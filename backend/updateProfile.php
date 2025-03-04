@@ -51,7 +51,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("s", $newEmail);
         $stmt->execute();
         $result = $stmt->get_result();
-        if ($result->num_rows > 0 && $newUsername == $user["username"]) {
+        if ($result->num_rows > 0) {
             echo json_encode(["status" => "error", "message" => "Email already in use. Please choose another email."]);
             exit();
         }
