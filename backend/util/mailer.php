@@ -3,7 +3,13 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../../vendor/autoload.php';
+// COMPOSER REQUIRE CODE: 
+// require '../../vendor/autoload.php';
+// DOWNLOADED ZIP CODE:
+
+require '../../phpmailer/src/Exception.php'; // THIS WAS A HEADACHE! Make sure these line up perfectly. It may be very deceiving
+require '../../phpmailer/src/PHPMailer.php';
+require '../../phpmailer/src/SMTP.php';
 
 function sendEmail( $to, $subject, $message) 
 {
@@ -29,12 +35,11 @@ function sendEmail( $to, $subject, $message)
 
         $mail->send();
 
-        return true;
+        echo 'Message has been sent';
     } 
     catch ( Exception $e ) 
     {
-        return false;
+        echo 'Message could not be sent';
     }
 }
-echo "mailer.php included!"
 ?>
