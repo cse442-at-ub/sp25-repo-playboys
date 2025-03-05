@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 //import all the pages created in the frontend
 
@@ -26,6 +26,17 @@ import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
 import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from './Settings/Account_settings/DeleteAccount';
+
+function PathGuard({ allowedPathStart, children }: { allowedPathStart: string, children: React.ReactNode }) {
+  const location = useLocation();
+
+  // Check if the path starts with the allowed prefix
+  if (!location.pathname.startsWith(allowedPathStart)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+}
 
 function App() {
   return (

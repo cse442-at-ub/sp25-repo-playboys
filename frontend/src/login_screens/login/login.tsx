@@ -32,6 +32,28 @@ const Login: React.FC = () => {
         }
     };
 
+    const handleSpotifyLogin = async () => {
+        //request sign in with global+/login.php as path
+        //request sign in with global+/login.php as path
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/spotify_login.php`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        const result = await response.json();
+        console.log(result);
+        console.log(result["status"]);
+
+        if (result["status"] === "success") {
+            window.location.href = "#/userprofile";
+        }
+        else {
+            setError(result["message"]);
+        }};
+
+        
+
 
   return (
     <div className="auth-container">
@@ -50,15 +72,11 @@ const Login: React.FC = () => {
         
             <div className="social-login">
                 <h3>Or login with</h3>
-                <button id="spotify-login">
+                <button onClick={handleSpotifyLogin} id="spotify-login">
                     {/* <img src="/icons/spotify.svg" alt="Spotify" className="social-icon" /> */}
                     Login With Spotify
                 </button>
 
-                <button id="apple-login">
-                    {/* <img src="/icons/apple-music.svg" alt="Apple Music" className="social-icon" /> */}
-                    Login With Apple Music
-                </button>
             </div>
         </div>
     </div>
