@@ -1,8 +1,8 @@
 import React from "react";
-import "./Settings.css";
+// import "./Settings.css";
 
 const options = [
-  { name: "Friend Requests", icon: "🤝", path: "settings/community/friend_requests" },
+  { name: "Friend Requests", icon: "🤝", path: "settings/community_settings/friend-requests" },
   { name: "Activity Sharing", icon: "📢", path: "settings/community/activity_sharing" },
   { name: "Collaborative Playlists", icon: "🎶", path: "settings/community/collaborative_playlists" },
   { name: "Private Messages", icon: "💬", path: "settings/community/private_messages" },

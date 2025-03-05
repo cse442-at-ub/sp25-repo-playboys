@@ -9,25 +9,23 @@ const Login: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const data = {username, password};
+        const data = { username, password };
         console.log(data);
 
-        //request sign in with global+/login.php as path
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/login.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
-        })
+        });
         const result = await response.json();
         console.log(result);
         console.log(result["status"]);
 
         if (result["status"] === "success") {
-            window.location.href = "#/userprofile";
-        }
-        else {
+            window.location.href = `#/userprofile?user=${username}`;
+        } else {
             setError(result["message"]);
         }
     };
@@ -77,10 +75,11 @@ const Login: React.FC = () => {
                     Login With Spotify
                 </button>
 
+
+    
             </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default Login;

@@ -1,27 +1,54 @@
 <?php
+// Allow requests from any origin and check if user is logged in
 require __DIR__ . "/headers.php";
+require __DIR__ . "/cookieAuthHeader.php";
+require __DIR__ . "/userDatabaseGrabber.php";
 
-if (isset($_GET['username'])) {
-    $username = $_GET['username'];
+//check if the request method is a get request
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    echo json_encode(["status" => "error", "message" => "Invalid request method"]);
+    exit();
+}
 
-    // Fetch user profile based on username
-    $stmt = $conn->prepare("SELECT username, email, friends, followers, following, top_songs, top_artists, recent_activity FROM user_profiles WHERE username = ?");
+
+try{
+    //$result is from cookieAuth.php and is the username of the user
+    $user = $result->fetch_assoc();
+    $login_username = $user["username"];
+
+    //if the $_GET["user"] from query string is not set, or "" then set it to the logged in user
+    $username = $_GET['user'] ?? $login_username ?: $login_username;
+
+    $stmt = $conn->prepare("SELECT username, email, friends, followers, followings, top_songs, top_artists, recent_activity FROM user_profiles WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
     
     if ($result->num_rows > 0) {
         $profile = $result->fetch_assoc();
-        echo json_encode(["status" => "success", "profile" => $profile], JSON_PRETTY_PRINT);
-    } else {
-        echo json_encode(["status" => "error", "message" => "User not found"]);
-    }
+        if($login_username == $username){
+            $list_pending_friends = grabAllFriendRequest($conn, $login_username);
 
-    $stmt->close();
-} else {
-    echo json_encode(["status" => "error", "message" => "No username provided"]);
-    echo json_encode(["status" => "error", "message" => "No username provided"]);
+            echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "isFriend" => "none", "pendingFriends" => $list_pending_friends["pending_requests"]]);
+            exit();
+        } else {
+            $friend_checker = checkFriendStatus($conn, $login_username, $username);
+            
+            echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "friendStatus" => $friend_checker["status"]]);
+            exit();
+        }
+        
+    } else {
+        echo json_encode(["status" => "error", "message" => "No profile found, Please Login", "User" => $username]);
+        exit();
+    } 
+}catch(Exception $e){
+    echo json_encode(["status" => "error", "message" => "No profile found, Please Login", "User" => $username]);
+    exit();
 }
 
+$stmt->close();
 $conn->close();
+
+
 ?>
