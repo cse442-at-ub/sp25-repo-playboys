@@ -1,36 +1,42 @@
 import React from "react";
 import "./Settings.css";
+import { useNavigate } from 'react-router-dom';
+
 const options = [
-  { name: "Theme & Appearance", icon: "🎨", path: "settings/app_support/theme_appearance" },
-  { name: "Language", icon: "🌍", path: "settings/app_support/language" },
-  { name: "Help Center", icon: "❓", path: "settings/app_support/help_center" },
-  { name: "Report a Problem", icon: "⚠️", path: "settings/app_support/report_problem" },
-  { name: "Log Out", icon: "🚪", path: "settings/app_support/logout" }
+  { name: "Do Not Disturb", icon: "./static/SilenceIcon.png", path: "settings/app_support/report_problem" },
+  { name: "Snooze", icon: "./static/SnoozeIcon.png", path: "settings/app_support/report_problem" },
+  { name: "Delivery Method", icon: "./static/DeliveryIcon.png", path: "settings/app_support/report_problem" },
+  
 ];
 
 
 const SettingsNotifications = () => {
+
+  const navigate = useNavigate();
+  const handleBackButton = () => {
+    console.log("Show all clicked");
+    navigate('/');
+    //navigate('/userProfile');
+  };
+
   return (
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
           <div className="header-text">
-                    <span className="menu-icon">☰</span>
-                    <span>Settings-Account</span>
-                  </div>
-                  <button className="back-button" onClick={() => window.location.href = "#/settings"}>
-                    🔙
-                  </button>
+              <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+              <span>Notification</span>
+            </div>
         </div>
 
         <div className="option-container">
           {options.map((option, index) => (
             <button className="option-button"onClick={() => window.location.href = `#/${option.path}`}>
-                        <div key={index} className="option-card">
-                          <div className="icon">{option.icon}</div>
-                          <p>{option.name}</p>
-                        </div>
-                      </button>
+                <div key={index} className="option-card">
+                  <img src = {option.icon} alt = {option.icon} />
+                  <p>{option.name}</p>
+                </div>
+              </button>
           ))}
         </div>
       </div>
