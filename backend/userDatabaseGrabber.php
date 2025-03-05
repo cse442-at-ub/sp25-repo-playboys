@@ -26,4 +26,21 @@ function checkFriendStatus($conn, $username, $friend) {
         return "Error: " . $e->getMessage();
     }
 }
+
+function grabAllFriendRequest($conn, $username) {
+    try {
+        $status = "pending";
+        $stmt = $conn->prepare("SELECT * FROM friend_pairs WHERE (username = ? OR friend = ?) AND status = ? AND requester <> ?");
+        $stmt->bind_param("ssss", $username, $username, $status, $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $requesters = [];
+        while ($row = $result->fetch_assoc()) {
+            $requesters[] = $row['requester']; // Add requester to the array
+        }
+        return ["pending_requests" => $requesters]; 
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+}
 ?>

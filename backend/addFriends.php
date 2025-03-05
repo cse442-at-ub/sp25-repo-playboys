@@ -22,9 +22,14 @@
             $stmt->close();
             echo json_encode(["status" => "success", "message" => "Friend request sent."]);
             exit();
-        } else if($friender_checker["status"] == "pending"){ 
-    
-            echo json_encode(["status" => "sent", "message" => "Friend request already sent."]);
+        } else if($friender_checker["status"] == "pending" && $friender_checker["requester"] == $login_username){
+            $stmt = $conn->prepare("DELETE FROM friend_pairs WHERE 
+            (username = ? AND friend = ? AND requester = ?) 
+            OR (username = ? AND friend = ? AND requester = ?)"); 
+            $stmt->bind_param("ssssss", $login_username, $potential_friend, $login_username, $potential_friend, $login_username, $potential_friend);    
+            $stmt->execute();
+            $stmt->close();
+            echo json_encode(["status" => "retract", "message" => "Friend request retracted."]);
             exit();
         }else{
             echo json_encode(["status" => "friends", "message" => "Already friends."]);

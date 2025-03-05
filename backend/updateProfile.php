@@ -31,7 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 //update user profile information
 else if ($_SERVER['REQUEST_METHOD'] === 'POST') {  
+    //grab old email
+    $stmt = $conn->prepare("SELECT email FROM user_profiles WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $email = $user["email"];
     $newEmail = trim($data["email"]);
+
+    //grab potential new email from forntend json 
     $newUsername = trim($data["username"]);
 
     if ((!isset($data["email"]) || !isset($data["username"]))) {
