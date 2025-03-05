@@ -132,9 +132,18 @@
 }
 
 .friend-name {
-  font-size: 14px;
-  font-weight: 500; /* More balanced weight */
-  color: #222;
+  font-size: 16px; /* Slightly larger */
+  font-weight: bold;
+  color: #007bff; /* Vibrant blue for pop */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+/* Add some interaction on hover */
+.friend-name:hover {
+  transform: scale(1.1);
+  color: #32cd32; /* Changes to green on hover */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .friend-actions {
@@ -175,3 +184,118 @@
   transform: scale(1.05);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
+
+
+@media (max-width: 768px) {
+  .settings-container {
+    width: 100%;
+    padding: 60px 15px 15px; /* Adjust padding for smaller screens */
+  }
+
+  .settings-header {
+    font-size: 24px; /* Reduce header font size */
+    padding: 10px 15px; /* Adjust padding */
+  }
+
+  .header-text {
+    gap: 6px; /* Reduce gap between icon and text */
+  }
+
+  .menu-icon {
+    font-size: 28px; /* Adjust icon size */
+  }
+
+  .option-container {
+    grid-template-columns: repeat(2, 1fr); /* Two columns instead of three */
+    gap: 15px; /* Adjust spacing */
+    width: 90%; /* Use more screen width */
+  }
+
+  .option-card {
+    padding: 40px; /* Reduce padding */
+    height: 150px; /* Adjust for smaller screens */
+    max-width: 200px; /* Reduce max width */
+  }
+
+  .icon {
+    font-size: 50px; /* Reduce icon size */
+  }
+
+  .option-card p {
+    font-size: 14px; /* Adjust text size */
+  }
+
+  /* Friend Requests List */
+  .friend-request-row {
+    flex-direction: column; /* Stack elements */
+    align-items: flex-start; /* Align text */
+    padding: 10px; /* Adjust padding */
+  }
+
+  .friend-name {
+    font-size: 16px; /* Slightly larger */
+    font-weight: bold;
+    color: #007bff; /* Vibrant blue for pop */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, text-shadow 0.3s ease-in-out;
+  }
+  
+  /* Add some interaction on hover */
+  .friend-name:hover {
+    transform: scale(1.1);
+    color: #32cd32; /* Changes to green on hover */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .friend-actions {
+    width: 100%; /* Make buttons span full width */
+    justify-content: space-between;
+    margin-top: 6px; /* Add spacing */
+  }
+
+  .accept-button,
+  .decline-button {
+    flex: 1; /* Make buttons equal width */
+    font-size: 12px;
+    padding: 6px; /* Adjust padding */
+  }
+}
+
+@media (max-width: 480px) {
+  .option-container {
+    grid-template-columns: 1fr; /* Single column layout */
+  }
+
+  .settings-header {
+    font-size: 20px; /* Further reduce header size */
+  }
+
+  .menu-icon {
+    font-size: 24px;
+  }
+
+  .option-card {
+    padding: 30px;
+    height: 130px;
+    max-width: 180px;
+  }
+
+  .icon {
+    font-size: 40px;
+  }
+
+  .friend-request-row {
+    padding: 8px;
+  }
+
+  .friend-actions {
+    flex-direction: column; /* Stack buttons */
+    gap: 4px; /* Reduce gap */
+  }
+
+  .accept-button,
+  .decline-button {
+    width: 100%; /* Full-width buttons */
+  }
+}
+

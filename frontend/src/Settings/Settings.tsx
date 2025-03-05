@@ -19,6 +19,9 @@ const Settings = () => {
             <span className="menu-icon">☰</span>
             <span>Settings</span>
           </div>
+          <button className="back-button" onClick={() => window.location.href = "#/userProfile"}>
+                    🔙
+                  </button>
         </div>
 
         <div className="option-container">
