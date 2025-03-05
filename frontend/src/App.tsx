@@ -23,7 +23,21 @@ import SettingsPlayback from "./Settings/Playback";
 import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from './Settings/Account_settings/DeleteAccount';
 
+// Hook for detecting screen size
+import useMediaQuery from './useMediaQuery';
+
+//import all mobile views for setting
+import MobileSettings from './mobile_setting/MobileSettings';
+import MobileSettingsAccount from './mobile_setting/MobileAccount';
+import MobileSettingsApplication from './mobile_setting/MobileApplicaton';
+import MobileSettingsCommunity from './mobile_setting/MobileCommunity';
+import MobileSettingsNotifications from './mobile_setting/MobileNotifications';
+import MobileSettingsPlayback from './mobile_setting/MobilePlayback';
+import MobileSettingsPrivacy from './mobile_setting/MobilePrivacy';
+import MobileDeleteAccount from './mobile_setting/Mobile_Account_settings/MobileDeleteAccount';
+
 function App() {
+  const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
   return (
     //add routes for each page created in the frontend
     <Router>
@@ -31,14 +45,14 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/settings/account" element={<SettingsAccount />} />
-        <Route path="/settings/app" element={<SettingsApplicaton />} />
-        <Route path="/settings/community" element={<SettingsCommunity />} />
-        <Route path="/settings/notifications" element={<SettingsNotifications />} />
-        <Route path="/settings/playback" element={<SettingsPlayback />} />
-        <Route path="/settings/privacy" element={<SettingsPrivacy />} />
-        <Route path="/settings/account/delete_account" element={<DeleteAccount />} />   
+        <Route path="/settings" element={isMobile ? <MobileSettings/> : <Settings />} />
+        <Route path="/settings/account" element={isMobile ? <MobileSettingsAccount/> : <SettingsAccount />} />
+        <Route path="/settings/app" element={ isMobile ? <MobileSettingsApplication/> : <SettingsApplicaton />} />
+        <Route path="/settings/community" element={isMobile ? <MobileSettingsCommunity/> : <SettingsCommunity />} />
+        <Route path="/settings/notifications" element={isMobile ? <MobileSettingsNotifications/> : <SettingsNotifications />} />
+        <Route path="/settings/playback" element={isMobile ? <MobileSettingsPlayback/> : <SettingsPlayback />} />
+        <Route path="/settings/privacy" element={isMobile ? <MobileSettingsPrivacy/> : <SettingsPrivacy />} />
+        <Route path="/settings/account/delete_account" element={isMobile ? <MobileDeleteAccount/> : <DeleteAccount />} />   
 
         <Route path="/" element={<Settings />} />
 

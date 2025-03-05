@@ -15,7 +15,7 @@ const SettingsNotifications = () => {
   const navigate = useNavigate();
   const handleBackButton = () => {
     console.log("Show all clicked");
-    navigate('/');
+    navigate("/settings");
     //navigate('/userProfile');
   };
 

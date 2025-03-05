@@ -1,5 +1,6 @@
 import React from "react";
 // import "./register.css";
+import { useNavigate } from 'react-router-dom';
 
 const SettingsPrivacy: React.FC = () => {
 
@@ -13,6 +14,13 @@ const SettingsPrivacy: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         // to implement
     };
+
+    const navigate = useNavigate();
+    const handleBackButton = () => {
+      console.log("Show all clicked");
+      navigate("/settings/account");
+      //navigate('/userProfile');
+    };
         
 
   return (
@@ -20,12 +28,9 @@ const SettingsPrivacy: React.FC = () => {
         <div className="auth-container">
             <div className="settings-header">
                 <div className="settings-header-text">
-                    <span className="menu-icon">☰</span>
-                    <span>Settings-Account-Delete Account</span>
+                    <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+                    <span>Account Deletion</span>
                 </div>
-                <button className="back-button" onClick={() => window.location.href = "#/settings/account"}>
-                    🔙
-                </button>
             </div>
             <div className="login-box">
                 <h2>Account Deletion</h2>
