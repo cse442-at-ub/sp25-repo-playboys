@@ -14,7 +14,7 @@ $database = "cse442_2025_spring_team_ah_db"; //sql database name
 // $password = "";
 // $database = "user_login_information"; //sql database name
 
-$port = 3307; //port number for sql database
+$port = 3306; //port number for sql database
 
 // Create connection
 $conn = new mysqli($host, $username, $password, $database, $port);
