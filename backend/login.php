@@ -8,21 +8,43 @@
         echo json_encode(["status" => "error", "message" => "All fields are required."]);
         exit();
     }
-
+    $missingFields = [];
     $username = trim($data["username"]);
     $password = $data["password"];
+    //check if the fields are empty and if they are tell user
+    if (empty($username)) {
+        $missingFields[] = "email";
+    }
+    if (empty($password)) {
+        $missingFields[] = "password";
+    }
+    if (!empty($missingFields)) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "The following fields are required: " . implode(", ", $missingFields)
+        ]);
+        exit();
+    }
 
+    //verify that username exist
     $login_user = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
     $login_user->bind_param("s", $username);
     $login_user->execute();
     $result = $login_user->get_result();
 
     if ($result->num_rows === 0) {
-        echo json_encode(["status" => "error", "message" => "User does not exist."]);
+        echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
         exit();
     }
 
+
+
+
+
+
+
     $user = $result->fetch_assoc();
+
 
     if (!password_verify($password, $user["password"])) {
         echo json_encode(["status" => "error", "message" => "Invalid username or password."]);

@@ -1,4 +1,5 @@
 <?php
+//used to accept and decline friend requests
     require __DIR__ . "/headers.php";
     require __DIR__ . "/cookieAuthHeader.php";
     require __DIR__ . "/userDatabaseGrabber.php";
@@ -6,6 +7,7 @@
     $username = $user["username"];
     $data = json_decode(file_get_contents("php://input"), true);
     $friend = $data["friend"];
+    $choice = $data["choice"];
     $friend_checker = checkFriendStatus($conn, $username, $friend);
     if($friend_checker["status"] == "friends"){
         echo json_encode(["status" => "success", "message" => "Already Friends"]);
@@ -14,12 +16,26 @@
     //will change status to friends
    
     try{
+        //decline friend request
+        if($choice === "declined"){
+            $stmt = $conn->prepare("DELETE FROM friend_pairs WHERE (username = ? AND requester = ?) OR (friend = ? AND requester = ?)");
+            $stmt->bind_param("ssss", $username, $friend, $username, $friend);
+            $stmt->execute();
+            $stmt->execute();
+            echo json_encode(["status" => "success", "message" => " updated requester"]);
+            exit();
+        }
+
         $stmt = $conn->prepare("
         UPDATE friend_pairs 
         SET status = ? 
         WHERE (username = ? AND friend = ?) 
             OR (username = ? AND friend = ?)
         ");
+
+
+        //accept friend request
+
 
         // update status to friends
         $newStatus = "friends";
@@ -62,7 +78,7 @@
     
     } 
     catch (Exception $e) {
-        echo json_encode(["status" => "error", "message" => "Failed to update requester"]);
+        echo json_encode(["status" => "error", "message" => $e]);
         exit();
     }
     

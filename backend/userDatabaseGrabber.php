@@ -28,6 +28,7 @@ function checkFriendStatus($conn, $username, $friend) {
 }
 
 function grabAllFriendRequest($conn, $username) {
+    $requesters = [];
     try {
         $status = "pending";
         $stmt = $conn->prepare("SELECT * FROM friend_pairs WHERE (username = ? OR friend = ?) AND status = ? AND requester <> ?");

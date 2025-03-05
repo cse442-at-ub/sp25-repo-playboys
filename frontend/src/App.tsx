@@ -21,12 +21,12 @@ import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
 import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
-
+import FriendRequest from "./Settings/community_settings/friendRequest";
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />``
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
@@ -46,6 +46,7 @@ function App() {
         <Route path="/top-artists" element={<ProtectedRoute element={<TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/settings/community_settings/friend-requests" element={<ProtectedRoute element={<FriendRequest />} />} />
       </Routes>
     </Router>
   );

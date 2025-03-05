@@ -29,12 +29,39 @@
         exit();
     }
 
+    $password = $data["password"];
+    $confirm_password = $data["confirm_password"];
+    //check if password and confirm password matches
+    if($password != $confirm_password) {
+        echo json_encode(["status" => "error", "message" => "Passwords do not match."]);
+        exit();
+    }
+
+    $missingFields = [];
+    if (strlen($password) < 8) {
+        $missingFields[] = "at least 8 characters";
+    }
+    
+    if (!preg_match("/[A-Z]/", $password)) {
+        $missingFields[] = "at least one uppercase letter";
+    }
+    
+    if (!preg_match("/[^\w\d\s]/", $password)) { // Checks for at least one special character
+        $missingFields[] = "at least one special character";
+    }
+    
+    if (!empty($missingFields)) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Password must contain: " . implode(", ", $missingFields)
+        ]);
+        exit();
+    }
+    
 
     //trim and grab data sent from json object from router.php
     $email = trim($data["email"]);
     $username = trim($data["username"]);
-    $password = $data["password"];
-    $confirm_password = $data["confirm_password"];
     $followers = 0;
     $followings = 0;
     $friends = 0;
@@ -42,11 +69,6 @@
     $top_artists = "";
     $recent_activity = "";
 
-    //check if password and confirm password matches
-    if($password != $confirm_password) {
-        echo json_encode(["status" => "error", "message" => "Passwords do not match."]);
-        exit();
-    }
 
     //salt and hash password
     $password = password_hash($password, PASSWORD_BCRYPT); 

@@ -2,7 +2,7 @@
     require __DIR__ . "/headers.php";
     require __DIR__ . "/cookieAuthHeader.php";
     require __DIR__ . "/userDatabaseGrabber.php";
-
+    //used to send friend request
     //check if the request method is a post request
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo json_encode(["status" => "error", "message" => "Invalid request method"]);

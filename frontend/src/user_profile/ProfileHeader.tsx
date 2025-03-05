@@ -80,7 +80,7 @@ function ProfileHeader() {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ friend: friendUsername }),
+                body: JSON.stringify({ friend: friendUsername, "choice": "accept" }),
             });
 
             const result = await response.json();
