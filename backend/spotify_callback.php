@@ -11,7 +11,9 @@ session_start();
 
 // 1. Check if an authorization code is provided
 if (!isset($_GET['code'])) {
-    exit('No authorization code provided.');
+    echo json_encode(["status" => "Error", "message" => "Error retrieving authorization code."]);
+    // exit('No authorization code provided.');
+    exit();
 }
 
 $code = $_GET['code'];
@@ -44,7 +46,8 @@ curl_close($ch);
 $token_data = json_decode($response, true);
 
 if (!isset($token_data['access_token'])) {
-    exit('Error retrieving access token.');
+    echo json_encode(["status" => "Error", "message" => "Error retrieving access token"]);
+    exit();
 }
 
 $access_token = $token_data['access_token'];
