@@ -22,6 +22,7 @@ import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
 import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from './Settings/Account_settings/DeleteAccount';
+import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -52,7 +53,8 @@ function App() {
         <Route path="/settings/notifications" element={isMobile ? <MobileSettingsNotifications/> : <SettingsNotifications />} />
         <Route path="/settings/playback" element={isMobile ? <MobileSettingsPlayback/> : <SettingsPlayback />} />
         <Route path="/settings/privacy" element={isMobile ? <MobileSettingsPrivacy/> : <SettingsPrivacy />} />
-        <Route path="/settings/account/delete_account" element={isMobile ? <MobileDeleteAccount/> : <DeleteAccount />} />   
+        <Route path="/settings/account/delete_account" element={isMobile ? <MobileDeleteAccount/> : <DeleteAccount />} />
+        <Route path="/settings/privacy/profile_visibility" element={isMobile ? <ProfileVisibility/> : <ProfileVisibility />} />   
 
         <Route path="/" element={<Settings />} />
 
