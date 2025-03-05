@@ -1,8 +1,11 @@
+
+
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
 
 // Import all pages
+
 import LandingPage from "./landing_page/landingPage";
 import UserProfile from "./user_profile/userProfile";
 import TopArtistsView from "./user_profile/TopArtistsView";
@@ -20,6 +23,7 @@ import SettingsCommunity from "./Settings/Community";
 import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
 import SettingsPrivacy from "./Settings/Privacy";
+
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import FriendRequest from "./Settings/community_settings/friendRequest";
 function App() {

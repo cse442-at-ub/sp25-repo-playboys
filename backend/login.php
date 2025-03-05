@@ -32,6 +32,7 @@
     $login_user->execute();
     $result = $login_user->get_result();
 
+    // if user doesnt exist we return an error
     if ($result->num_rows === 0) {
         echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
         exit();
@@ -44,6 +45,7 @@
 
 
     $user = $result->fetch_assoc();
+
 
 
     if (!password_verify($password, $user["password"])) {
