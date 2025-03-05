@@ -55,7 +55,7 @@ const MobileLandingPage: React.FC<LandingPageProps> = () => {
           />
           <div className="position-relative py-4 px-5 px-md-5 min-vh-100 d-flex flex-column">
             <Header onLogin={handleLogin} onSignUp={handleSignUp} />
-            <Row className="mt-5 pt-5 ms-5">
+            <Row className="mt-5">
               <Col>
                 <h1 className="text-center text-warning display-3 fw-bold mt-5">
                   Your Music. <br />
