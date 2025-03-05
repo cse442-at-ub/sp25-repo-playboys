@@ -64,3 +64,38 @@
   flex-direction: column;
   gap: 12px;
 }
+
+/* Make the navigation bar full width */
+.mobile-nav-bar {
+  width: 100%; 
+  background-color: #f0f0f0; /* Light gray background */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between; /* Space icons evenly */
+  align-items: center;
+  padding: 10px 20px; /* Add some spacing */
+}
+
+/* Remove border and adjust icon styling */
+.nav-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Adjust icon size */
+.nav-icon {
+  width: 46px;
+  height: 46px;
+}
+
+.profile-img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
