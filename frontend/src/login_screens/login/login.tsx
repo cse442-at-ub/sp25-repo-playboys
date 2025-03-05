@@ -48,7 +48,6 @@ const Login: React.FC = () => {
                 <div className="social-login">
                     <h3>Or login with</h3>
                     <button id="spotify-login">Login With Spotify</button>
-                    <button id="apple-login">Login With Apple Music</button>
                 </div>
 
                 {/* New Register Link */}
