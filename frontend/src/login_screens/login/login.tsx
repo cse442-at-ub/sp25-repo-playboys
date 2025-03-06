@@ -10,7 +10,7 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const data = { username, password };
-        console.log(data);
+
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/login.php`, {
             method: "POST",
@@ -74,11 +74,13 @@ const Login: React.FC = () => {
                     {/* <img src="/icons/spotify.svg" alt="Spotify" className="social-icon" /> */}
                     Login With Spotify
                 </button>
-
-
-    
+            </div>
+                            {/* New Register Link */}
+            <div className="register-link">
+                    New Around Here? <a href="#/register"><span>Join Us Now!</span></a>
             </div>
         </div>
+    </div>
     );
 };
 
