@@ -5,17 +5,23 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
 
 // Import all pages
-
+import MobileLandingPage from './mobile_landing_page/mobile_landing_page'
 import LandingPage from "./landing_page/landingPage";
 import UserProfile from "./user_profile/userProfile";
 import TopArtistsView from "./user_profile/TopArtistsView";
 import EditProfile from "./user_profile/EditProfile";
 import PlaylistsView from "./user_profile/PlaylistsView";
 
-// Login and settings
+// Login and Sign Up Components
 import Register from "./login_screens/register/register";
 import Login from "./login_screens/login/login";
 import Forgot from "./login_screens/forgot/forgot";
+// Import mobile Login and Sign Up
+import MobileLogin from './mobile_login_views/mobile_login/mobile_login';
+import MobileForgotPassword from './mobile_login_views/mobile_forgot/mobile_forgot'
+import MobileRegister from './mobile_login_views/mobile_register/mobile_register'
+
+//Settings Components
 import Settings from "./Settings/Settings";
 import SettingsAccount from "./Settings/Account";
 import SettingsApplicaton from "./Settings/Applicaton";
@@ -26,7 +32,6 @@ import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
-
 //import all mobile views for setting
 import MobileSettings from './mobile_setting/MobileSettings';
 import MobileSettingsAccount from './mobile_setting/MobileAccount';
@@ -49,10 +54,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />``
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot" element={<Forgot />} />
+        <Route path="/" element={isMobile ? <MobileLandingPage/> : <LandingPage />} />``
+        <Route path="/register" element={isMobile ? <MobileRegister/> : <Register />} />
+        <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
+        <Route path="/forgot" element={isMobile ? <MobileForgotPassword /> :<Forgot />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
