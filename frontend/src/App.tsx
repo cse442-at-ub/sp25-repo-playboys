@@ -4,13 +4,20 @@ import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
 
-// Import all pages
+//landing pages
 import MobileLandingPage from './mobile_landing_page/mobile_landing_page'
 import LandingPage from "./landing_page/landingPage";
+
+//Profile Components
 import UserProfile from "./user_profile/userProfile";
 import TopArtistsView from "./user_profile/TopArtistsView";
 import EditProfile from "./user_profile/EditProfile";
 import PlaylistsView from "./user_profile/PlaylistsView";
+// Import mobile Profile
+import MobileProfile from './mobile_profile/MobileProfile';
+import MobileEditProfile from './mobile_profile/MobileEditProfile';
+import MobileTopArtistsPage from './mobile_profile/MobileTopArtistsView';
+import MobilePlaylistsView from './mobile_profile/MobilePlaylistsView';
 
 // Login and Sign Up Components
 import Register from "./login_screens/register/register";
@@ -71,10 +78,10 @@ function App() {
         <Route path="/settings/privacy" element={<ProtectedRoute element={isMobile ? <MobileSettingsPrivacy/> : <SettingsPrivacy />} />} />
         <Route path="/settings/account/delete_account" element={<ProtectedRoute element={isMobile ? <MobileDeleteAccount/> : <DeleteAccount />} />} />
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={isMobile ? <ProfileVisibility/> : <ProfileVisibility />} />} />
-        <Route path="/userprofile" element={<ProtectedRoute element={<UserProfile />} />} />
-        <Route path="/top-artists" element={<ProtectedRoute element={<TopArtistsView />} />} />
-        <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
-        <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/userprofile" element={<ProtectedRoute element={isMobile ? <MobileProfile /> : <UserProfile />} />} />
+        <Route path="/top-artists" element={<ProtectedRoute element={isMobile ? <MobileTopArtistsPage /> : <TopArtistsView />} />} />
+        <Route path="/playlist-view" element={<ProtectedRoute element={isMobile ? <MobilePlaylistsView /> : <PlaylistsView />} />} />
+        <Route path="/edit-profile" element={<ProtectedRoute element={isMobile ? <MobileEditProfile /> : <EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
       </Routes>
     </Router>

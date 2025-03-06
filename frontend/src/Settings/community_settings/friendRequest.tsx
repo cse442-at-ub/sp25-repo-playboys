@@ -71,7 +71,7 @@ const FriendRequests = () => {
 
     const navigate = useNavigate();
     const handleBackButton = () => {
-      console.log("Show all clicked");
+      console.log("Friend Request Page Selected");
       navigate("/settings/community");
       //navigate('/userProfile');
     };
