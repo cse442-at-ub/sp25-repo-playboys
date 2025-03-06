@@ -1,0 +1,40 @@
+/* Centering the container */
+.profile-visibility-container {
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  /* Visibility box */
+  .visibility-box {
+    background: #d3d3d3;
+    border-radius: 12px;
+    padding: 20px;
+    width: 350px;
+  }
+  
+  /* Button styles */
+  .visibility-option {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    background-color: white;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease-in-out;
+  }
+  
+  /* Hover effect */
+  .visibility-option:hover {
+    transform: scale(1.05);
+    background-color: #32cd32;
+    color: white;
+  }
+  
+  /* Selected button */
+  .selected {
+    background-color: #32cd32 !important;
+    color: white !important;
+  }
+  

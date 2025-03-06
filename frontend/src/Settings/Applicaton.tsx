@@ -1,68 +1,46 @@
 import React from "react";
 import "./Settings.css";
+import { useNavigate } from 'react-router-dom';
+
 
 const options = [
-  { name: "Theme & Appearance", icon: "🎨", path: "settings/app_support/theme_appearance" },
-  { name: "Language", icon: "🌍", path: "settings/app_support/language" },
-  { name: "Help Center", icon: "❓", path: "settings/app_support/help_center" },
-  { name: "Report a Problem", icon: "⚠️", path: "settings/app_support/report_problem" },
-  { name: "Log Out", icon: "🚪", path: "logout" } // "logout" to trigger API call
+  { name: "Theme & Appearance", icon: "./static/ThemeIcon.png", path: "settings/app_support/theme_appearance" },
+  { name: "Language", icon: "./static/LanguageIcon.png", path: "settings/app_support/language" },
+  { name: "Help Center", icon: "./static/SupportIcon.png", path: "settings/app_support/help_center" },
+  { name: "Report a Problem", icon: "./static/AlertIcon.png", path: "settings/app_support/report_problem" },
+  { name: "Offline Storage", icon: "./static/FlopyDiskIcon.png", path: "settings/playback/offline_data_storage" },
+  { name: "Data Sync Frequency", icon: "./static/SyncIcon.png", path: "settings/playback/data_sync_frequency" }
+
 ];
 
-const SettingsApplication = () => {
-  const handleOptionClick = async (selectedPath: string) => {
-    if (selectedPath === "logout") {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/logout.php`, { 
-          method: "POST", 
-          credentials: "include", 
-          headers: { "Content-Type": "application/json" } 
-        });
-  
-        const data = await response.json(); // Parse JSON response
-  
-        if (data.status === "success") {
-          document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          window.location.href = "#/login"; // Redirect to login
-        } else {
-   
-          document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          window.location.href = "#/login"; // Redirect to login
-        }
-      } catch (error) {
-        console.error("Error logging out:", error);
-        alert("An error occurred. Please try again.");
-      }
-    } else {
-      window.location.href = `#/${selectedPath}`;
-    }
-  };
+
+const SettingsApplicaton = () => {
+
+    const navigate = useNavigate();
+    const handleBackButton = () => {
+      console.log("Show all clicked");
+      navigate("/settings");
+      //navigate('/userProfile');
+    };
 
   return (
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
           <div className="header-text">
-            <span className="menu-icon">☰</span>
-            <span>Settings-Account</span>
-          </div>
-          <button className="back-button" onClick={() => window.location.href = "#/settings"}>
-            🔙
-          </button>
+                    <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+                    <span>App & Support</span>
+                  </div>
         </div>
 
         <div className="option-container">
           {options.map((option, index) => (
-            <button
-              key={index}
-              className="option-button"
-              onClick={() => handleOptionClick(option.path)}
-            >
-              <div className="option-card">
-                <div className="icon">{option.icon}</div>
-                <p>{option.name}</p>
-              </div>
-            </button>
+            <button className="option-button"onClick={() => window.location.href = `#/${option.path}`}>
+                <div key={index} className="option-card">
+                  <img src = {option.icon} alt = {option.name} />
+                  <p>{option.name}</p>
+                </div>
+              </button>
           ))}
         </div>
       </div>
@@ -70,4 +48,4 @@ const SettingsApplication = () => {
   );
 };
 
-export default SettingsApplication;
+export default SettingsApplicaton;

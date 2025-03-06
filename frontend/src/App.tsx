@@ -23,10 +23,29 @@ import SettingsCommunity from "./Settings/Community";
 import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
 import SettingsPrivacy from "./Settings/Privacy";
-
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
+import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
+
+//import all mobile views for setting
+import MobileSettings from './mobile_setting/MobileSettings';
+import MobileSettingsAccount from './mobile_setting/MobileAccount';
+import MobileSettingsApplication from './mobile_setting/MobileApplicaton';
+import MobileSettingsCommunity from './mobile_setting/MobileCommunity';
+import MobileSettingsNotifications from './mobile_setting/MobileNotifications';
+import MobileSettingsPlayback from './mobile_setting/MobilePlayback';
+import MobileSettingsPrivacy from './mobile_setting/MobilePrivacy';
+import MobileDeleteAccount from './mobile_setting/Mobile_Account_settings/MobileDeleteAccount';
+
+
+
+// Hook for detecting screen size
+import useMediaQuery from './useMediaQuery';
+
 function App() {
+
+  const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
+
   return (
     <Router>
       <Routes>
@@ -38,19 +57,20 @@ function App() {
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
         */}
-        <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
-        <Route path="/settings/account" element={<ProtectedRoute element={<SettingsAccount />} />} />
-        <Route path="/settings/app" element={<ProtectedRoute element={<SettingsApplicaton />} />} />
-        <Route path="/settings/community" element={<ProtectedRoute element={<SettingsCommunity />} />} />
-        <Route path="/settings/notifications" element={<ProtectedRoute element={<SettingsNotifications />} />} />
-        <Route path="/settings/playback" element={<ProtectedRoute element={<SettingsPlayback />} />} />
-        <Route path="/settings/privacy" element={<ProtectedRoute element={<SettingsPrivacy />} />} />
-        <Route path="/settings/account/delete_account" element={<ProtectedRoute element={<DeleteAccount />} />} />
+        <Route path="/settings" element={<ProtectedRoute element={isMobile ? <MobileSettings/> : <Settings />} />} />
+        <Route path="/settings/account" element={<ProtectedRoute element={isMobile ? <MobileSettingsAccount/> : <SettingsAccount />} />} />
+        <Route path="/settings/app" element={<ProtectedRoute element={isMobile ? <MobileSettingsApplication/> : <SettingsApplicaton />} />} />
+        <Route path="/settings/community" element={<ProtectedRoute element={isMobile ? <MobileSettingsCommunity/> : <SettingsCommunity />} />} />
+        <Route path="/settings/notifications" element={<ProtectedRoute element={isMobile ? <MobileSettingsNotifications/> : <SettingsNotifications />} />} />
+        <Route path="/settings/playback" element={<ProtectedRoute element={isMobile ? <MobileSettingsPlayback/> : <SettingsPlayback />} />} />
+        <Route path="/settings/privacy" element={<ProtectedRoute element={isMobile ? <MobileSettingsPrivacy/> : <SettingsPrivacy />} />} />
+        <Route path="/settings/account/delete_account" element={<ProtectedRoute element={isMobile ? <MobileDeleteAccount/> : <DeleteAccount />} />} />
+        <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={isMobile ? <ProfileVisibility/> : <ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={<UserProfile />} />} />
         <Route path="/top-artists" element={<ProtectedRoute element={<TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
-        <Route path="/settings/community_settings/friend-requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
       </Routes>
     </Router>
   );
