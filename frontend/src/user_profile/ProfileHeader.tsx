@@ -102,19 +102,19 @@ function ProfileHeader() {
 
     return (
         <div className="container">
-            {/* Pending Friend Requests - Mobile Friendly */}
-            {pendingFriends.length > 0 && (
-                <div className="d-flex justify-content-center mt-3">
+            {/* Dropdown for Pending Friend Requests */}
+            <div className="d-flex justify-content-end mt-3">
+                {pendingFriends.length > 0 && (
                     <div className="dropdown">
                         <button 
-                            className="btn btn-outline-primary dropdown-toggle w-100" 
+                            className="btn btn-outline-primary dropdown-toggle" 
                             type="button" 
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
                             Pending Friend Requests ({pendingFriends.length})
                         </button>
                         {showDropdown && (
-                            <ul className="dropdown-menu show w-100">
+                            <ul className="dropdown-menu show position-absolute" style={{ right: 0 }}>
                                 {pendingFriends.map((friend, index) => (
                                     <li key={index} className="dropdown-item d-flex justify-content-between align-items-center">
                                         {friend}
@@ -126,58 +126,48 @@ function ProfileHeader() {
                             </ul>
                         )}
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
-            {/* Profile Header - Mobile Adjustments */}
-            <div className="row mt-4 align-items-center text-center text-md-start">
-                <div className="col-12 col-md-4 d-flex justify-content-center">
-                    <img 
-                        src="./static/ProfilePlaceholder.png" 
-                        alt="Profile" 
-                        className="img-fluid rounded-circle mt-3" 
-                        style={{ maxWidth: "150px", height: "auto" }}
-                    />
+            {/* Profile Header Section */}
+            <div className="row mt-4">
+                <div className="col-md-4">
+                    <img src="./static/ProfilePlaceholder.png" alt="Profile" className="img-fluid rounded-circle mt-3" />
                 </div>
-                <div className="col-12 col-md-8 mt-3 mt-md-0">
+                <div className="col-md-8">
                     {profile ? (
                         <>
-                            <h1 className="h3">{profile.username}</h1>
-                            <h2 className="h5 text-muted">@{profile.username}</h2>
-                            <p className="h6 mt-2">
+                            <h1 className="display-4">{profile.username}</h1>
+                            <h2 className="mt-3">@{profile.username}</h2>
+                            <p className="h4 mt-3">
                                 {profile.friends} Friends • {profile.followers} Followers • {profile.followings} Following
                             </p>
 
-                            {/* Action Buttons */}
-                            <div className="d-flex flex-column flex-md-row justify-content-center justify-content-md-start mt-3">
-                                {profile.username === loggedInUser ? (
-                                    <button className="btn btn-secondary btn-sm mt-2 mt-md-0 mx-1" onClick={() => navigate("/edit-profile")}>
-                                        🖋️ Edit Profile
-                                    </button>
-                                ) : (
-                                    <>
-                                        <button className="btn btn-primary btn-sm mt-2 mt-md-0 mx-1">➕ Follow</button>
+                            {profile.username === loggedInUser ? (
+                                <button className="btn btn-secondary btn-lg mt-4 px-5" onClick={() => navigate("/edit-profile")}>🖋️ Edit Profile</button>
+                            ) : (
+                                <>
+                                    <button className="btn btn-primary btn-lg mt-4 mx-2">➕ Follow</button>
 
-                                        {friendStatus === "none" && (
-                                            <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={sendFriendRequest} disabled={isLoading}>
-                                                🤝 Add Friend
-                                            </button>
-                                        )}
+                                    {friendStatus === "none" && (
+                                        <button className="btn btn-success btn-lg mt-4" onClick={sendFriendRequest} disabled={isLoading}>
+                                            🤝 Add Friend
+                                        </button>
+                                    )}
 
-                                        {friendStatus === "pending" && (
-                                            <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" onClick={sendFriendRequest} disabled={isLoading}>
-                                                ⏳ Pending Request
-                                            </button>
-                                        )}
+                                    {friendStatus === "pending" && (
+                                        <button className="btn btn-warning btn-lg mt-4" onClick={sendFriendRequest} disabled={isLoading}>
+                                            ⏳ Pending Request
+                                        </button>
+                                    )}
 
-                                        {friendStatus === "friends" && (
-                                            <button className="btn btn-secondary btn-sm mt-2 mt-md-0 mx-1" disabled>
-                                                ✅ Friends
-                                            </button>
-                                        )}
-                                    </>
-                                )}
-                            </div>
+                                    {friendStatus === "friends" && (
+                                        <button className="btn btn-secondary btn-lg mt-4" disabled>
+                                            ✅ Friends
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </>
                     ) : (
                         <p className="text-danger mt-3">{error || "Loading..."}</p>
@@ -189,6 +179,7 @@ function ProfileHeader() {
 }
 
 export default ProfileHeader;
+
 
 
 
