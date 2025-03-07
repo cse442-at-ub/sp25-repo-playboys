@@ -23,6 +23,7 @@ import MobilePlaylistsView from './mobile_profile/MobilePlaylistsView';
 import Register from "./login_screens/register/register";
 import Login from "./login_screens/login/login";
 import Forgot from "./login_screens/forgot/forgot";
+import ResetPassword from "./login_screens/forgot/new_password";
 // Import mobile Login and Sign Up
 import MobileLogin from './mobile_login_views/mobile_login/mobile_login';
 import MobileForgotPassword from './mobile_login_views/mobile_forgot/mobile_forgot'
@@ -65,6 +66,9 @@ function App() {
         <Route path="/register" element={isMobile ? <MobileRegister/> : <Register />} />
         <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
         <Route path="/forgot" element={isMobile ? <MobileForgotPassword /> :<Forgot />} />
+        <Route path="/forgot/reset" element={isMobile ? <MobileForgotPassword /> :<ResetPassword />} />
+
+
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 

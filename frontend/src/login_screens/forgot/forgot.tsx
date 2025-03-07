@@ -5,6 +5,11 @@ const ForgotPassword: React.FC = () => {
 
     const [email, setEmail] = React.useState("");
     const [error, setError] = React.useState("");
+
+
+    const handleSubmit = async (e: React.FormEvent) => {
+            console.log(email);
+    }
     
   return (
     <div className="auth-container">
