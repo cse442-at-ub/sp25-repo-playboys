@@ -85,14 +85,29 @@ $result = $login_user->get_result();
 
 // // if user doesnt exist we register them
 if ($result->num_rows === 0) {
-
-
     //prepare sql statement and bind parameters
     $insert_new_user = $conn->prepare("INSERT INTO user_login_data (access_token, email, username, spotify_id) VALUES (?, ?, ?, ?)");
     $insert_new_user->bind_param("ssss",$access_token, $email, $display_name, $spotify_id);
 
     //insert newly registered user into database
     $insert_new_user->execute();
+
+
+    //trim and grab data sent from json object from router.php
+    $username = $display_name;
+    $followers = 0;
+    $followings = 0;
+    $friends = 0;
+    $top_songs = "";
+    $top_artists = "";
+    $recent_activity = "";
+
+  
+    //make new user profile table for new user
+    $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity) VALUES (?, ?, ? , ? , ? , ? , ? , ?)");
+    $insert_new_profile->bind_param("ssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity);
+    $insert_new_profile->execute();
+
 
     //generate random token
     $token = bin2hex(random_bytes(32));
@@ -110,12 +125,11 @@ if ($result->num_rows === 0) {
         'expires' => time() + 3600,
         'path' => '/'
     ]);
-    header('Location: ' . $config['frontend_url'] . '/#/userprofile');
-
-    // echo json_encode(["status" => "success", "message" => "User registered successfully"]);
+    header('Location: ' . $config['frontend_url'] . '#/userprofile');
 
     //garbage collection
     $insert_new_user->close();
+    $insert_new_profile->close();
     $conn->close();
 }
 // they were already registered so we log them in
@@ -136,7 +150,7 @@ else{
         'expires' => time() + 3600,
         'path' => '/'
     ]);
-    header('Location: ' . $config['frontend_url'] . '/#/userprofile');
+    header('Location: ' . $config['frontend_url'] . '#/userprofile');
 
     // echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
 }
