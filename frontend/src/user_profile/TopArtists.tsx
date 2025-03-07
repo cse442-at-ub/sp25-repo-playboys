@@ -13,27 +13,28 @@ function TopArtists() {
     { name: 'Beatles', image: './static/TheBeatlespfp.png' }
   ];
   const navigate = useNavigate();
-
   const handleShowAllClick = () => {
     console.log("Show all clicked");
-    navigate('/top-artists');
+    navigate('/top-artists')
   };
 
-  const handleArtistClick = (artist: Artist): void => {
+  // Function to handle clicking an artist
+const handleArtistClick = (artist: Artist): void => {
     console.log(`Artist clicked: ${artist.name}`);
-  };
+    // Implementation for when any artist is clicked
+};
 
   return (
-    <div className="mt-4 px-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="h4 font-weight-bold">Top Artists</h2>
-        <button className="btn btn-link text-dark p-0 h6" onClick={handleShowAllClick}>
-          Show all
-        </button>
-      </div>
-      <div className="row mt-3">
+    <div className="mt-5">
+     <div className="d-flex justify-content-between align-items-center">
+      <h2 className="display-4 font-weight-bold">Top Artists</h2>
+      <button className="btn btn-link btn-lg text-dark h4" onClick={handleShowAllClick}>
+        Show all
+      </button>
+     </div>
+      <div className="row mt-4">
         {artists.map((artist, index) => (
-          <div key={index} className="col-6 col-sm-4 mb-3 d-flex justify-content-center">
+          <div key={index} className="col-md-4 mb-4">
             <ArtistItem artist={artist} onClick={handleArtistClick} />
           </div>
         ))}
@@ -52,18 +53,18 @@ function ArtistItem({ artist, onClick }: { artist: Artist; onClick: (artist: Art
         flexDirection: "column",
         alignItems: "center",
         cursor: "pointer",
-        width: "100%"
       }}
     >
       <img
         src={artist.image}
-        alt={`${artist.name} profile`}
-        className="img-fluid rounded-circle mb-2"
-        style={{ width: "100px", height: "100px" }} // Smaller size for mobile
+        alt={`${artist.name} profile picture`}
+        className="img-fluid rounded-circle mb-3"
+        style={{ width: "250px", height: "250px" }} //size
       />
-      <h3 className="h6 font-weight-bold text-truncate" style={{ maxWidth: "90px" }}>{artist.name}</h3>
+      <h3 style={{ fontSize: "15px", fontWeight: "bold" }}>{artist.name}</h3>
     </button>
   );
 }
+
 
 export default TopArtists;

@@ -7,17 +7,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const UserProfile: React.FC = () => {
   return (
-    <div className="container-fluid bg-white py-3 px-3">
+    <div className="container-fluid bg-white py-4">
       <div className="row">
-        {/* Main Content (Full-width on mobile, 9 columns on larger screens) */}
-        <div className="col-12 col-lg-9">
+        <div className="col-lg-9">
           <ProfileHeader />
-          <div className="mb-4"><TopArtists /></div>
-          <div className="mb-4"><Playlists /></div>
+          <TopArtists />
+          <Playlists />
         </div>
-        
-        {/* Sidebar (Moves below content on small screens) */}
-        <div className="col-12 col-lg-3 mt-4 mt-lg-0">
+        <div className="col-lg-3">
           <Sidebar />
         </div>
       </div>
@@ -26,4 +23,3 @@ const UserProfile: React.FC = () => {
 };
 
 export default UserProfile;
-
