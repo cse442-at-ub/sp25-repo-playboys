@@ -194,3 +194,23 @@
   color: #0056b3; /* Darker blue on hover */
   text-decoration: underline;
 }
+
+/* Register link styling */
+.register-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 16px;
+  color: #555;
+}
+
+.register-link span {
+  color: #007bff; /* Highlight color */
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+.register-link span:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline;
+}

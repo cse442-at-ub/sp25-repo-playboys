@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const FriendRequests = () => {
     const [pendingFriends, setPendingFriends] = useState<string[]>([]);
@@ -68,17 +69,21 @@ const FriendRequests = () => {
         }
     };
 
+    const navigate = useNavigate();
+    const handleBackButton = () => {
+      console.log("Friend Request Page Selected");
+      navigate("/settings/community");
+      //navigate('/userProfile');
+    };
+
     return (
         <div className="settings-page">
             <div className="auth-container">
                 <div className="settings-header">
                     <div className="settings-header-text">
-                        <span className="menu-icon">☰</span>
-                        <span>Settings - Account - Friend Requests</span>
+                        <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+                        <span>Friend Requests</span>
                     </div>
-                    <button className="back-button" onClick={() => window.location.href = "#/settings/account"}>
-                        🔙
-                    </button>
                 </div>
                 <div className="login-box">
                     <h2>Pending Friend Requests</h2>

@@ -35,7 +35,7 @@ function Sidebar() {
     };
 
     const handleMyProfileClick = () => {
-        console.log('My Profile clicked');
+        window.location.href = "#/userprofile";
     };
 
     const handleSettingClick = () => {
