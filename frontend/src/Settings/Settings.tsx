@@ -1,6 +1,6 @@
 import React from "react";
 import "./Settings.css"; // Import the CSS file
-
+import { useNavigate } from 'react-router-dom';
 const options = [
   { name: "Account", imageUrl: "./static/AccountIcon.png" },
   { name: "Privacy", imageUrl: "./static/LockIcon.png" },
@@ -11,11 +11,18 @@ const options = [
 ];
 
 const Settings = () => {
+  const navigate = useNavigate();
+  const handleBackButton = () => {
+    console.log("Show all clicked");
+    navigate("/userprofile");
+    //navigate('/userProfile');
+  };
   return (
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
           <div className="header-text">
+          <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
             <span className="menu-icon">☰</span>
             <span>Settings</span>
           </div>

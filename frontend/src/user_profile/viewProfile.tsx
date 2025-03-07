@@ -7,14 +7,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ViewProfile: React.FC = () => {
   return (
-    <div className="container-fluid bg-white py-4">
+    <div className="container-fluid bg-white py-3 px-3">
       <div className="row">
-        <div className="col-lg-9">
+        {/* Main Content (Full width on mobile, 9 columns on larger screens) */}
+        <div className="col-12 col-lg-9">
           <ProfileHeader />
-          <TopArtists />
-          <Playlists />
+          <div className="mb-4"><TopArtists /></div>
+          <div className="mb-4"><Playlists /></div>
         </div>
-        <div className="col-lg-3">
+        
+        {/* Sidebar (Moves below content on mobile, stays on the right on larger screens) */}
+        <div className="col-12 col-lg-3 mt-4 mt-lg-0">
           <Sidebar />
         </div>
       </div>
