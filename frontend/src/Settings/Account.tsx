@@ -18,7 +18,6 @@ const SettingsAccount = () => {
     const handleBackButton = () => {
       console.log("Show all clicked");
       navigate("/settings");
-      //navigate('/userProfile');
     };
 
   return (
