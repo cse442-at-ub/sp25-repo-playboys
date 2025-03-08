@@ -19,7 +19,7 @@ try{
     //if the $_GET["user"] from query string is not set, or "" then set it to the logged in user
     $username = $_GET['user'] ?? $login_username ?: $login_username;
 
-    $stmt = $conn->prepare("SELECT username, email, friends, followers, followings, top_songs, top_artists, recent_activity FROM user_profiles WHERE username = ?");
+    $stmt = $conn->prepare("SELECT username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic FROM user_profiles WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -29,12 +29,12 @@ try{
         if($login_username == $username){
             $list_pending_friends = grabAllFriendRequest($conn, $login_username);
 
-            echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "isFriend" => "none", "pendingFriends" => $list_pending_friends["pending_requests"]]);
+            echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "isFriend" => "none", "pendingFriends" => $list_pending_friends["pending_requests"] , "profile_pic" => $profile["profile_pic"]]);
             exit();
         } else {
             $friend_checker = checkFriendStatus($conn, $login_username, $username);
             
-            echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "friendStatus" => $friend_checker["status"]]);
+            echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "friendStatus" => $friend_checker["status"], "profile_pic" => $profile["profile_pic"]]);
             exit();
         }
         

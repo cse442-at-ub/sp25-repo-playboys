@@ -10,7 +10,7 @@ $data = json_decode(file_get_contents("php://input"), true); // decode JSON body
 //retreive user information from the database for update profile page
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try{
-        $stmt = $conn->prepare("SELECT username, email FROM user_profiles WHERE username = ?");
+        $stmt = $conn->prepare("SELECT username, email, profile_pic FROM user_profiles WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
         }
         $email = $user["email"];
+        
         echo json_encode(["status" => "success", "data" => $user]);
         exit();
     }catch(Exception $e){
