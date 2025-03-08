@@ -1,0 +1,247 @@
+.settings-page {
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Adjust alignment to prevent vertical overflow */
+  height: 100vh; /* Full viewport height */
+  overflow: hidden; /* Prevent scrollbars */
+}
+
+.settings-container {
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Prevent pushing content down */
+  padding: 80px 20px 20px; /* Account for the fixed header height */
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent scrollbars */
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Spread items evenly */
+  font-size: 32px;
+  font-weight: bold;
+  width: 100%;
+  position: fixed; /* Fix header so it doesn't affect layout */
+  top: 0;
+  left: 0;
+  background-color: white;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.header-text {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between menu icon and text */
+}
+
+.menu-icon {
+  font-size: 32px;
+  cursor: pointer;
+}
+
+.back-button {
+  border: none;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  transform: scale(1.05);
+}
+
+.option-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Ensures 3 columns */
+  gap: 20px; /* Adjust spacing between cards */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 80%; /* Ensures it doesn't stretch too wide */
+  height: 100%; /* Adjust height to ensure centering */
+  margin: auto; /* Center within the page */
+}
+
+.option-card {
+  background: #d3d3d3;
+  border-radius: 25px;
+  padding: 60px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+  height: 180px; /* Adjust for uniform sizing */
+  width: 100%; /* Prevent stretching */
+  max-width: 250px; /* Keeps card sizes consistent */
+}
+
+.option-button {
+  border: none;
+  background: none;
+}
+
+.option-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #32cd32;
+  transition: background-color 0.5s;
+}
+
+.icon {
+  font-size: 60px; /* Proper icon sizing */
+  margin-bottom: 10px;
+}
+
+.option-card p {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+@media (max-width: 768px){
+  /* General Styles */
+.settings-page {
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  overflow: auto;
+}
+
+/* Container */
+.settings-container {
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0px 20px 50px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+/* Header */
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 32px;
+  font-weight: bold;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: white;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 15px;
+}
+
+.header-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-icon {
+  font-size: 32px;
+  cursor: pointer;
+}
+
+/* Option Container - Grid Layout */
+.option-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Desktop: 3 columns */
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 100%;
+  margin: auto;
+}
+
+/* Individual Option Cards */
+.option-card {
+  background: #d3d3d3;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+  height: 150px;
+  width: 100%;
+  max-width: 250px;
+}
+
+.option-button {
+  border: none;
+  background: none;
+}
+
+.option-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #32cd32;
+  transition: background-color 0.5s;
+}
+
+/* Icon Styling */
+.option-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.option-card p {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/*  Mobile View - 2 Columns */
+@media (max-width: 768px) {
+  .option-container {
+    grid-template-columns: repeat(2, 1fr); /* Mobile: 2 columns */
+    gap: 10px;
+    height: 60%;
+    width: 90%;
+  }
+
+  .option-card {
+    padding: 0px;
+    height: 200px;
+    max-width: 300px;
+  }
+
+  .option-card img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .option-card p {
+    font-size: 14px;
+  }
+}
+}
