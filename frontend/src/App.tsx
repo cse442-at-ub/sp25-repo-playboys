@@ -50,6 +50,8 @@ import MobileSettingsPrivacy from './mobile_setting/MobilePrivacy';
 import MobileDeleteAccount from './mobile_setting/Mobile_Account_settings/MobileDeleteAccount';
 
 
+import StyleGuide from "./style_guide";
+
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -83,6 +85,7 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={isMobile ? <MobilePlaylistsView /> : <PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={isMobile ? <MobileEditProfile /> : <EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/style_guide" element={<StyleGuide />}></Route>
       </Routes>
     </Router>
   );
