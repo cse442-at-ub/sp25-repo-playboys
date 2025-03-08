@@ -20,7 +20,7 @@ const MobileAccountDeletion: React.FC = () => {
     const handleBackButton = () => {
       console.log("Show all clicked");
       navigate("/settings/account");
-      //navigate('/userProfile');
+          
     };
         
 
