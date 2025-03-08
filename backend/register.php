@@ -58,7 +58,7 @@
         exit();
     }
     
-
+    
     //trim and grab data sent from json object from router.php
     $email = trim($data["email"]);
     $username = trim($data["username"]);
@@ -68,12 +68,39 @@
     $top_songs = "";
     $top_artists = "";
     $recent_activity = "";
+    $profile_pic = "";
 
+    
+    $missingFields = [];
+    $check_username = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
+    $check_username->bind_param("s", $username);
+    $check_username->execute();
+    $result = $check_username->get_result();
+    
 
+    // if user doesnt exist we return an error
+    if ($result->num_rows > 0) {
+        $missingFields[] = "username";
+    }
+    $check_email = $conn->prepare("SELECT * FROM user_login_data WHERE email = ?");
+    $check_email->bind_param("s", $email);
+    $check_email->execute();
+    $result = $check_email->get_result();
+    if ($result->num_rows > 0) {
+        $missingFields[] = "email";
+    }
+
+    if (!empty($missingFields)) {
+        echo json_encode([
+            "status" => "error",
+            "message" => implode(", ", $missingFields) . " already in use"
+        ]);
+        exit();
+    }
+    
+   
     //salt and hash password
     $password = password_hash($password, PASSWORD_BCRYPT); 
-
-
     try {
         //prepare sql statement and bind parameters
         $insert_new_user = $conn->prepare("INSERT INTO user_login_data (email, username, password) VALUES (?, ?, ?)");
@@ -83,8 +110,8 @@
         $insert_new_user->execute();
 
         //make new user profile table for new user
-        $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity) VALUES (?, ?, ? , ? , ? , ? , ? , ?)");
-        $insert_new_profile->bind_param("ssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity);
+        $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic) VALUES (?, ?, ? , ? , ? , ? , ? , ?, ?)");
+        $insert_new_profile->bind_param("sssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic);
         $insert_new_profile->execute();
         echo json_encode(["status" => "success", "message" => "User registered successfully"]);
     

@@ -10,7 +10,7 @@ $data = json_decode(file_get_contents("php://input"), true); // decode JSON body
 //retreive user information from the database for update profile page
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try{
-        $stmt = $conn->prepare("SELECT username, email FROM user_profiles WHERE username = ?");
+        $stmt = $conn->prepare("SELECT username, email, profile_pic FROM user_profiles WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
         }
         $email = $user["email"];
+        
         echo json_encode(["status" => "success", "data" => $user]);
         exit();
     }catch(Exception $e){
@@ -89,13 +90,26 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     try {
+        //update email and username in user_profiles
         $stmt = $conn->prepare("UPDATE user_profiles SET email = ?, username = ? WHERE username = ?");
         $stmt->bind_param("sss", $newEmail, $newUsername, $username);
         $stmt->execute();
+        //update email and username in user login data
         $stmt = $conn->prepare("UPDATE user_login_data SET email = ?, username = ? WHERE username = ?");
         $stmt->bind_param("sss", $newEmail, $newUsername, $username);
         $stmt->execute();
+        //updated username in cookie auth
         $stmt = $conn->prepare("UPDATE cookie_authentication SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+        //update username in friend pairs database
+        $stmt = $conn->prepare("UPDATE friend_pairs SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+        $stmt = $conn->prepare("UPDATE friend_pairs SET friend = ? WHERE friend = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+        $stmt = $conn->prepare("UPDATE friend_pairs SET requester = ? WHERE requester = ?");
         $stmt->bind_param("ss", $newUsername, $username);
         $stmt->execute();
         $stmt->close();

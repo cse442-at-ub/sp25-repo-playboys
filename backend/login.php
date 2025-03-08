@@ -13,7 +13,7 @@
     $password = $data["password"];
     //check if the fields are empty and if they are tell user
     if (empty($username)) {
-        $missingFields[] = "email";
+        $missingFields[] = "username";
     }
     if (empty($password)) {
         $missingFields[] = "password";
