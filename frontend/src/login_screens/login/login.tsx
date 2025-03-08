@@ -33,8 +33,22 @@ const Login: React.FC = () => {
     const handleSpotifyLogin = async () => {
         //request sign in with global+/login.php as path
         //request sign in with global+/login.php as path
-        window.location.href = "http://localhost/backend/spotify_login.php";
-    };
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/spotify_login.php`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        const result = await response.json();
+        console.log(result);
+        console.log(result["status"]);
+
+        if (result["status"] === "success") {
+            window.location.href = "#/userprofile";
+        }
+        else {
+            setError(result["message"]);
+        }};
 
         
 

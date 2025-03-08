@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ProfileHeader from './ProfileHeader';
 import TopArtists from './TopArtists';
@@ -7,17 +8,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const UserProfile: React.FC = () => {
   return (
-    <div className="container-fluid bg-white py-4">
+    <div className="container-fluid bg-white py-3 px-3">
       <div className="row">
-        <div className="col-lg-9">
+        <div className="col-12 col-lg-9" style={{ paddingRight: '0' }}>
           <ProfileHeader />
-          <TopArtists />
-          <Playlists />
+          <div className="mb-4"><TopArtists /></div>
+          <div className="mb-4"><Playlists /></div>
         </div>
-        <div className="col-lg-3">
+        <div className="col-12 col-lg-3" style={{ paddingLeft: '0' }}>
           <Sidebar />
         </div>
       </div>
+        <div className = "d-lg-none" style = {{height: "60px"}}/>
     </div>
   );
 };

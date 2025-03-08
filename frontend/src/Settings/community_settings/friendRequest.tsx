@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const FriendRequests = () => {
     const [pendingFriends, setPendingFriends] = useState<string[]>([]);
@@ -12,7 +13,7 @@ const FriendRequests = () => {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
-            
+
             const result = await response.json();
             if (result.status === "success") {
                 setPendingFriends(result.pendingFriends || []);
@@ -71,9 +72,8 @@ const FriendRequests = () => {
 
     const navigate = useNavigate();
     const handleBackButton = () => {
-      console.log("Friend Request Page Selected");
-      navigate("/settings/community");
-      //navigate('/userProfile');
+        console.log("Friend Request Page Selected");
+        navigate("/settings/community");
     };
 
     return (
@@ -86,26 +86,26 @@ const FriendRequests = () => {
                     </div>
                 </div>
                 <div className="login-box">
-                    <h2>Pending Friend Requests</h2>
-                    {error && <p className="error-message">{error}</p>}
+                    <h2 className="mb-4">Pending Friend Requests</h2>
+                    {error && <p className="text-danger">{error}</p>}
                     {pendingFriends.length > 0 ? (
-                        <div className="friend-requests-list">
+                        <ul className="list-group">
                             {pendingFriends.map((friend, index) => (
-                                <div key={index} className="friend-request-row">
-                                    <span className="friend-name">{friend}</span>
-                                    <div className="friend-actions">
-                                        <button className="accept-button" onClick={() => acceptFriendRequest(friend)}>
-                                            ✓ Accept
+                                <li key={index} className="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+                                    <span className="font-weight-bold mb-2 mb-md-0">{friend}</span>
+                                    <div className="d-flex flex-wrap justify-content-center">
+                                        <button className="btn btn-success btn-sm me-md-2 mb-2 mb-md-0" onClick={() => acceptFriendRequest(friend)}>
+                                            <i className="bi bi-check-lg"></i> Accept
                                         </button>
-                                        <button className="decline-button" onClick={() => declineFriendRequest(friend)}>
-                                            ✗ Decline
+                                        <button className="btn btn-danger btn-sm mb-2 mb-md-0" onClick={() => declineFriendRequest(friend)}>
+                                            <i className="bi bi-x-lg"></i> Decline
                                         </button>
                                     </div>
-                                </div>
+                                </li>
                             ))}
-                        </div>
+                        </ul>
                     ) : (
-                        <p>No pending friend requests.</p>
+                        <p className="text-muted">No pending friend requests.</p>
                     )}
                 </div>
             </div>

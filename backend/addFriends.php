@@ -31,9 +31,11 @@
             $stmt->close();
             echo json_encode(["status" => "retract", "message" => "Friend request retracted."]);
             exit();
+        }else if($friender_checker["status"] == "pending" && $friender_checker["requester"] != $login_username){
+            echo json_encode(["status" => "success", "message" => "Friend request sent."]);
+            exit();
         }else{
             echo json_encode(["status" => "friends", "message" => "Already friends."]);
-            exit();
         }
     }catch(Exception $e){
         echo json_encode(["status" => "error", "message" => "Failed to send friend request."]);
