@@ -1,18 +1,16 @@
-
-
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
+import ProtectedRoute from './ProtectedRoute'; // Import the protected route component
 
 //landing pages
 import MobileLandingPage from './mobile_landing_page/mobile_landing_page'
-import LandingPage from "./landing_page/landingPage";
+import LandingPage from './landing_page/landingPage';
 
 //Profile Components
-import UserProfile from "./user_profile/userProfile";
-import TopArtistsView from "./user_profile/TopArtistsView";
-import EditProfile from "./user_profile/EditProfile";
-import PlaylistsView from "./user_profile/PlaylistsView";
+import UserProfile from './user_profile/userProfile';
+import TopArtistsView from './user_profile/TopArtistsView';
+import EditProfile from './user_profile/EditProfile';
+import PlaylistsView from './user_profile/PlaylistsView';
 // Import mobile Profile
 import MobileProfile from './mobile_profile/MobileProfile';
 import MobileEditProfile from './mobile_profile/MobileEditProfile';
@@ -20,26 +18,25 @@ import MobileTopArtistsPage from './mobile_profile/MobileTopArtistsView';
 import MobilePlaylistsView from './mobile_profile/MobilePlaylistsView';
 
 // Login and Sign Up Components
-import Register from "./login_screens/register/register";
-import Login from "./login_screens/login/login";
-import Forgot from "./login_screens/forgot/forgot";
-import ResetPassword from "./login_screens/forgot/new_password";
+import Register from './login_screens/register/register';
+import Login from './login_screens/login/login';
+import Forgot from './login_screens/forgot/forgot';
+import ResetPassword from './login_screens/forgot/new_password';
 // Import mobile Login and Sign Up
 import MobileLogin from './mobile_login_views/mobile_login/mobile_login';
-import MobileForgotPassword from './mobile_login_views/mobile_forgot/mobile_forgot'
-import MobileRegister from './mobile_login_views/mobile_register/mobile_register'
+import MobileRegister from './mobile_login_views/mobile_register/mobile_register';
 
 //Settings Components
-import Settings from "./Settings/Settings";
-import SettingsAccount from "./Settings/Account";
-import SettingsApplicaton from "./Settings/Applicaton";
-import SettingsCommunity from "./Settings/Community";
-import SettingsNotifications from "./Settings/Notifications";
-import SettingsPlayback from "./Settings/Playback";
-import SettingsPrivacy from "./Settings/Privacy";
-import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
+import Settings from './Settings/Settings';
+import SettingsAccount from './Settings/Account';
+import SettingsApplicaton from './Settings/Applicaton';
+import SettingsCommunity from './Settings/Community';
+import SettingsNotifications from './Settings/Notifications';
+import SettingsPlayback from './Settings/Playback';
+import SettingsPrivacy from './Settings/Privacy';
+import DeleteAccount from './Settings/Account_settings/DeleteAccount';
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
-import FriendRequest from "./Settings/community_settings/friendRequest";
+import FriendRequest from './Settings/community_settings/friendRequest';
 //import all mobile views for setting
 import MobileSettings from './mobile_setting/MobileSettings';
 import MobileSettingsAccount from './mobile_setting/MobileAccount';
@@ -65,8 +62,8 @@ function App() {
         <Route path="/" element={isMobile ? <MobileLandingPage/> : <LandingPage />} />``
         <Route path="/register" element={isMobile ? <MobileRegister/> : <Register />} />
         <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
-        <Route path="/forgot" element={isMobile ? <MobileForgotPassword /> :<Forgot />} />
-        <Route path="/forgot/reset" element={isMobile ? <MobileForgotPassword /> :<ResetPassword />} />
+        <Route path="/forgot" element={<Forgot />} />
+        <Route path="/forgot/reset" element={<ResetPassword />} />
 
 
 
