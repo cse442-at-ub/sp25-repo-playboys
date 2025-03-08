@@ -42,7 +42,7 @@ const MobileLogin: React.FC = () => {
                 <input type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />
                 <label>Password</label>
                 <input type="password" placeholder="Enter a password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                <a href="#/forgot">Forgot password?</a>
+                <a href="#/forgot">Forgot password ?</a>
      
                 <button type="submit">Submit</button>
                 {error && <p className="error-message">{error}</p>}
