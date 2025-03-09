@@ -1,0 +1,15 @@
+.explore-page {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .top-trending,
+  .recommended,
+  .new-releases {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
