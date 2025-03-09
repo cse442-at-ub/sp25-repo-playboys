@@ -36,6 +36,8 @@ import FriendRequest from "./Settings/community_settings/friendRequest";
 //import all mobile views for setting
 
 
+// Explore Page
+import Explore from "./explore/explore";
 
 
 // Hook for detecting screen size
@@ -70,6 +72,8 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/explore" element={<ProtectedRoute element={<Explore />} />} />
+
       </Routes>
     </Router>
   );
