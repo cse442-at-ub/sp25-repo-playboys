@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 function Sidebar() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("Explore"); // Track active tab for mobile
@@ -18,7 +19,7 @@ function Sidebar() {
   ];
 
   const handleExploreClick = () => {
-    console.log("Explore clicked");
+    navigate('/explore');
     if (isMobile) setActiveTab("Explore");
   };
   const handleMyStatClick = () => {
@@ -34,7 +35,6 @@ function Sidebar() {
     if (isMobile) setActiveTab("Setting");
   };
   const handleSearchClick = () => {
-    console.log("Search clicked");
     if (isMobile) setActiveTab("Search");
   };
 

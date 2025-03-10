@@ -6,11 +6,13 @@ import ArtistResults from './artistResults';
 import EventResults from './eventResults';
 import CommunityResults from './communityResults';
 import './SearchResultPage.css'; // Import the CSS file for styling
+import { useNavigate } from 'react-router-dom';
+
 
 const SearchResultPage = () => {
-
+    const navigate = useNavigate();
     const handleBackButton = () => {
-        console.log("Go back clicked");
+        navigate("/explore");
         // Your navigation code here
     };
 
