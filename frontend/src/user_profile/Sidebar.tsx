@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 function Sidebar() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("Explore"); // Track active tab for mobile
@@ -19,7 +19,7 @@ function Sidebar() {
   ];
 
   const handleExploreClick = () => {
-    console.log("Explore clicked");
+    navigate('/explore');
     if (isMobile) setActiveTab("Explore");
   };
   const handleMyStatClick = () => {
@@ -34,7 +34,11 @@ function Sidebar() {
     window.location.href = "#/settings";
     if (isMobile) setActiveTab("Setting");
   };
+  const handleSearchClick = () => {
+    if (isMobile) setActiveTab("Search");
+  };
 
+  // Menu items for desktop and mobile
   const menuItems = [
     { icon: "./static/ExploreIcon.png", text: "Explore", handleClick: handleExploreClick },
     { icon: "./static/StatisticIcon.png", text: "My Stat", handleClick: handleMyStatClick },
@@ -58,7 +62,38 @@ function Sidebar() {
         className="fixed-bottom bg-white d-flex justify-content-around p-2"
         style={{ borderTop: "1px solid #ddd", zIndex: 1051 }}
       >
-        {menuItems.map((item, index) => (
+        {menuItems.slice(0, 2).map((item, index) => (
+          <button
+            key={index}
+            className={`btn ${activeTab === item.text ? "text-primary" : "text-secondary"}`}
+            onClick={item.handleClick}
+          >
+            <img
+              src={item.icon}
+              className="d-block mx-auto"
+              style={{ width: "30px", height: "30px" }}
+              alt={item.text}
+            />
+            <span className="d-block" style={{ fontSize: "12px" }}>
+              {item.text}
+            </span>
+          </button>
+        ))}
+        <button
+          className={`btn ${activeTab === "Search" ? "text-primary" : "text-secondary"}`}
+          onClick={handleSearchClick}
+        >
+          <img
+            src="./static/SearchIcon.png"
+            className="d-block mx-auto"
+            style={{ width: "30px", height: "30px" }}
+            alt="Search"
+          />
+          <span className="d-block" style={{ fontSize: "12px" }}>
+            Search
+          </span>
+        </button>
+        {menuItems.slice(2).map((item, index) => (
           <button
             key={index}
             className={`btn ${activeTab === item.text ? "text-primary" : "text-secondary"}`}
@@ -178,6 +213,7 @@ function MenuItem({ icon, text, handleClick }: { icon: string; text: string; han
 }
 
 export default Sidebar;
+
 
 
 
