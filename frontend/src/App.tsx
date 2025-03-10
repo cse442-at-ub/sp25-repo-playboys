@@ -19,9 +19,10 @@ import PlaylistsView from "./user_profile/PlaylistsView";
 import Register from "./login_screens/register/register";
 import Login from "./login_screens/login/login";
 import Forgot from "./login_screens/forgot/forgot";
+import ResetPassword from './login_screens/forgot/new_password';
 // Import mobile Login and Sign Up
 
-
+import StyleGuide from "./style_guide";
 //Settings Components
 import Settings from "./Settings/Settings";
 import SettingsAccount from "./Settings/Account";
@@ -33,6 +34,7 @@ import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
+import SearchPage from "./search_result_page/searchResultPage";
 //import all mobile views for setting
 
 
@@ -48,10 +50,12 @@ function App() {
   return (
     <Router>
       <Routes>
+      <Route path="/style_guide" element={<StyleGuide />}></Route>
         <Route path="/" element={ <LandingPage />} />``
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
+        <Route path="/forgot/reset" element={<ResetPassword />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
@@ -70,6 +74,7 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
       </Routes>
     </Router>
   );
