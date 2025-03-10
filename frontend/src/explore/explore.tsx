@@ -9,7 +9,7 @@ const Explore: React.FC = () => {
         <input
           type="text"
           className="search-bar"
-          placeholder="Try an album, genre, artist, songs..."
+          placeholder="Search for an album, genre, artist, songs... 🔍"
         />
       </div>
 
