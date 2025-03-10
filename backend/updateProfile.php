@@ -2,6 +2,7 @@
 // Allow requests from any origin and check if user is logged in
 require __DIR__ . "/headers.php";
 require __DIR__ . "/cookieAuthHeader.php";
+require __DIR__ . "/userDatabaseGrabber.php";
 
 $user = $result->fetch_assoc();
 $username = $user["username"];
@@ -54,7 +55,10 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-
+    if(!isValidEmail($newEmail)){
+        echo json_encode(["status" => "error", "message" => "Email Invalid. Please try again."]);
+        exit();
+    }
     //check if new email is the same as the old, if not check if it is in use
     if($newEmail != $email){
         $stmt = $conn->prepare("SELECT * FROM user_profiles WHERE email = ?");

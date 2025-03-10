@@ -44,4 +44,17 @@ function grabAllFriendRequest($conn, $username) {
         return "Error: " . $e->getMessage();
     }
 }
+
+function isValidEmail($email){
+    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+    if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+        list($user, $domain) = explode('@', $email);
+        if(checkdnsrr($domain, 'MX') || checkdnsrr($domain, 'A')){ //checks for MX or A records
+            return true;
+        }
+    }
+    return false;
+}
 ?>
+
+
