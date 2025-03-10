@@ -1,36 +1,53 @@
 import React from "react";
 import "./explore.css";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
 
+const genres = [
+  { name: "Rock", color: "#A44036" },
+  { name: "Pop", color: "#E91E63" },
+  { name: "Kpop", color: "#9C27B0" },
+  { name: "Country", color: "#2196F3" },
+  { name: "Classical", color: "#FFC107" },
+  { name: "Introspective", color: "#4CAF50" },
+  { name: "Electronic", color: "#00BCD4" },
+];
+
+
 const Explore: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleGenreClick = (genre: string) => {
+    navigate(`/genre/${genre.toLowerCase()}`);
+  };
   return (
     <div className="explore-page">
       <Sidebar />
       <div className="explore-content">
-      {/* Search Bar */}
-      <div className="search-bar-container">
-        <input
-          type="text"
-          className="search-bar"
-          placeholder="Search for an album, genre, artist, songs... 🔍"
-        />
-      </div>
-      
+        {/* Search Bar */}
+        <div className="search-bar-container">
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Search for an album, genre, artist, songs... 🔍"
+          />
+        </div>
+
         {/* What Are People Listening To */}
-        <h2 className="section-title">What Are People Listening To</h2>
+        <h2 className="section-title">Popularity List</h2>
         <div className="listening-container">
           {/* Top Song */}
           <div className="listening-column">
-            <h3>Top Song</h3>
-            <div className="list-item">Song 1 - Artist 1</div>
-            <div className="list-item">Song 2 - Artist 2</div>
-            <div className="list-item">Song 3 - Artist 3</div>
-            <div className="list-item">Song 4 - Artist 4</div>
-            <div className="list-item">Song 5 - Artist 5</div>
+            <h3>Top Songs</h3>
+            <div className="list-item">Song 1: Artist 1</div>
+            <div className="list-item">Song 2: Artist 2</div>
+            <div className="list-item">Song 3: Artist 3</div>
+            <div className="list-item">Song 4: Artist 4</div>
+            <div className="list-item">Song 5: Artist 5</div>
           </div>
           {/* Top Artist */}
           <div className="listening-column">
-            <h3>Top Artist</h3>
+            <h3>Top Artists</h3>
             <div className="list-item">Artist 1</div>
             <div className="list-item">Artist 2</div>
             <div className="list-item">Artist 3</div>
@@ -39,7 +56,7 @@ const Explore: React.FC = () => {
           </div>
           {/* Top Album */}
           <div className="listening-column">
-            <h3>Top Album</h3>
+            <h3>Top Albums</h3>
             <div className="list-item">Album 1</div>
             <div className="list-item">Album 2</div>
             <div className="list-item">Album 3</div>
@@ -48,7 +65,7 @@ const Explore: React.FC = () => {
           </div>
           {/* Top Genre */}
           <div className="listening-column">
-            <h3>Top Genre</h3>
+            <h3>Top Genres</h3>
             <div className="list-item">Pop</div>
             <div className="list-item">Rock</div>
             <div className="list-item">Hip Hop</div>
@@ -58,15 +75,18 @@ const Explore: React.FC = () => {
         </div>
 
         {/* Genre Section */}
-        <h2 className="section-title">Genre</h2>
+        <h2 className="section-title">Browse All</h2>
         <div className="genre-container">
-          <div className="genre-box" style={{ backgroundColor: "#F44336" }}> Rock </div>
-          <div className="genre-box" style={{ backgroundColor: "#E91E63" }}> Pop </div>
-          <div className="genre-box" style={{ backgroundColor: "#9C27B0" }}> Kpop </div>
-          <div className="genre-box" style={{ backgroundColor: "#2196F3" }}> Country </div>
-          <div className="genre-box" style={{ backgroundColor: "#FFC107" }}> Classical </div>
-          <div className="genre-box" style={{ backgroundColor: "#4CAF50" }}> Introspective </div>
-          <div className="genre-box" style={{ backgroundColor: "#00BCD4" }}> Electronic </div>
+          {genres.map((genre) => (
+            <button
+              key={genre.name}
+              className="genre-box"
+              style={{ backgroundColor: genre.color }}
+              onClick={() => handleGenreClick(genre.name)}
+            >
+              {genre.name}
+            </button>
+          ))}
         </div>
 
         {/* Upcoming Events */}
@@ -74,26 +94,25 @@ const Explore: React.FC = () => {
         <div className="events-container">
           <div className="event-circle">
             <div className="event-date">
-              30th February<br />20:00
+              Feb 31<br />13:61 PM
             </div>
             <div className="event-location">Metlife</div>
           </div>
           <div className="event-circle">
             <div className="event-date">
-              31th February<br />24:00
+              Jan 1<br />1:11 AM
             </div>
             <div className="event-location">Metlife</div>
           </div>
           <div className="event-circle">
             <div className="event-date">
-              29th February<br />19:00
+              Aug 2<br />2:22 PM
             </div>
-            <div className="event-location">Metlife</div>
+            <div className="event-location">Orchard Park</div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
 export default Explore;

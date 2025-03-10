@@ -22,6 +22,8 @@
   margin: 20px 0 10px;
   font-size: 20px;
   text-align: center;
+  font-weight: bolder;
+  text-decoration: underline;
 }
 
 /* Listening Container (Top Song, Artist, Album, Genre) */
@@ -98,4 +100,30 @@
 
 .explore-content{
   margin-right: 20%;
+}
+
+.genre-box, .artist-button {
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  text-transform: capitalize;
+}
+
+.genre-box:hover {
+  filter: brightness(85%);
+}
+
+.genre-box:active {
+  transform: scale(0.95);
+}
+
+.genre-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
