@@ -40,7 +40,7 @@ import SearchPage from "./search_result_page/searchResultPage";
 
 // Explore Page
 import Explore from "./explore/explore";
-
+import GenrePage from "./explore/genre";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -53,11 +53,13 @@ function App() {
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
-        <Route path="/" element={ <LandingPage />} />``
+        <Route path="/" element={ <LandingPage />} />
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/explore/:genre" element={<GenrePage />} />
+
         <Route path="/forgot/reset" element={<ResetPassword />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
