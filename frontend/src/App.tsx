@@ -47,7 +47,10 @@ import MobileSettingsPlayback from './mobile_setting/MobilePlayback';
 import MobileSettingsPrivacy from './mobile_setting/MobilePrivacy';
 import MobileDeleteAccount from './mobile_setting/Mobile_Account_settings/MobileDeleteAccount';
 
-
+// import all statistics views
+import { StatisticsOverview } from "./statistics_page/statistics_overview";
+import { StatisticsDetails } from "./statistics_page/statistics_details";
+import { SampleStatistics } from "./statistics_page/sample_statistics";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -64,6 +67,29 @@ function App() {
         <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/forgot/reset" element={<ResetPassword />} />
+        <Route path="/statistics" element={<StatisticsOverview 
+                                            topX={3}
+                                            topArtistsLastMonth={SampleStatistics.topArtistsLastMonth} 
+                                            topArtistsLast90Days={SampleStatistics.topArtistsLast90Days} 
+                                            topArtistsLastYear={SampleStatistics.topArtistsLastYear} 
+                                            topSongsLastMonth={SampleStatistics.topSongsLastMonth} 
+                                            topSongsLast90Days={SampleStatistics.topSongsLast90Days} 
+                                            topSongsLastYear={SampleStatistics.topSongsLastYear} 
+                                            topAlbumsLastMonth={SampleStatistics.topAlbumsLastMonth} 
+                                            topAlbumsLast90Days={SampleStatistics.topAlbumsLast90Days} 
+                                            topAlbumsLastYear={SampleStatistics.topAlbumsLastYear}/>} />
+        <Route path="/statistics/details" element={<StatisticsDetails 
+                                            topX={8}
+                                            topArtistsLastMonth={SampleStatistics.topArtistsLastMonth} 
+                                            topArtistsLast90Days={SampleStatistics.topArtistsLast90Days} 
+                                            topArtistsLastYear={SampleStatistics.topArtistsLastYear} 
+                                            topSongsLastMonth={SampleStatistics.topSongsLastMonth} 
+                                            topSongsLast90Days={SampleStatistics.topSongsLast90Days} 
+                                            topSongsLastYear={SampleStatistics.topSongsLastYear} 
+                                            topAlbumsLastMonth={SampleStatistics.topAlbumsLastMonth} 
+                                            topAlbumsLast90Days={SampleStatistics.topAlbumsLast90Days} 
+                                            topAlbumsLastYear={SampleStatistics.topAlbumsLastYear}/>} />
+      
 
 
 
@@ -84,7 +110,7 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={isMobile ? <MobilePlaylistsView /> : <PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={isMobile ? <MobileEditProfile /> : <EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
-      </Routes>
+        </Routes>
     </Router>
   );
 }
