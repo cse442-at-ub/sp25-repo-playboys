@@ -38,6 +38,8 @@ import SearchPage from "./search_result_page/searchResultPage";
 //import all mobile views for setting
 
 
+// Explore Page
+import Explore from "./explore/explore";
 
 
 // Hook for detecting screen size
@@ -55,6 +57,7 @@ function App() {
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
+        <Route path="/explore" element={<Explore />} />
         <Route path="/forgot/reset" element={<ResetPassword />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
@@ -74,6 +77,8 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        
+
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
       </Routes>
     </Router>
