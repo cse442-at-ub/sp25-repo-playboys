@@ -16,7 +16,12 @@ const GenrePage: React.FC = () => {
         <p className="genre-description">
           Explore the best in {genre} music—discover top tracks, albums, and artists.
         </p>
-        {/* Additional content can be added here */}
+        <div className="song-list">
+        <div className="song">{genre} song 1</div>
+        <div className="song">{genre} song 2</div>
+        <div className="song">{genre} song 3</div>
+        <div className="song">{genre} song 4</div>
+        </div>
       </div>
     </div>
   );

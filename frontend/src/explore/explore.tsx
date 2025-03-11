@@ -6,7 +6,7 @@ import Sidebar from "../user_profile/Sidebar";
 const genres = [
   { name: "Rock", color: "#A44036" },
   { name: "Pop", color: "#E91E63" },
-  { name: "Kpop", color: "#9C27B0" },
+  { name: "K-Pop", color: "#9C27B0" },
   { name: "Country", color: "#2196F3" },
   { name: "Classical", color: "#FFC107" },
   { name: "Introspective", color: "#4CAF50" },
@@ -42,7 +42,7 @@ const Explore: React.FC = () => {
         <div className="listening-container">
           {/* Top Songs */}
           <div className="listening-column">
-            <h3>Top Songs</h3>
+            <h3><center>Top Songs</center></h3>
             <div className="list-item">Song 1: Artist 1</div>
             <div className="list-item">Song 2: Artist 2</div>
             <div className="list-item">Song 3: Artist 3</div>
@@ -51,7 +51,7 @@ const Explore: React.FC = () => {
           </div>
           {/* Top Artists */}
           <div className="listening-column">
-            <h3>Top Artists</h3>
+            <h3><center>Top Artists</center></h3>
             <div className="list-item" onClick={() => handleArtistClick("Artist 1")}>
               Artist1
             </div>
@@ -70,7 +70,7 @@ const Explore: React.FC = () => {
           </div>
           {/* Top Albums */}
           <div className="listening-column">
-            <h3>Top Albums</h3>
+            <h3><center>Top Albums</center></h3>
             <div className="list-item">Album 1</div>
             <div className="list-item">Album 2</div>
             <div className="list-item">Album 3</div>
@@ -79,7 +79,7 @@ const Explore: React.FC = () => {
           </div>
           {/* Top Genres */}
           <div className="listening-column">
-            <h3>Top Genres</h3>
+            <h3><center>Top Genres</center></h3>
             <div className="list-item">Pop</div>
             <div className="list-item">Rock</div>
             <div className="list-item">Hip Hop</div>
