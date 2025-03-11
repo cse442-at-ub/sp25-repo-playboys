@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useSpring, animated } from "@react-spring/web";
-import { useGesture } from "@use-gesture/react"; // Correct import
 import "./SongRecommendation.css";
 import Sidebar from '../user_profile/Sidebar';
 
@@ -11,7 +9,7 @@ const SongRecommendation: React.FC = () => {
     artist: "Artist Name",
     album: "Album Name",
     genre: "Rock, Kpop",
-    backgroundStory: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    backgroundStory: "dolce far niente"
   });
 
   const handleAddToPlaylist = () => {
@@ -25,7 +23,6 @@ const SongRecommendation: React.FC = () => {
   return (
     <div className="song-container">
       <div className="song-details">
-        <animated.div {...bind()} style={{ ...style, touchAction: "none" }}>
           <div className="album-art"></div>
           <div className="song-info">
             <h2>{song.name}</h2>
@@ -35,7 +32,6 @@ const SongRecommendation: React.FC = () => {
             <h2>Background:</h2>
             <h3>{song.backgroundStory}</h3>
           </div>
-        </animated.div>
       </div>
       <div className="controls">
         <button className={`heart-btn ${liked ? "liked" : ""}`} onClick={() => setLiked(!liked)}>

@@ -68,8 +68,8 @@
       flex-direction: column; /* Stack album art and song info vertically */
       align-items: center;
       padding: 15px;
-      min-height: auto; /* Remove fixed height */
-      max-height: auto; /* Allow the content to adjust based on content */
+      min-height: 78vh;
+      max-height: 78vh;
     }
   
     .album-art {
@@ -81,12 +81,17 @@
   
     .song-info {
       text-align: center; /* Center text on smaller screens */
+      flex-grow: 1; /* Allows it to expand naturally */
+      display: -webkit-box;
+      -webkit-line-clamp: 12; /* Number of lines before truncation */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   
     .controls {
       flex-direction: row; /* Stack buttons vertically */
       gap: 40px; /* Reduce gap between buttons */
-      margin-top: 14px;
+      margin-top: 30px;
     }
   
     .controls button {
