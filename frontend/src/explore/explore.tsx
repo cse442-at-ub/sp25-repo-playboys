@@ -13,13 +13,17 @@ const genres = [
   { name: "Electronic", color: "#00BCD4" },
 ];
 
-
 const Explore: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGenreClick = (genre: string) => {
-    navigate(`/genre/${genre.toLowerCase()}`);
+    navigate(`/explore/${genre.toLowerCase()}`);
   };
+
+  const handleArtistClick = (artist: string) => {
+    navigate(`/explore/${artist.toLowerCase()}`);
+  };
+
   return (
     <div className="explore-page">
       <Sidebar />
@@ -36,7 +40,7 @@ const Explore: React.FC = () => {
         {/* What Are People Listening To */}
         <h2 className="section-title">Popularity List</h2>
         <div className="listening-container">
-          {/* Top Song */}
+          {/* Top Songs */}
           <div className="listening-column">
             <h3>Top Songs</h3>
             <div className="list-item">Song 1: Artist 1</div>
@@ -45,16 +49,26 @@ const Explore: React.FC = () => {
             <div className="list-item">Song 4: Artist 4</div>
             <div className="list-item">Song 5: Artist 5</div>
           </div>
-          {/* Top Artist */}
+          {/* Top Artists */}
           <div className="listening-column">
             <h3>Top Artists</h3>
-            <div className="list-item">Artist 1</div>
-            <div className="list-item">Artist 2</div>
-            <div className="list-item">Artist 3</div>
-            <div className="list-item">Artist 4</div>
-            <div className="list-item">Artist 5</div>
+            <div className="list-item" onClick={() => handleArtistClick("Artist 1")}>
+              Artist1
+            </div>
+            <div className="list-item" onClick={() => handleArtistClick("Artist 2")}>
+              Artist2
+            </div>
+            <div className="list-item" onClick={() => handleArtistClick("Artist 3")}>
+              Artist3
+            </div>
+            <div className="list-item" onClick={() => handleArtistClick("Artist 4")}>
+              Artist4
+            </div>
+            <div className="list-item" onClick={() => handleArtistClick("Artist 5")}>
+              Artist5
+            </div>
           </div>
-          {/* Top Album */}
+          {/* Top Albums */}
           <div className="listening-column">
             <h3>Top Albums</h3>
             <div className="list-item">Album 1</div>
@@ -63,7 +77,7 @@ const Explore: React.FC = () => {
             <div className="list-item">Album 4</div>
             <div className="list-item">Album 5</div>
           </div>
-          {/* Top Genre */}
+          {/* Top Genres */}
           <div className="listening-column">
             <h3>Top Genres</h3>
             <div className="list-item">Pop</div>
@@ -115,4 +129,5 @@ const Explore: React.FC = () => {
     </div>
   );
 };
+
 export default Explore;
