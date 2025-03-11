@@ -35,7 +35,8 @@ import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOpti
 import FriendRequest from "./Settings/community_settings/friendRequest";
 //import all mobile views for setting
 
-
+//import Song Recommendation
+import SongRecommendation from "./song_recommendation/SongRecommendationFE";
 
 
 // Hook for detecting screen size
@@ -48,7 +49,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={ <LandingPage />} />``
+        <Route path="/" element={ <SongRecommendation />} />``
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />

@@ -1,0 +1,100 @@
+.song-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    margin: auto;
+    padding-right: 240px;
+  }
+  
+  .song-details {
+    display: flex;
+    flex-direction: row; /* Ensures album art and info stay side by side */
+    background: #eee;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    min-height: 84vh;
+    max-height: 84vh;
+    align-items: flex-start; /* Keeps items aligned at the top */
+  }
+  
+  .album-art {
+    width: 300px;
+    height: 300px;
+    background: brown;
+    margin-right: 40px;
+    flex-shrink: 0; /* Prevents it from shrinking */
+  }
+  
+  .song-info h2,
+  .song-info h2,
+  .song-info h2,
+  .song-info h3 {
+    margin: 10px 0;
+    flex-grow: 1; /* Allows it to expand naturally */
+    display: -webkit-box;
+    -webkit-line-clamp: 12; /* Number of lines before truncation */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  
+  .controls button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .heart-btn.liked {
+    color: red;
+  }
+  
+  
+  /* Mobile view adjustments */
+  @media (max-width: 768px) {
+    .song-container {
+      padding-right: 0; /* Remove padding to use full width on smaller screens */
+    }
+  
+    .song-details {
+      flex-direction: column; /* Stack album art and song info vertically */
+      align-items: center;
+      padding: 15px;
+      min-height: auto; /* Remove fixed height */
+      max-height: auto; /* Allow the content to adjust based on content */
+    }
+  
+    .album-art {
+      width: 200px; /* Reduce size of album art */
+      height: 200px; /* Adjust height accordingly */
+      margin-right: 0; /* Remove right margin */
+      margin-bottom: 20px; /* Add margin for space between art and text */
+    }
+  
+    .song-info {
+      text-align: center; /* Center text on smaller screens */
+    }
+  
+    .controls {
+      flex-direction: row; /* Stack buttons vertically */
+      gap: 40px; /* Reduce gap between buttons */
+      margin-top: 14px;
+    }
+  
+    .controls button {
+      font-size: 20px; /* Make buttons smaller */
+    }
+  
+    .song-info h2,
+    .song-info h3 {
+      margin: 8px 0;
+    }
+  }
