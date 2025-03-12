@@ -7,7 +7,8 @@ $client_id     = $config['spotify_client_id'];
 $client_secret = $config['spotify_client_secret'];
 $redirect_uri  = $config['spotify_redirect_uri'];
 
-echo "Hello from Spotify Callback!";
+// Define the scope(s) required by your app
+$scope = 'user-read-email user-read-private';
 
 // Spotify's authorization endpoint
 $auth_url = 'https://accounts.spotify.com/authorize?' . http_build_query([
