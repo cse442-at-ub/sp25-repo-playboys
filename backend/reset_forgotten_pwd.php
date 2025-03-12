@@ -1,63 +1,104 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
-header("Access-Control-Allow-Methods: POST");
+    require __DIR__ . "/headers.php";
 
-include '../data_base.php';
+    $data = json_decode(file_get_contents("php://input"), true);
 
-$data = json_decode(file_get_contents("php://input"), true); // Idk if this is the way to go...
+    if ( empty( $data[ "password" ] ) || empty( $data[ "confirmPassword" ] ) ) 
+    {
+        echo json_encode( [ "status" => "error", "message" => "Please enter your new password" ] );
+        exit();
+    }
 
-if ( !isset( $data['password'] ) || !isset( $data['confirm_password'] ) ) 
-{
-    echo json_encode( ["error" => "Reset code and new passwords are required"] );
-    exit();
-}
+    $email = $data[ "decodedEmail" ];
+    $password = $data[ "password" ];
+    $confirm_password = $data[ "confirmPassword" ];
 
-$password = $conn->real_escape_string( $data['password'] ); // Idk if conn->real... is the way to go...
-$confirm_password = $conn->real_escape_string( $data['confirm_password'] );
+    if( $password !== $confirm_password ) 
+    {
+        echo json_encode( [ "status" => "error", "message" => "Passwords do not match. Please try again." ] );
+        exit();
+    }
+    
+    // Try to find users id
+    $get_users_id = $conn->prepare("SELECT id FROM user_login_data WHERE email = ?");
+    $get_users_id->bind_param( "s", $email );
+    $get_users_id->execute();
 
-if( $confirm_password != $password ) 
-{
-    echo json_encode( ["error" => "Passwords do not match"] );
-    exit();
-}
+    $result = $get_users_id->get_result();
+    if( $result->num_rows > 0 ) 
+    {
+        $users_id = $result->fetch_assoc()["id"];
+    }
+    else
+    {
+        echo json_encode([
+            "status" => "error",
+            "message"=> "Could not find user. Please try again."
+        ]);
+        exit();
+    }
 
-$new_password = password_hash( $conn->real_escape_string($data['password'] ), PASSWORD_DEFAULT);
+    $get_users_id->close();
 
-// IMPORTANT: GET user's 'id' so we can identify them! 
-// I do this with the 'hidden' '_POST' stuff in my code, 
-// but I imagine you have some different way of going about this with cookies.
-// I imagine I need it next, in order to know whose password to reset!
+    // Have users id, is request valid?
+    $current = date("Y-m-d H:i:s", strtotime("+0 hour") );
 
-$current_time = date("Y-m-d H:i:s", strtotime("+0 hour") );
+    $get_request_id = $conn->prepare("SELECT request_id FROM pwd_reset_requests WHERE users_id = ? AND expires >= ?");
+    $get_request_id->bind_param( "is", $users_id, $current );
+    $get_request_id->execute();
 
-// If we got here, we shouldn't need to 'if-statement' this... 
-// I don't in my working code, and I don't want to give you something I haven't tested...
-// Let me know if I need to change it to handle that error! Should be easy
-$sql = "SELECT expires FROM password_resets WHERE user_id = '$user_id'";
-$result = mysqli_query( $conn, $sql );
+    $result = $get_request_id->get_result();
+    if( $result->num_rows > 0 ) 
+    {
+        $request_id = $result->fetch_assoc()["id"];
+    }
+    else
+    {
+        echo json_encode([
+            "status" => "error",
+            "message"=> "Could not find request. Please try again."
+        ]);
+        exit();
+    }
 
-$row = mysqli_fetch_assoc( $result );
+    // Try to UPDATE pwd
+    $new_password = password_hash( $password, PASSWORD_DEFAULT );
 
-$expires = $row["expires"];
+    try 
+    {
+        $reset_pwd = $conn->prepare( "UPDATE user_login_data SET password = ? WHERE id = ?" );
+        $reset_pwd->bind_param("si", $new_password, $users_id );
+        $reset_pwd->execute();
+    }
+    catch( Exception $e )
+    {
+        echo json_encode([
+            "status" => "error",
+            "message"=> "Could not update password. Please try again."
+        ]);
+        exit();
+    }
 
-if( $expires >= $current_time ) 
-{
-    $sql = "UPDATE users SET password='$password' WHERE id = '$user_id'";
-    $result = mysqli_query( $conn, $sql );
+    // Try to DELETE reset request
+    try 
+    {
+        $remove_pwd_reset_request = $conn->prepare( "DELETE FROM pwd_reset_requests WHERE request_id = ?" );
+        $remove_pwd_reset_request->bind_param("i", $request_id );
+        $remove_pwd_reset_request->execute();
 
-    $sql = "DELETE * FROM password_resets WHERE id = '$user_id'";
-    $result = mysqli_query( $conn, $sql );
-
-    echo json_encode( ["success" => true, "message" => "Password has been reset"] );
-}
-else 
-{
-    $sql = "DELETE * FROM password_resets WHERE id = '$user_id'";
-    $result = mysqli_query( $conn, $sql );
-
-    echo json_encode( ["error" => "Entered reset code has expired, please try again"] );
-}
-
-$conn->close();
+        echo json_encode([
+            "status" => "success",
+            "message"=> "Password reset successful."
+        ]);
+        exit();
+    }
+    catch( Exception $e ) 
+    {
+        echo json_encode([
+            "status" => "error",
+            "message"=> "Could not remove reset request. Please try again."
+        ]);
+        exit();
+    }
+?>

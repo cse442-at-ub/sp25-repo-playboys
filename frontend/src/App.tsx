@@ -52,7 +52,6 @@ import MobileSettingsPrivacy from './mobile_setting/MobilePrivacy';
 import MobileDeleteAccount from './mobile_setting/Mobile_Account_settings/MobileDeleteAccount';
 
 
-
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
 
@@ -67,7 +66,7 @@ function App() {
         <Route path="/register" element={isMobile ? <MobileRegister/> : <Register />} />
         <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
         <Route path="/forgot" element={isMobile ? <MobileForgotPassword /> :<Forgot />} />
-        <Route path="/reset" element={isMobile ? <MobileResetPassword /> :<Reset />}/>
+        <Route path="/forgot/reset/:email" element={isMobile ? <MobileResetPassword /> :<Reset />}/>
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 

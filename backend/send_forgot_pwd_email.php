@@ -1,78 +1,74 @@
 <?php
-
     require __DIR__ . "/headers.php";
-    
-    require '../../util/mailer.php'; // I'd make sure these are correct 
+    require __DIR__ . "/mailer.php";
 
-    $method = $_SERVER["REQUEST_METHOD"];
     $data = json_decode(file_get_contents("php://input"), true); // Not sure of this, new to me
 
-    if ( empty( $data[ "email" ] ) ) 
+    if( empty( $data[ "email" ] ) ) 
     {
-        echo json_encode( [
-            "status" => "error",
-            "error" => "An email is required"
-        ]);
+        echo json_encode( [ "status" => "error", "message" => "Please enter an email address." ] );
         exit();
     }
 
     $email = $data['email']; 
 
-    if( !isValidEmail($email) ) 
+    if( !isValidEmail( $email ) ) 
+    {
+        echo json_encode([  "status" => "error", "message" => "The email you've entered is invalid. Please enter a valid email address." ] );
+        exit();
+    }
+
+    // Try to find user
+    $get_users_id = $conn->prepare( "SELECT id FROM user_login_data WHERE email=?" );
+    $get_users_id->bind_param( "s", $email );
+    $get_users_id->execute();
+
+    $result = $get_users_id->get_result();
+    if( $result->num_rows > 0) 
+    {
+        $users_id = $result->fetch_assoc()["id"];
+    }
+    else 
     {
         echo json_encode( [
-            "status"=> "error",
-            "error" => "The email address entered is not a valid email"
+            "status" => "error", 
+            "message" => "Could not find user. Please try again."
         ]);
         exit();
     }
 
+    $get_users_id->close();
+
+    // User exists. Now, try to send email, request reset 
+    $code = strtoupper( bin2hex(random_bytes( 4 ) ) );
+    $expires = date("Y-m-d H:i:s", strtotime("+1 hour"));
+
     try 
     {
-        $sql = "SELECT id FROM users WHERE email = '$email'";
-        $result = mysqli_query( $conn, $sql );
+        $create_request = $conn->prepare( "INSERT INTO pwd_reset_requests (users_id, code, expires)  VALUES (? , ? , ?)" );
+        $create_request->bind_param( "iss", $users_id, $code, $expires );
+        $create_request->execute();
 
-        if ( mysqli_num_rows( $result ) > 0 ) 
-        {
-            $row = mysqli_fetch_assoc( $result );
+        sendEmail(   $email, "Team Playboys Reset Password", "<p>Your code is: '$code'<br><br>Expires in 1 hour.</p>" );
 
-            $user_id = $row["id"];
+        echo json_encode( [
+            "status" => "success", 
+            "message" => "Email sent. Please check your inbox."
+        ]);
 
-            $code = bin2hex(random_bytes(4)); // 16 -> 4
-
-            $expires = date("Y-m-d H:i:s", strtotime("+1 hour"));
-
-            $sql = "INSERT INTO password_resets (user_id, code, expires) 
-                    VALUES ('$user_id', '$code', '$expires')";
-            $result = mysqli_query( $conn, $sql );
-
-            sendEmail(   $email, 
-                    "Team Playboys Reset Password", 
-                    "<p>Your code is: '$code'<br><br>Expires in 1 hour.</p>" );
-
-            echo json_encode( [
-                "success" => true, 
-                "message" => "Password reset email sent"
-            ]);
-        } 
-        else 
-        {
-            echo json_encode([
-                "status" => "error",
-                "error" => "The email address entered could not be found in the database"
-            ]);
-        }
-    
+        $create_request->close();
     }
     catch( Exception $e ) 
     {
-        echo json_encode([
-            "status" => "error",
-            "error" => "An error occurred while connecting to the database"
+        echo json_encode( [
+            "status" => "error", 
+            "message" => "Could not send email. Please try again."
         ]);
     }
 
+    // This'll likely never be called... the field is an 'email' field... it requires this implicitly...
     function isValidEmail( $email ) 
     {
         return preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email );
     }
+?>

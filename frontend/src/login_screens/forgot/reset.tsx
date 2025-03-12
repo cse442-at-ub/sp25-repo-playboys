@@ -1,27 +1,51 @@
 import React from "react";
 import "./forgot.css";
-import {resetPassword } from "./api/forgot_pwd_apis";
+import { useParams } from "react-router-dom";
 
-const ForgotPassword: React.FC = () => {
-
+const ResetPassword: React.FC = () => 
+{
+	const { email } = useParams<{ email: string }>();
+	const decodedEmail = decodeURIComponent( email || "" );
+	
     const [password, setPassword] = React.useState("");
-    const [confirm_password, setConfirmPassword] = React.useState("");
+    const [confirmPassword, setConfirmPassword] = React.useState("");
     const [message, setMessage] = React.useState("");
     const [error, setError] = React.useState("");
     
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const data = {password, confirm_password};
+    const handleClickConfirm = async (e: React.FormEvent) => 
+	{
+		e.preventDefault();
+        const data = { decodedEmail, password, confirmPassword };
         console.log( data );
     
-        try 
+        try
         {
-          const response = await resetPassword( password, confirm_password );
-          setMessage( response );
-        } 
-        catch ( err: any ) 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}sp25-repo-playboys/backend/reset_forgotten_pwd.php`, 
+			{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify( data ),
+            })
+
+            const result = await response.json();
+            console.log( result );
+            console.log( result[ "status" ] );
+
+            if( result[ "status" ] === "success" ) 
+            {
+                setMessage( String( result[ "message" ] ) );
+				window.location.href = "#/"
+            }
+            else 
+            {
+                setError( String( result[ "message" ] ) );
+            }
+        }
+        catch( err: any ) 
         {
-          setError( err.message );
+            setError( "Sorry, something went wrong. Please try again." );
         }
     };
     
@@ -29,16 +53,20 @@ const ForgotPassword: React.FC = () => {
     <div className="auth-container">
         <div className="login-box">
             <h2>Reset Password</h2>
-            <form onSubmit={ handleSubmit }>
-                <label>Email</label>
+            <form onSubmit={ handleClickConfirm }>
+                <label>Password</label>
                 <input type="password" placeholder="Enter your new password" value={password} onChange={ ( e ) => setPassword( e.target.value ) }/>
-                <input type="password" placeholder="Confirm your new password" value={password} onChange={ ( e ) => setConfirmPassword( e.target.value ) }/>
-                <button type="submit">Send</button>
-                { error && <p className="error-message">{ error }</p> }
+				<label>Confirm Password</label>
+                <input type="password" placeholder="Confirm your new password" value={confirmPassword} onChange={ ( e ) => setConfirmPassword( e.target.value ) }/>
+                <button type="submit">Confirm</button>
+                {[
+					message && <p className="message">{ message }</p>,
+					error && <p className="error-message">{ error }</p>
+				]}
             </form>
         </div>
     </div>
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

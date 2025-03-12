@@ -1,71 +1,119 @@
 import React from "react";
 import "./forgot.css";
-import {send_forgot_pwd_email } from "./api/forgot_pwd_apis";
+import { useNavigate } from "react-router-dom";
 
-const ForgotPassword: React.FC = () => {
+const ForgotPassword: React.FC = () => 
+{
+    const navigate = useNavigate();
 
     const [email, setEmail] = React.useState("");
+    const [emailFieldMessage, setEmailFieldMessage] = React.useState("");
+    const [emailFieldError, setEmailFieldError] = React.useState("");
+
     const [code, setCode] = React.useState("");
-    const [emailMessage, setEmailMessage] = React.useState("");
-    const [codeMessage, setCodeMessage] = React.useState("");
-    const [emailError, setEmailError] = React.useState("");
-    const [codeError, setCodeError] = React.useState("");
+    const [codeFieldMessage, setCodeFieldMessage] = React.useState("");
+    const [codeFieldError, setCodeFieldError] = React.useState("");
 
-    
-    const handleEmailSubmit = async (e: React.FormEvent) => 
+    const handleClickSend = async ( e: React.FormEvent ) => 
     {
         e.preventDefault();
-        const data = {email};
+        const data = { email };
         console.log( data );
-    
-        try 
+
+        try
         {
-          const response = await send_forgot_pwd_email( email );
-          setEmailMessage( response );
-        } 
-        catch ( err: any ) 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}sp25-repo-playboys/backend/send_forgot_pwd_email.php`, 
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify( data ),
+            })
+
+            const result = await response.json();
+            console.log( result );
+            console.log( result[ "status" ] );
+
+            if( result[ "status" ] === "success" ) 
+            {
+                setEmailFieldMessage( String( result[ "message" ] ) );
+            }
+            else 
+            {
+                setEmailFieldError( String( result[ "message" ] ) );
+            }
+        }
+        catch( err: any ) 
         {
-          setEmailError( err.message );
+            setEmailFieldError( "Sorry, something went wrong. Please try again." );
         }
     };
 
-    const handleCodeSubmit = async (e: React.FormEvent) => 
+    const handleClickVerify = async (e: React.FormEvent) => 
     {
         e.preventDefault();
-        const data = {email};
+        const data = { email, code };
         console.log( data );
-    
-        try 
+
+        try
         {
-            const response = await send_forgot_pwd_email( email );
-            setCodeMessage( response );
-        } 
-        catch ( err: any ) 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}sp25-repo-playboys/backend/verify_email_code.php`, 
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify( data ),
+            })
+
+            const result = await response.json();
+            console.log( result );
+            console.log( result[ "status" ] );
+
+            if( result[ "status" ] === "success" ) 
+            {
+                setCodeFieldMessage( String( result["message"] ) );
+
+                navigate( `/forgot/reset/${encodeURIComponent(email)}` );
+            }
+            else 
+            {
+                setCodeFieldError( String( result[ "message" ] ) );
+            }
+        }
+        catch( err: any ) 
         {
-            setCodeError( err.message );
+            setCodeFieldError( "Sorry, something went wrong. Please try again." );
         }
     };
     
-  return (
-    <div className="auth-container">
-        <div className="login-box">
-            <h2>Forgot Password</h2>
-            <form onSubmit={ handleEmailSubmit }>
-                <label>Email</label>
-                <input type="email" placeholder="Enter your email" value={email} onChange={ ( e ) => setEmail( e.target.value ) }/>
-                <button type="submit">Send</button>
-                { emailError && <p className="error-message">{ emailError }</p> }
-            </form>
-            <br></br>
-            <form onSubmit={ handleCodeSubmit }>
-                <label>Verification Code</label>
-                <input type="text" placeholder="Enter the code sent to your email" value={code} onChange={ ( e ) => setCode( e.target.value ) }/>
-                <button type="submit">Send</button>
-                { codeError && <p className="error-message">{ codeError }</p> }
-            </form>
+    return (
+        <div className="auth-container">
+            <div className="login-box">
+                <h2>Forgot Password</h2>
+                <form onSubmit={ handleClickSend }>
+                    <label>Email</label>
+                    <input type="email" placeholder="Enter your email" value={email} onChange={ ( e ) => setEmail( e.target.value ) }/>
+                    <button type="submit">Send</button>
+                    {[
+                        emailFieldMessage && <p className="message">{ emailFieldMessage }</p>,
+                        emailFieldError && <p className="error-message">{ emailFieldError }</p>
+                    ]}
+                </form>
+                <br></br>
+                <form onSubmit={ handleClickVerify }>
+                    <label>Verification Code</label>
+                    <input type="text" placeholder="Enter the code sent to your email" value={code} onChange={ ( e ) => setCode( e.target.value ) }/>
+                    <button type="submit">Verify</button>
+                    {[ 
+                        codeFieldMessage && <p className="message">{ codeFieldMessage }</p>,
+                        codeFieldError && <p className="error-message">{ codeFieldError }</p>
+                    ]}
+                </form>
+            </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default ForgotPassword;

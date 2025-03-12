@@ -112,6 +112,19 @@
     gap: 12px;
   }
   
+  /* Message styling */
+.message {
+  color: green;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  text-align: center;
+  background: #e6ffe6;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid green;
+}
+
   /* Error message styling */
 .error-message {
     color: red;
@@ -119,7 +132,7 @@
     margin-top: 10px;
     text-align: center;
     background: #ffe6e6;
-    padding: 10px;
+    padding-top: 10px;
     border-radius: 5px;
     border: 1px solid red;
 }
