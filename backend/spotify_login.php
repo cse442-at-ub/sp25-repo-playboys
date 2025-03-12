@@ -1,6 +1,6 @@
 <?php
 // login.php
-
+require __DIR__ . "/headers.php";
 $config = include __DIR__ . '/config.php';
 
 $client_id     = $config['spotify_client_id'];

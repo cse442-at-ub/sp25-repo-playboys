@@ -39,13 +39,7 @@
     }
 
 
-
-
-
-
-
     $user = $result->fetch_assoc();
-
 
 
     if (!password_verify($password, $user["password"])) {

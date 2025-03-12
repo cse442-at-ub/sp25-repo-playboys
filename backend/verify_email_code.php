@@ -34,7 +34,7 @@
     // We have users id, now try to get their reset pwd request
     $current = date( "Y-m-d H:i:s", strtotime( "+0 hour" ) );
 
-    $get_forgot_pwd_request = $conn->prepare( "SELECT * FROM pwd_reset_requests WHERE users_id = ? AND expires >= ?" );
+    $get_forgot_pwd_request = $conn->prepare( "SELECT * FROM pwd_reset_requests WHERE users_id = ? AND expires >= ? Order By request_id desc" );
     $get_forgot_pwd_request->bind_param( "is", $users_id, $current );
     $get_forgot_pwd_request->execute();
     
@@ -46,7 +46,7 @@
         // Have we entered the right code?
         if( strcmp( $code_entered, $correct_code ) <> 0 ) 
         {
-            echo json_encode([ "status" => "error", "message" => "Code entered is incorrect. Please try again." ] );
+            echo json_encode([ "status" => "error", "message" => "Code entered is incorrect. $code_entered $correct_code Please try again." ] );
             exit();
         }
 
