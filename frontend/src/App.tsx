@@ -15,11 +15,11 @@ import EditProfile from "./user_profile/EditProfile";
 import PlaylistsView from "./user_profile/PlaylistsView";
 // Import mobile Profile
 
-// Login and Sign Up Components
+// Import mobile Login and Sign Up
 import Register from "./login_screens/register/register";
 import Login from "./login_screens/login/login";
 import Forgot from "./login_screens/forgot/forgot";
-import ResetPassword from './login_screens/forgot/new_password';
+import Reset from './login_screens/forgot/reset';
 // Import mobile Login and Sign Up
 
 import StyleGuide from "./style_guide";
@@ -57,10 +57,9 @@ function App() {
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
+        <Route path="/forgot/reset/:email" element={<Reset />}/>
         <Route path="/explore" element={<Explore />} />
         <Route path="/explore/:genre" element={<GenrePage />} />
-
-        <Route path="/forgot/reset" element={<ResetPassword />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
