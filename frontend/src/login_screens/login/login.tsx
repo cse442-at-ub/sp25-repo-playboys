@@ -33,7 +33,7 @@ const Login: React.FC = () => {
     const handleSpotifyLogin = async () => {
         //request sign in with global+/login.php as path
         //request sign in with global+/login.php as path
-        window.location.href = "http://localhost/backend/spotify_login.php";
+        window.location.href = `${process.env.REACT_APP_API_URL}backend/spotify_login.php`;
     };
 
         

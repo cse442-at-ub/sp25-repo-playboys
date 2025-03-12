@@ -21,10 +21,10 @@ function ArtistCard({ name, image }: ArtistCardProps) {
       <img
         src={image}
         alt={`${name}'s profile`}
-        className="img-fluid rounded-circle mb-3"
-        style={{ width: '100%', height: 'auto', maxWidth: '300px' }} // Set width to 100% and height to auto
+        className="img-fluid rounded-circle mb-2"
+        style={{ width: '100%', maxWidth: '150px', height: 'auto' }} // Adjusted for mobile
       />
-      <h2 className="h5 fw-bold">{name}</h2>
+      <h2 className="h6 fw-bold text-truncate" style={{ maxWidth: "140px" }}>{name}</h2> {/* Prevents long names from breaking */}
     </div>
   );
 }
@@ -33,26 +33,23 @@ function PlaylistsView() {
   const navigate = useNavigate();
 
   const handleBackButton = () => {
-    console.log("Show all clicked");
-    navigate('/userProfile'); // Navigate to the desired route
+    console.log("Back button clicked");
+    navigate('/userProfile');
   };
 
   return (
-    <div className="container-fluid bg-white">
-      <div className="row">
-        <div className="col-lg-12">
-          <div className="mb-4">
-            <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
-            <h1 className="display-4 fw-bold">♬ Playlists</h1>
+    <div className="container bg-white py-3">
+      <div className="d-flex align-items-center mb-3">
+        <button className="btn btn-light fs-3 me-2" aria-label="Go back" onClick={handleBackButton}>←</button>
+        <h1 className="h4 fw-bold m-0">♬ Playlists</h1>
+      </div>
+      
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3"> 
+        {artistData.map((artist, index) => (
+          <div className="col d-flex justify-content-center" key={index}> 
+            <ArtistCard name={artist.name} image={artist.image} />
           </div>
-          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4"> {/* Adjust column count */}
-            {artistData.map((artist, index) => (
-              <div className="col" key={index}>
-                <ArtistCard name={artist.name} image={artist.image} />
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

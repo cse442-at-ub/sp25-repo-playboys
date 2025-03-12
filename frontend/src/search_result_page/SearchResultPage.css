@@ -1,0 +1,547 @@
+/* Main search page: Container for the page layout */
+.search-result-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 20px;
+    position: relative;
+}
+
+/* Main content takes up most of the space */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Ensure the content takes full available width */
+}
+
+/* Row containing both the back button and search bar */
+.search-bar-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    position: relative;
+}
+
+/* Back button styling */
+.back-button {
+    background-color: transparent;
+    border: none;
+    color: black; /* Back arrow is black */
+    font-size: 36px; /* Bigger back arrow */
+    padding: 10px;
+    position: absolute; /* Position absolutely */
+    left: 0; /* All the way to the left */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Adjust the song results container */
+.song-results {
+    width: 85%;
+    margin-top: 20px;
+    padding: 10px;
+    position: relative;
+    margin-right: 300px; /* Shift to the left */
+}
+.artist-results {
+    width: 85%;
+    margin-top: 20px;
+    padding: 10px;
+    position: relative;
+    margin-right: 300px; /* Shift to the left */
+}
+.community-results {
+    width: 85%;
+    margin-top: 20px;
+    padding: 10px;
+    position: relative;
+    margin-right: 300px; /* Shift to the left */
+}
+.event-results {
+    width: 85%;
+    margin-top: 20px;
+    padding: 10px;
+    position: relative;
+    margin-right: 300px; /* Shift to the left */
+}
+/* Centered search bar container */
+.search-bar-container {
+    flex-grow: 1; /* Allow the search bar to grow and center itself */
+    display: flex;
+    justify-content: center;
+    margin-left: 60px; /* Adjust the left margin so it isn't hidden by the back arrow */
+}
+
+/* Sidebar styling */
+.sidebar-container {
+    width: 300px; /* Adjust width as needed */
+}
+
+/* Responsive Design: Stack elements on small screens */
+@media (max-width: 768px) {
+    .search-result-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar-container {
+        width: 100%;
+    }
+
+    .search-bar-row {
+        position: relative;
+    }
+
+    .back-button {
+        position: static; /* Reset to default positioning */
+    }
+
+    .search-bar-container {
+        margin-left: 0; /* Reset margin to align properly on small screens */
+    }
+
+    .song-results {
+        width: 100%; /* Ensure search results take full width on small screens */
+        margin-right: 0; /* Reset margin for small screens */
+    }
+    .artist-results {
+        width: 100%; /* Ensure search results take full width on small screens */
+        margin-right: 0; /* Reset margin for small screens */
+    }
+    .community-results {
+        width: 100%; /* Ensure search results take full width on small screens */
+        margin-right: 0; /* Reset margin for small screens */
+    }
+    .event-results {
+        width: 100%; /* Ensure search results take full width on small screens */
+        margin-right: 0; /* Reset margin for small screens */
+    }
+    .main-content {
+        width: 100%; /* Reset width for small screens */
+        margin-left: 0; /* Reset margin for small screens */
+    }
+}
+
+
+
+
+/* css for search bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px; /* Increased width */
+    border: 2px solid black; /* Added black outline */
+}
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    font-size: 16px;
+}
+
+
+
+
+
+
+/********
+********
+songResults css 
+*******
+*********/
+
+.song-results-horizontal-container {
+    padding: 20px;
+    position: relative; /* Needed for scroll arrow positioning */
+}
+
+.song-results-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.song-results-horizontal-scroll {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+.song-results-horizontal-scroll::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Chrome, Safari, and Opera */
+}
+
+.song-item-horizontal {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-right: 10px; /* Space between items */
+}
+
+.song-item-horizontal:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.song-image-horizontal {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.song-details {
+    width: 100%;
+}
+
+.song-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-artist {
+    font-size: 0.9rem;
+    margin: 5px 0 0;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    cursor: pointer;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.scroll-arrow.left {
+    left: 10px;
+}
+
+.scroll-arrow.right {
+    right: 10px;
+}
+
+.scroll-arrow:hover {
+    color: #555;
+}
+
+
+
+
+
+
+/*******
+*******
+artistResults css 
+******
+*******/
+
+.artist-results-horizontal-container {
+    padding: 20px;
+    position: relative;
+}
+
+.artist-results-title {
+    font-size: 2rem; /* Increased title font size */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.artist-results-horizontal-scroll {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.artist-results-horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.artist-item-horizontal {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 15px; /* Increased padding */
+    text-align: center;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-right: 15px; /* Increased margin */
+}
+
+.artist-item-horizontal:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.artist-image-horizontal {
+    width: 150px; /* Increased image width */
+    height: 150px; /* Increased image height */
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px; /* Increased margin */
+}
+
+.artist-details {
+    width: 100%;
+}
+
+.artist-name {
+    font-size: 1.2rem; /* Increased name font size */
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem; /* Increased arrow font size */
+    cursor: pointer;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.scroll-arrow.left {
+    left: 15px;
+}
+
+.scroll-arrow.right {
+    right: 15px;
+}
+
+.scroll-arrow:hover {
+    color: #555;
+}
+
+
+
+
+/*******
+*******
+Community Result css 
+******
+********/
+.community-results-horizontal-container {
+    padding: 20px;
+    position: relative;
+}
+
+.community-results-title {
+    font-size: 2rem; /* Increased title font size */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.community-results-horizontal-scroll {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.community-results-horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.community-item-horizontal {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 15px; /* Increased padding */
+    text-align: center;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-right: 15px; /* Increased margin */
+}
+
+.community-item-horizontal:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.community-image-horizontal {
+    width: 150px; /* Increased image width */
+    height: 150px; /* Increased image height */
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 15px; /* Increased margin */
+}
+
+.community-details {
+    width: 100%;
+}
+
+.community-name {
+    font-size: 1.2rem; /* Increased name font size */
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem; /* Increased arrow font size */
+    cursor: pointer;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.scroll-arrow.left {
+    left: 15px;
+}
+
+.scroll-arrow.right {
+    right: 15px;
+}
+
+.scroll-arrow:hover {
+    color: #555;
+}
+
+
+
+/*******
+*******
+eventResults css 
+******
+********/
+
+.event-search-results {
+    padding: 20px;
+    position: relative;
+  }
+  
+  .event-search-results-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .event-results-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  }
+  
+  .event-results-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Chrome, Safari, and Opera */
+  }
+  
+  .event-item {
+    display: flex;
+    background-color: #e0e0e0;
+    padding: 20px;
+    margin-right: 15px;
+    border-radius: 8px;
+    min-width: 300px;
+    align-items: center;
+  }
+  
+  .event-details {
+    flex-grow: 1;
+  }
+  
+  .event-date,
+  .event-time,
+  .event-location,
+  .event-artist {
+    margin-bottom: 5px;
+  }
+  
+  .event-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #6750A4;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    margin-left: 20px;
+  }
+
+  .event-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+  .scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    cursor: pointer;
+    color: #000;
+    transition: color 0.3s ease;
+  }
+  
+  .scroll-arrow.left {
+    left: 10px;
+  }
+  
+  .scroll-arrow.right {
+    right: 10px;
+  }
+  
+  .scroll-arrow:hover {
+    color: #555;
+  }
