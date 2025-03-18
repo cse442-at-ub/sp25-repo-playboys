@@ -17,7 +17,7 @@ const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
-  const [topAlbums, setTopAlbums] = useState<any[]>([]); // new state for top albums
+  const [topGenres, setTopGenres] = useState<any[]>([]); // new state for top Genres
 
   // Fetch top artists.
   useEffect(() => {
@@ -39,14 +39,14 @@ const Explore: React.FC = () => {
       .catch((error) => console.error("Error fetching top songs:", error));
   }, []);
 
-  // Fetch top albums.
+  // Fetch top genres.
   useEffect(() => {
-    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topAlbums.php`)
+    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topGenres.php`)
       .then((response) => response.json())
       .then((data) => {
-        setTopAlbums(data);
+        setTopGenres(data);
       })
-      .catch((error) => console.error("Error fetching top albums:", error));
+      .catch((error) => console.error("Error fetching top Genres:", error));
   }, []);
 
   const handleGenreClick = (genre: string) => {
@@ -59,6 +59,11 @@ const Explore: React.FC = () => {
     navigate(`/explore/${song.toLowerCase()}`);
   };
 
+  const capitalize = (str: string): string => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+  
+
   return (
     <div className="explore-page">
       <Sidebar />
@@ -68,7 +73,7 @@ const Explore: React.FC = () => {
           <input
             type="text"
             className="search-bar"
-            placeholder="Search for an album, genre, artist, songs... 🔍"
+            placeholder="Search for an Genre, genre, artist, songs... 🔍"
           />
         </div>
 
@@ -115,35 +120,24 @@ const Explore: React.FC = () => {
               <p>Loading top artists...</p>
             )}
           </div>
-          {/* Top Albums */}
-          <div className="listening-column">
-            <h3>
-              <center>Top Albums</center>
-            </h3>
-            {topAlbums.length > 0 ? (
-              topAlbums.slice(0, 5).map((album, index) => (
-                <div
-                  className="list-item"
-                  key={album.name + index}
-                  style={{ cursor: "pointer" }}
-                >
-                  {album.name}
-                </div>
-              ))
-            ) : (
-              <p>Loading top albums...</p>
-            )}
-          </div>
           {/* Top Genres */}
           <div className="listening-column">
             <h3>
               <center>Top Genres</center>
             </h3>
-            <div className="list-item">Pop</div>
-            <div className="list-item">Rock</div>
-            <div className="list-item">Hip Hop</div>
-            <div className="list-item">R&B</div>
-            <div className="list-item">Country</div>
+            {topGenres.length > 0 ? (
+              topGenres.slice(0, 5).map((genre, index) => (
+                <div
+                  className="list-item"
+                  key={genre.name + index}
+                  style={{ cursor: "pointer" }}
+                >
+                  {capitalize(genre.name)}
+                </div>
+              ))
+            ) : (
+              <p>Loading top Genres...</p>
+            )}
           </div>
         </div>
 
