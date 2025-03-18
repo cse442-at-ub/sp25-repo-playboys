@@ -17,6 +17,7 @@ const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
+  const [topGenres, setTopGenres] = useState<any[]>([]); // new state for top Genres
 
   // Fetch top artists.
   useEffect(() => {
@@ -27,7 +28,8 @@ const Explore: React.FC = () => {
       })
       .catch((error) => console.error("Error fetching top artists:", error));
   }, []);
-  // Fetch top somgs.
+
+  // Fetch top songs.
   useEffect(() => {
     fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topSongs.php`)
       .then((response) => response.json())
@@ -35,6 +37,16 @@ const Explore: React.FC = () => {
         setTopTracks(data);
       })
       .catch((error) => console.error("Error fetching top songs:", error));
+  }, []);
+
+  // Fetch top genres.
+  useEffect(() => {
+    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topGenres.php`)
+      .then((response) => response.json())
+      .then((data) => {
+        setTopGenres(data);
+      })
+      .catch((error) => console.error("Error fetching top Genres:", error));
   }, []);
 
   const handleGenreClick = (genre: string) => {
@@ -45,6 +57,10 @@ const Explore: React.FC = () => {
   };
   const handleSongClick = (song: string) => {
     navigate(`/explore/${song.toLowerCase()}`);
+  };
+
+  const capitalize = (str: string): string => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
   
 
@@ -57,7 +73,7 @@ const Explore: React.FC = () => {
           <input
             type="text"
             className="search-bar"
-            placeholder="Search for an album, genre, artist, songs... 🔍"
+            placeholder="Search for a genre, artist, songs... 🔍"
           />
         </div>
 
@@ -71,14 +87,18 @@ const Explore: React.FC = () => {
             </h3>
             {topTracks.length > 0 ? (
               topTracks.slice(0, 5).map((track, index) => (
-                <div className="list-item" 
-                key={track.name + index}
-                onClick={() => handleSongClick(track.name)}
-                style={{ cursor: "pointer" }}>
+                <div
+                  className="list-item"
+                  key={track.name + index}
+                  onClick={() => handleSongClick(track.name)}
+                  style={{ cursor: "pointer" }}
+                >
                   {track.name} - {track.artist.name}
                 </div>
               ))
-            ) : (<p>Loading top songs...</p>)}
+            ) : (
+              <p>Loading top songs...</p>
+            )}
           </div>
           {/* Top Artists */}
           <div className="listening-column">
@@ -91,33 +111,33 @@ const Explore: React.FC = () => {
                   className="list-item"
                   key={artist.name + index}
                   onClick={() => handleArtistClick(artist.name)}
-                  style={{ cursor: "pointer" }}>
+                  style={{ cursor: "pointer" }}
+                >
                   {artist.name}
                 </div>
               ))
-            ) : (<p>Loading top artists...</p>)}
-          </div>
-          {/* Top Albums */}
-          <div className="listening-column">
-            <h3>
-              <center>Top Albums</center>
-            </h3>
-            <div className="list-item">Album 1</div>
-            <div className="list-item">Album 2</div>
-            <div className="list-item">Album 3</div>
-            <div className="list-item">Album 4</div>
-            <div className="list-item">Album 5</div>
+            ) : (
+              <p>Loading top artists...</p>
+            )}
           </div>
           {/* Top Genres */}
           <div className="listening-column">
             <h3>
               <center>Top Genres</center>
             </h3>
-            <div className="list-item">Pop</div>
-            <div className="list-item">Rock</div>
-            <div className="list-item">Hip Hop</div>
-            <div className="list-item">R&B</div>
-            <div className="list-item">Country</div>
+            {topGenres.length > 0 ? (
+              topGenres.slice(0, 5).map((genre, index) => (
+                <div
+                  className="list-item"
+                  key={genre.name + index}
+                  style={{ cursor: "pointer" }}
+                >
+                  {capitalize(genre.name)}
+                </div>
+              ))
+            ) : (
+              <p>Loading top Genres...</p>
+            )}
           </div>
         </div>
 
@@ -130,7 +150,6 @@ const Explore: React.FC = () => {
               className="genre-box"
               style={{ backgroundColor: genre.color, cursor: "pointer" }}
               onClick={() => handleGenreClick(genre.name)}
-              
             >
               {genre.name}
             </button>
