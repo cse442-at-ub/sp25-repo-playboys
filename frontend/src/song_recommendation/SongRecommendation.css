@@ -1,105 +1,119 @@
+/* Song container */
 .song-container {
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+  padding-right: 240px;
+}
+
+/* Song details */
+.song-details {
+  display: flex;
+  flex-direction: row;
+  background: #eee;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  min-height: 84vh;
+  max-height: 84vh;
+  align-items: flex-start;
+  position: relative; /* Needed for absolute positioning of swipe indicator */
+}
+
+/* Album Art */
+.album-art {
+  width: 300px;
+  height: 300px;
+  background: brown;
+  margin-right: 40px;
+  flex-shrink: 0;
+}
+
+/* Song Info */
+.song-info h2,
+.song-info h3 {
+  margin: 10px 0;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 12;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Swipe Indicator (appears during swipe) */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 10px;
+  opacity: 0.8;
+  color: white;
+  z-index: 10;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Like (Swipe Left) - Red Background */
+.swipe-indicator.left {
+  background: rgba(255, 0, 0, 0.8);
+}
+
+/* Skip (Swipe Right) - Blue Background */
+.swipe-indicator.right {
+  background: rgba(0, 102, 255, 0.8);
+}
+
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  .song-container {
+    padding-right: 0;
+  }
+
+  .song-details {
     flex-direction: column;
     align-items: center;
-    width: 90%;
-    margin: auto;
-    padding-right: 240px;
+    padding: 15px;
+    min-height: 78vh;
+    max-height: 78vh;
   }
-  
-  .song-details {
-    display: flex;
-    flex-direction: row; /* Ensures album art and info stay side by side */
-    background: #eee;
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    min-height: 84vh;
-    max-height: 84vh;
-    align-items: flex-start; /* Keeps items aligned at the top */
-  }
-  
+
   .album-art {
-    width: 300px;
-    height: 300px;
-    background: brown;
-    margin-right: 40px;
-    flex-shrink: 0; /* Prevents it from shrinking */
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
   }
-  
-  .song-info h2,
-  .song-info h2,
-  .song-info h2,
-  .song-info h3 {
-    margin: 10px 0;
-    flex-grow: 1; /* Allows it to expand naturally */
-    display: -webkit-box;
-    -webkit-line-clamp: 12; /* Number of lines before truncation */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+
+  .song-info {
+    text-align: center;
   }
-  
+
   .controls {
-    display: flex;
-    justify-content: center;
+    flex-direction: row;
     gap: 40px;
     margin-top: 30px;
   }
-  
+
   .controls button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
+    font-size: 20px;
   }
-  
-  .heart-btn.liked {
-    color: red;
-  }
-  
-  
-  /* Mobile view adjustments */
-  @media (max-width: 768px) {
-    .song-container {
-      padding-right: 0; /* Remove padding to use full width on smaller screens */
-    }
-  
-    .song-details {
-      flex-direction: column; /* Stack album art and song info vertically */
-      align-items: center;
-      padding: 15px;
-      min-height: 78vh;
-      max-height: 78vh;
-    }
-  
-    .album-art {
-      width: 200px; /* Reduce size of album art */
-      height: 200px; /* Adjust height accordingly */
-      margin-right: 0; /* Remove right margin */
-      margin-bottom: 20px; /* Add margin for space between art and text */
-    }
-  
-    .song-info {
-      text-align: center; /* Center text on smaller screens */
-      flex-grow: 1; /* Allows it to expand naturally */
-      display: -webkit-box;
-      -webkit-line-clamp: 12; /* Number of lines before truncation */
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  
-    .controls {
-      flex-direction: row; /* Stack buttons vertically */
-      gap: 40px; /* Reduce gap between buttons */
-      margin-top: 30px;
-    }
-  
-    .controls button {
-      font-size: 20px; /* Make buttons smaller */
-    }
-  
-    .song-info h2,
-    .song-info h3 {
-      margin: 8px 0;
-    }
-  }
+}
