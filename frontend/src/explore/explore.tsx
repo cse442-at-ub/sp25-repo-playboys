@@ -66,7 +66,10 @@ const Explore: React.FC = () => {
 
   return (
     <div className="explore-page">
-      <Sidebar />
+      <div className="sidebar">
+        <Sidebar />
+      </div>
+      
       <div className="explore-content">
         {/* Search Bar */}
         <div className="search-bar-container">
