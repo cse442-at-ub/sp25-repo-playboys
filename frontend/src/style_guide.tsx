@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Button } from 'react-bootstrap';
 
 // Color Palette
@@ -85,7 +85,7 @@ export const SecondaryButton = ({ children, onClick }: { children: React.ReactNo
 
 // Headings
 export const Heading = ({ level, children }: { level?: number; children: React.ReactNode }) => {
-  const Tag = `h${level || 1}` as keyof JSX.IntrinsicElements;
+  const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
   return (
     <Tag style={{ fontWeight: FontWeights.bold, color: Colors.dark, marginBottom: Spacing.md }}>
       {children}
