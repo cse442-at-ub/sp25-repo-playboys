@@ -49,15 +49,16 @@ export const Spacing = {
 
 // Reusable Components
 
-export const PrimaryButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+export const PrimaryButton = ({ children, onClick, disabled }: ButtonProps) => (
   <Button
     variant="primary"
+    disabled={disabled}
     style={{
       padding: '12px',
-      backgroundColor: Colors.success,
-      borderRadius: BorderRadius.medium,
-      fontSize: FontSizes.lg,
-      fontWeight: FontWeights.bold,
+      backgroundColor: '#32cd32',
+      borderRadius: '12px',
+      fontSize: '18px',
+      fontWeight: 'bold',
       width: '100%',
     }}
     onClick={onClick}
@@ -66,15 +67,16 @@ export const PrimaryButton = ({ children, onClick }: { children: React.ReactNode
   </Button>
 );
 
-export const SecondaryButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+export const SecondaryButton = ({ children, onClick, disabled }: ButtonProps) => (
   <Button
     variant="secondary"
+    disabled={disabled}
     style={{
       padding: '12px',
-      backgroundColor: Colors.secondary,
-      borderRadius: BorderRadius.medium,
-      fontSize: FontSizes.lg,
-      fontWeight: FontWeights.bold,
+      backgroundColor: '#6c757d',
+      borderRadius: '12px',
+      fontSize: '18px',
+      fontWeight: 'bold',
       width: '100%',
     }}
     onClick={onClick}

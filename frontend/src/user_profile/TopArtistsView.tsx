@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Heading, Colors, Spacing, FontSizes } from '../style_guide';
 
 const artistData = [
   { name: 'Drake', image: './static/Drakepfp.png' },
@@ -17,14 +18,13 @@ interface ArtistCardProps {
 
 function ArtistCard({ name, image }: ArtistCardProps) {
   return (
-    <div className="text-center">
+    <div style={{ textAlign: 'center' }}>
       <img
         src={image}
         alt={`${name}'s profile`}
-        className="img-fluid rounded-circle mb-2"
-        style={{ width: '90px', height: '90px' }} // Smaller size for mobile
+        style={{ width: '90px', height: '90px', borderRadius: '50%', marginBottom: Spacing.sm, objectFit: 'cover' }}
       />
-      <h2 className="h6 fw-bold text-truncate" style={{ maxWidth: '100px' }}>{name}</h2>
+      <h2 style={{ fontSize: FontSizes.sm, fontWeight: 600, maxWidth: '100px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</h2>
     </div>
   );
 }
@@ -32,22 +32,17 @@ function ArtistCard({ name, image }: ArtistCardProps) {
 function TopArtistsView() {
   const navigate = useNavigate();
 
-  const handleBackButton = () => {
-    console.log("Back button clicked");
-    navigate('/userProfile'); // Navigate to the desired route
-  };
+  const handleBackButton = () => navigate('/userProfile');
 
   return (
-    <div className="container-fluid bg-white px-3">
-      <div className="d-flex align-items-center mb-3">
-        <button className="btn btn-light btn-sm fs-5 me-2" aria-label="Go back" onClick={handleBackButton}>
-          ←
-        </button>
-        <h1 className="h4 fw-bold mb-0">Your Top Artists</h1>
+    <div style={{ backgroundColor: Colors.white, padding: `0 ${Spacing.md}` }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: Spacing.sm }}>
+        <button onClick={handleBackButton} style={{ background: 'none', border: 'none', fontSize: FontSizes.base, marginRight: Spacing.sm }}>←</button>
+        <Heading level={2}>Your Top Artists</Heading>
       </div>
       <div className="row row-cols-3 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 g-3">
         {artistData.map((artist, index) => (
-          <div className="col d-flex justify-content-center" key={index}>
+          <div key={index} className="col d-flex justify-content-center">
             <ArtistCard name={artist.name} image={artist.image} />
           </div>
         ))}
