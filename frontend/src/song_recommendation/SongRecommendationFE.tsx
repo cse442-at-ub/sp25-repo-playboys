@@ -23,6 +23,10 @@ const SongRecommendation: React.FC = () => {
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const controls = useAnimation();
   const playerRef = useRef<any>(null);
+  const [remainingTime, setRemainingTime] = useState<number>(MAX_PLAY_DURATION);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
 
   const fetchToken = async () => {
     const res = await fetch(`${process.env.REACT_APP_API_URL}spotifyplayer.php`, {
@@ -134,32 +138,47 @@ const SongRecommendation: React.FC = () => {
   }, [token, playerReady]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    let interval: NodeJS.Timeout;
-  
     if (isPlaying && currentTrack) {
-      const totalSeconds = MAX_PLAY_DURATION / 1000;
-      setCountdown(totalSeconds); // Start countdown display
+      // Start countdown only if not already running
+      if (!countdownIntervalRef.current) {
+        setCountdown(Math.ceil(remainingTime / 1000));
   
-      interval = setInterval(() => {
-        setCountdown(prev => {
-          if (prev && prev > 1) return prev - 1;
-          return null;
-        });
-      }, 1000);
+        countdownIntervalRef.current = setInterval(() => {
+          setRemainingTime(prev => {
+            const next = prev - 1000;
+            setCountdown(Math.ceil(next / 1000));
+            return next;
+          });
+        }, 1000);
   
-      timeout = setTimeout(() => {
-        fadeOutAndSkip();
-        setCountdown(null); // Clear countdown when done
-      }, MAX_PLAY_DURATION);
+        timeoutRef.current = setTimeout(() => {
+          fadeOutAndSkip();
+          clearInterval(countdownIntervalRef.current!);
+          countdownIntervalRef.current = null;
+          timeoutRef.current = null;
+          setCountdown(null);
+          setRemainingTime(MAX_PLAY_DURATION); // Reset for next track
+        }, remainingTime);
+      }
+    } else {
+      // Pause countdown
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+        countdownIntervalRef.current = null;
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     }
   
     return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-      setCountdown(null); // Clean up on song change
+      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      countdownIntervalRef.current = null;
+      timeoutRef.current = null;
     };
-  }, [isPlaying, currentTrack]);
+  }, [isPlaying, currentTrack]);  
 
 
   const handlePlay = async () => {
@@ -210,7 +229,7 @@ const SongRecommendation: React.FC = () => {
           position_ms: 0,
         }),
       });
-  
+      setRemainingTime(MAX_PLAY_DURATION);
       setCurrentTrack(randomTrack);
     }
   
@@ -255,6 +274,7 @@ const SongRecommendation: React.FC = () => {
         setTimeout(() => playerRef.current.setVolume(0.8), 500);
       }
     }, interval);
+    setRemainingTime(MAX_PLAY_DURATION);
   };
   
 
