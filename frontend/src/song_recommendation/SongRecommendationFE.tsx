@@ -17,8 +17,9 @@ const SongRecommendation: React.FC = () => {
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [liked, setLiked] = useState(false);
-  const MAX_PLAY_DURATION = 45000; // 45 seconds
+  const MAX_PLAY_DURATION = 36000; // 36 seconds
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const controls = useAnimation();
   const playerRef = useRef<any>(null);
@@ -91,16 +92,32 @@ const SongRecommendation: React.FC = () => {
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
   
-    if (isPlaying) {
+    if (isPlaying && currentTrack) {
+      const totalSeconds = MAX_PLAY_DURATION / 1000;
+      setCountdown(totalSeconds); // Start countdown display
+  
+      interval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev && prev > 1) return prev - 1;
+          return null;
+        });
+      }, 1000);
+  
       timeout = setTimeout(() => {
-        fadeOutAndSkip(); // 🔊 fade audio, then skip
+        fadeOutAndSkip();
+        setCountdown(null); // Clear countdown when done
       }, MAX_PLAY_DURATION);
     }
   
-    return () => clearTimeout(timeout);
-  }, [isPlaying]);
-  
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+      setCountdown(null); // Clean up on song change
+    };
+  }, [isPlaying, currentTrack]);
+
 
   const handlePlay = async () => {
     if (!deviceId || !token) return;
@@ -216,6 +233,11 @@ const SongRecommendation: React.FC = () => {
           <h2>{currentTrack.artists.map((a: any) => a.name).join(", ")}</h2>
           <h2>{currentTrack.album.name}</h2>
           <h2>Now Playing: Top 50 Global Playlist</h2>
+          {countdown !== null && (
+          <h3 style={{ marginTop: "1rem", color: "#888" }}>
+            Skipping in {countdown} second{countdown !== 1 ? "s" : ""}
+          </h3>
+          )}
         </>
       ) : (<> </>)}
         </div>
