@@ -2,6 +2,7 @@ import React from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
+import SongRecommendation from "../song_recommendation/SongRecommendationFE";
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -125,6 +126,7 @@ const Explore: React.FC = () => {
             <div className="event-location">Orchard Park</div>
           </div>
         </div>
+        <SongRecommendation/>
       </div>
     </div>
   );
