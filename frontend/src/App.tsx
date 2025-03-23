@@ -37,6 +37,8 @@ import FriendRequest from "./Settings/community_settings/friendRequest";
 import SearchPage from "./search_result_page/searchResultPage";
 //import all mobile views for setting
 
+//Import SongRecommendation
+import SongRecommendation from "./song_recommendation/SongRecommendationFE";
 
 // Explore Page
 import Explore from "./explore/explore";

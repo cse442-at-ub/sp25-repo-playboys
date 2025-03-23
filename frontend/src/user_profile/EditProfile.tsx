@@ -15,7 +15,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/updateProfile.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}updateProfile.php`, {
           method: "GET",
           credentials: "include",
         });
@@ -46,7 +46,7 @@ const EditProfile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/updateProfile.php`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}updateProfile.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email }),
@@ -90,7 +90,7 @@ const EditProfile = () => {
     formData.append('profileImage', profileImage);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/profileUpload.php`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}profileUpload.php`, {
         method: "POST",
         body: formData,
         credentials: "include",
