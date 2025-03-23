@@ -33,6 +33,46 @@ const SongRecommendation: React.FC = () => {
     setToken(data.access_token);
   };
 
+  const getRandomTrackFromRandomPlaylist = async () => {
+    if (!token) return null;
+  
+    const searchTerms = ["top", "hits", "vibes", "pop", "chill", "party"];
+    const randomSearch = searchTerms[Math.floor(Math.random() * searchTerms.length)];
+  
+    const searchRes = await fetch(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(randomSearch)}&type=playlist&limit=50`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+  
+    const searchData = await searchRes.json();
+    const playlists = (searchData.playlists?.items || []).filter((p: any) => p && p.id);
+  
+    if (!playlists || playlists.length === 0) return null;
+  
+    const randomPlaylist = playlists[Math.floor(Math.random() * playlists.length)];
+    const playlistId = randomPlaylist.id;
+  
+    const tracksRes = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+  
+    const tracksData = await tracksRes.json();
+    const tracks = tracksData.items
+      .map((item: any) => item.track)
+      .filter((track: any) => track?.uri);
+  
+    if (tracks.length === 0) return null;
+  
+    const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+    return randomTrack;
+  };
+  
+
   useEffect(() => {
     fetchToken();
   }, []);
@@ -46,13 +86,12 @@ const SongRecommendation: React.FC = () => {
         volume: 0.8,
       });
       playerRef.current = player;
-      player.addListener("ready", ({ device_id }: any) => {
+      player.addListener("ready", async ({ device_id }: any) => {
         console.log("Player ready with device_id:", device_id);
         setDeviceId(device_id);
         setPlayerReady(true);
-
-        // Transfer playback to the device
-        fetch("https://api.spotify.com/v1/me/player", {
+      
+        await fetch("https://api.spotify.com/v1/me/player", {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,18 +99,22 @@ const SongRecommendation: React.FC = () => {
           },
           body: JSON.stringify({ device_ids: [device_id], play: true }),
         });
-
-        // Start Top 50 Global playlist
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            context_uri: "spotify:playlist:37i9dQZEVXbMDoHDwVN2tF",
-          }),
-        });
+      
+        const randomTrack = await getRandomTrackFromRandomPlaylist();
+        if (randomTrack) {
+          await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uris: [randomTrack.uri],
+              position_ms: 0,
+            }),
+          });
+          setCurrentTrack(randomTrack);
+        }
       });
 
       player.addListener("player_state_changed", (state: any) => {
@@ -153,21 +196,36 @@ const SongRecommendation: React.FC = () => {
   const handleSkipSong = async () => {
     setSwipeDirection("right");
     await controls.start({ x: 300, opacity: 0, transition: { duration: 0.4 } });
-    await fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    await resetState();
+  
+    const randomTrack = await getRandomTrackFromRandomPlaylist();
+    if (randomTrack) {
+      await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uris: [randomTrack.uri],
+          position_ms: 0,
+        }),
+      });
+  
+      setCurrentTrack(randomTrack);
+    }
+  
+    await controls.start({ x: 0, opacity: 1 });
+    setSwipeDirection(null);
+    setLiked(false);
   };
+  
 
   const fadeOutAndSkip = async () => {
     if (!playerRef.current || !token || !deviceId) return;
   
-    let volume = 0.8; // starting volume
+    let volume = 0.8;
     const fadeStep = 0.1;
-    const interval = 100; // ms between each step
+    const interval = 100;
   
     const fade = setInterval(async () => {
       volume = Math.max(0, volume - fadeStep);
@@ -176,19 +234,29 @@ const SongRecommendation: React.FC = () => {
       if (volume <= 0) {
         clearInterval(fade);
   
-        // Skip track after fade
-        await fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const randomTrack = await getRandomTrackFromRandomPlaylist();
+        if (randomTrack) {
+          await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uris: [randomTrack.uri],
+              position_ms: 0,
+            }),
+          });
+  
+          setCurrentTrack(randomTrack);
+        }
   
         // Restore volume for next track
         setTimeout(() => playerRef.current.setVolume(0.8), 500);
       }
     }, interval);
   };
+  
 
   const resetState = async () => {
     setSwipeDirection(null);
@@ -232,7 +300,6 @@ const SongRecommendation: React.FC = () => {
           <h2>{currentTrack.name}</h2>
           <h2>{currentTrack.artists.map((a: any) => a.name).join(", ")}</h2>
           <h2>{currentTrack.album.name}</h2>
-          <h2>Now Playing: Top 50 Global Playlist</h2>
           {countdown !== null && (
           <h3 style={{ marginTop: "1rem", color: "#888" }}>
             Skipping in {countdown} second{countdown !== 1 ? "s" : ""}
