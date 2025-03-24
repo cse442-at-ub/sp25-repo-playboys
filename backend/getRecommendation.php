@@ -16,7 +16,7 @@ if (!isset($_SESSION['username'])) {
 
 $username = $_SESSION['username'];
 
-// Step 1: Get access token from DB
+//Get access token from DB
 $stmt = $conn->prepare("SELECT access_token FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -29,11 +29,11 @@ if (!$result || !$result['access_token']) {
 
 $token = $result['access_token'];
 
-// Step 2: Choose a random artist
+//Choose a random artist
 $artistList = ["Bring Me The Horizon", "Ariana Grande", "Taylor Swift", "Kendrick Lamar", "Billie Eilish"];
 $chosenArtist = $artistList[array_rand($artistList)];
 
-// Step 3: Search Spotify for that artist
+//Search Spotify for that artist
 $searchUrl = "https://api.spotify.com/v1/search?q=" . urlencode($chosenArtist) . "&type=artist&limit=1";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $searchUrl);
@@ -52,7 +52,7 @@ if (empty($searchData['artists']['items'][0]['id'])) {
 
 $artistID = $searchData['artists']['items'][0]['id'];
 
-// Step 4: Get top tracks for the artist
+//Get top tracks for the artist
 $tracksUrl = "https://api.spotify.com/v1/artists/$artistID/top-tracks?country=US";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $tracksUrl);
@@ -78,7 +78,7 @@ if (!$selectedTrack) {
     exit();
 }
 
-// Step 5: Send back track data
+//Send back track data
 echo json_encode([
     "name" => $selectedTrack['name'],
     "artist" => $selectedTrack['artists'][0]['name'],
