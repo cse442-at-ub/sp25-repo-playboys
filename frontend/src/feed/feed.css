@@ -1,0 +1,80 @@
+/* Fullscreen feed container */
+.feed-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    position: relative;
+}
+
+/* Each post should take up the full screen */
+.post {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+/* Video should cover the full screen while maintaining aspect ratio */
+.post-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+}
+
+/* Overlay for text to ensure readability */
+.post-overlay {
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    width: 90%;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Title styling */
+.post-info h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Description text */
+.post-info p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+/* Song info styling */
+.song {
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Styling for the Post action button at the bottom right */
+.post-actions {
+    position: absolute;
+    bottom: 20px; /* Adjust distance from bottom */
+    right: 20px;  /* Adjust distance from right */
+    z-index: 10;  /* Ensure the button is above other content */
+}
+
+.post-actions button {
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the button */
+.post-actions button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}

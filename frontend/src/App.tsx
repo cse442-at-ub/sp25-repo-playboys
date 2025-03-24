@@ -33,6 +33,13 @@ import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
+
+// Coummunity Components
+import CommunityPage from "./communities/comunity_page";
+
+// Feed Compnents
+import Feed from "./feed/feed";
+import PostPage from "./feed/post";
 //import all mobile views for setting
 
 
@@ -70,6 +77,13 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/communities" element={<CommunityPage />}/>
+        <Route path="/feed" element={<Feed/>}/>
+        <Route path="/feed/post" element={<PostPage/>}/>
+
+
+
+
       </Routes>
     </Router>
   );
