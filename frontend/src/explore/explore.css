@@ -107,7 +107,11 @@
 .explore-content{
   margin-right: 10%;
   margin-left: 10%;
+<<<<<<< HEAD
   margin-bottom: 120px;
+=======
+  margin-bottom: 20px;
+>>>>>>> origin/dev
 }
 
 .genre-box, .artist-button {
@@ -126,4 +130,8 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.songrecommend {
+  margin-bottom: 120px;
 }
