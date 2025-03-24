@@ -188,6 +188,7 @@ const Explore: React.FC = () => {
             <div className="event-location">Orchard Park</div>
           </div>
         </div>
+        <SongRecommendation/>
       </div>
       <div className="songrecommend">
         <SongRecommendation/>

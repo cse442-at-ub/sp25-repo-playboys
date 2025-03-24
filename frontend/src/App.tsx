@@ -38,6 +38,8 @@ import SearchPage from "./search_result_page/searchResultPage";
 import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 //import all mobile views for setting
 
+//Import SongRecommendation
+import SongRecommendation from "./song_recommendation/SongRecommendationFE";
 
 // Explore Page
 import Explore from "./explore/explore";
