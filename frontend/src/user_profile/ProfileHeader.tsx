@@ -17,7 +17,7 @@ function ProfileHeader() {
 
     const fetchProfile = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}getProfile.php?user=${user || ""}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php?user=${user || ""}`, {
                 method: "GET",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },

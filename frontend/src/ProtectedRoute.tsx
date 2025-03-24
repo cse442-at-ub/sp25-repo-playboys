@@ -7,7 +7,7 @@ const ProtectedRoute = ({ element }: { element: React.ReactElement }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}independentCookieAuth.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/independentCookieAuth.php`, {
           method: "GET",
           credentials: "include", // Sends cookies with request
         });
