@@ -47,7 +47,7 @@ if (!isset($data['access_token'])) {
 
 $access_token = $data['access_token'];
 
-// 🔍 Get user info from Spotify
+//Get user info from Spotify
 $meCurl = curl_init();
 curl_setopt($meCurl, CURLOPT_URL, "https://api.spotify.com/v1/me");
 curl_setopt($meCurl, CURLOPT_RETURNTRANSFER, true);
@@ -89,7 +89,7 @@ if ($row) {
     $username = $generated_username;
 }
 
-// ✅ Set session username
+//Set session username
 $_SESSION['username'] = $username;
 
 // Redirect to explore page
