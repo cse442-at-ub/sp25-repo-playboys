@@ -50,7 +50,7 @@ function ProfileHeader() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}addFriends.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/addFriends.php`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
