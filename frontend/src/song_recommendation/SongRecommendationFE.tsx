@@ -29,7 +29,7 @@ const SongRecommendation: React.FC = () => {
 
 
   const fetchToken = async () => {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}spotifyplayer.php`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/spotifyplayer.php`, {
       credentials: "include"
     });
     

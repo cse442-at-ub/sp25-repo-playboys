@@ -12,7 +12,7 @@ const Login: React.FC = () => {
         const data = { username, password };
 
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL}login.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/login.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,7 +33,7 @@ const Login: React.FC = () => {
     const handleSpotifyLogin = async () => {
         //request sign in with global+/login.php as path
         //request sign in with global+/login.php as path
-        window.location.href = `${process.env.REACT_APP_API_URL}spotify_login.php`;
+        window.location.href = `${process.env.REACT_APP_API_URL}backend/spotify_login.php`;
     };
 
         
