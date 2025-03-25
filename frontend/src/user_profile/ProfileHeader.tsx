@@ -78,7 +78,7 @@ function ProfileHeader() {
 
     const acceptFriendRequest = async (friendUsername: string) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}acceptFriends.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },

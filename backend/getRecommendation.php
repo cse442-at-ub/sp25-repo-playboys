@@ -1,7 +1,15 @@
 <?php
 
 //For Local Testing
-header("Access-Control-Allow-Origin: http://localhost:3000");
+$allowedOrigins = [
+    "http://localhost:3000",
+    "https://se-dev.cse.buffalo.edu"
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+}
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
