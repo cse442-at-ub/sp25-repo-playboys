@@ -19,7 +19,8 @@ $auth_url = "https://accounts.spotify.com/authorize?" . http_build_query([
     'client_id'     => $client_id,
     'scope'         => $scope_param,
     'redirect_uri'  => $redirect_uri,
-    'show_dialog'   => 'true'
+    'show_dialog'   => 'true',
+    'prompt'        => 'consent'
 ]);
 
 header("Location: $auth_url");
