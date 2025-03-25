@@ -12,12 +12,12 @@ $scopes = [
     'user-read-playback-state'
 ];
 
-$scope_param = urlencode(implode(' ', $scopes));
+$scope_param = implode(' ', $scopes);
 
 $auth_url = "https://accounts.spotify.com/authorize?" . http_build_query([
     'response_type' => 'code',
     'client_id'     => $client_id,
-    'scope'         => implode(' ', $scopes),
+    'scope'         => $scope_param,
     'redirect_uri'  => $redirect_uri,
     'show_dialog'   => 'true'
 ]);
