@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
+import SongRecommendation from "../song_recommendation/SongRecommendationFE";
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -188,6 +189,10 @@ const Explore: React.FC = () => {
           </div>
         </div>
       </div>
+      <div className="songrecommend">
+        <SongRecommendation/>
+      </div>
+
     </div>
   );
 };
