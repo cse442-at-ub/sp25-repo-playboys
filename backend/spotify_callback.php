@@ -51,6 +51,8 @@ if (!isset($token_data['access_token'])) {
 }
 
 $access_token = $token_data['access_token'];
+$_SESSION['access_token'] = $access_token;
+
 // Optionally handle refresh token and expiration if needed
 
 // 4. Use the access token to fetch the user's profile data from Spotify

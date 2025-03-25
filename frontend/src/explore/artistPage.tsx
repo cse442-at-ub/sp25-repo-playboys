@@ -15,6 +15,8 @@ const ArtistPage: React.FC = () => {
         .then(data => {
           if (data.status === 'success') {
             setTopSongs(data.topSongs);
+          } else {
+            console.error("Error fetching top songs:", data.message);
           }
           setLoading(false);
         })
