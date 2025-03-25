@@ -85,24 +85,79 @@ $result = $login_user->get_result();
 
 // // if user doesnt exist we register them
 if ($result->num_rows === 0) {
-
-
     //prepare sql statement and bind parameters
     $insert_new_user = $conn->prepare("INSERT INTO user_login_data (access_token, email, username, spotify_id) VALUES (?, ?, ?, ?)");
     $insert_new_user->bind_param("ssss",$access_token, $email, $display_name, $spotify_id);
 
     //insert newly registered user into database
     $insert_new_user->execute();
-    echo json_encode(["status" => "success", "message" => "User registered successfully"]);
+
+
+    //trim and grab data sent from json object from router.php
+    $username = $spotify_id;
+    $followers = 0;
+    $followings = 0;
+    $friends = 0;
+    $top_songs = "";
+    $top_artists = "";
+    $recent_activity = "";
+    $profile_pic = "";
+
+  
+    //make new user profile table for new user
+    $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic) VALUES (?, ?, ? , ? , ? , ? , ? , ?, ?)");
+    $insert_new_profile->bind_param("sssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity);
+    $insert_new_profile->execute();
+
+
+    //generate random token
+    $token = bin2hex(random_bytes(32));
+    //add auth_key: will act as a token for user confirmation
+    $delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
+    $delete_old_keys->bind_param("s", $display_name);
+    $delete_old_keys->execute();
+    $delete_old_keys->close();
+    
+    $insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key) VALUES (?, ?)");
+    $insert_key->bind_param("ss", $display_name, $token);
+    $insert_key->execute();
+    $insert_key->close();
+    setcookie('auth_token', $token, [
+        'expires' => time() + 3600,
+        'path' => '/'
+    ]);
+    header('Location: ' . $config['frontend_url'] . '#/userprofile');
 
     //garbage collection
     $insert_new_user->close();
+    $insert_new_profile->close();
     $conn->close();
 }
 // they were already registered so we log them in
 else{
+    //generate random token
+    $token = bin2hex(random_bytes(32));
+    //add auth_key: will act as a token for user confirmation
+    $delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
+    $delete_old_keys->bind_param("s", $display_name);
+    $delete_old_keys->execute();
+    $delete_old_keys->close();
+    
+    $insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key) VALUES (?, ?)");
+    $insert_key->bind_param("ss", $display_name, $token);
+    $insert_key->execute();
+    $insert_key->close();
 
-    echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
+    // Set session for Song Recommendation
+    $_SESSION['username'] = $spotify_id;
+    
+    setcookie('auth_token', $token, [
+        'expires' => time() + 3600,
+        'path' => '/'
+    ]);
+    header('Location: ' . $config['frontend_url'] . '#/userprofile');
+
+    // echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
 }
 // Redirect the user to a protected area or dashboard
 exit;
