@@ -37,13 +37,47 @@ const SongRecommendation: React.FC = () => {
     setToken(data.access_token);
   };
 
+  const refreshAccessToken = async (): Promise<string | null> => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}backend/refresh_token.php`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.access_token) {
+        setToken(data.access_token);
+        return data.access_token;
+      }
+    } catch (err) {
+      console.error("Error refreshing token:", err);
+    }
+    return null;
+  };
+  
+  const safeFetch = async (url: string, options: RequestInit): Promise<Response> => {
+    let res = await fetch(url, options);
+    if (res.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        const newOptions = {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: `Bearer ${newToken}`
+          }
+        };
+        res = await fetch(url, newOptions);
+      }
+    }
+    return res;
+  };  
+
   const getRandomTrackFromRandomPlaylist = async () => {
     if (!token) return null;
   
     const searchTerms = ["top", "hits", "vibes", "pop", "chill", "party"];
     const randomSearch = searchTerms[Math.floor(Math.random() * searchTerms.length)];
   
-    const searchRes = await fetch(
+    const searchRes = await safeFetch(
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(randomSearch)}&type=playlist&limit=50`,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +92,7 @@ const SongRecommendation: React.FC = () => {
     const randomPlaylist = playlists[Math.floor(Math.random() * playlists.length)];
     const playlistId = randomPlaylist.id;
   
-    const tracksRes = await fetch(
+    const tracksRes = await safeFetch(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -82,20 +116,24 @@ const SongRecommendation: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!token || playerReady) return;
+    const script = document.createElement("script");
+    script.src = "https://sdk.scdn.co/spotify-player.js";
+    script.async = true;
+    document.body.appendChild(script);
+  
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
         name: "Web Playback Player",
-        getOAuthToken: (cb: (token: string) => void) => cb(token),
+        getOAuthToken: (cb: (token: string) => void) => cb(token!),
         volume: 0.8,
       });
+  
       playerRef.current = player;
+  
       player.addListener("ready", async ({ device_id }: any) => {
-        console.log("Player ready with device_id:", device_id);
         setDeviceId(device_id);
         setPlayerReady(true);
-      
-        await fetch("https://api.spotify.com/v1/me/player", {
+        await safeFetch("https://api.spotify.com/v1/me/player", {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -103,10 +141,10 @@ const SongRecommendation: React.FC = () => {
           },
           body: JSON.stringify({ device_ids: [device_id], play: true }),
         });
-      
+  
         const randomTrack = await getRandomTrackFromRandomPlaylist();
         if (randomTrack) {
-          await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+          await safeFetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
             method: "PUT",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -120,22 +158,17 @@ const SongRecommendation: React.FC = () => {
           setCurrentTrack(randomTrack);
         }
       });
-
+  
       player.addListener("player_state_changed", (state: any) => {
         if (!state) return;
         setIsPlaying(!state.paused);
         const track = state.track_window?.current_track;
         setCurrentTrack(track);
       });
-
+  
       player.connect();
     };
-
-    const script = document.createElement("script");
-    script.src = "https://sdk.scdn.co/spotify-player.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, [token, playerReady]);
+  }, [token]);  
 
   useEffect(() => {
     if (isPlaying && currentTrack) {
@@ -182,21 +215,24 @@ const SongRecommendation: React.FC = () => {
 
 
   const handlePlay = async () => {
-    if (!deviceId || !token) return;
+    if (!deviceId || !token) {
+      console.warn("Device not ready yet");
+      return;
+    }
   
-    await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+    await safeFetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-  };  
+  };
   
 
   const handlePause = () => {
     if (!deviceId || !token) return;
-    fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+    safeFetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -218,7 +254,7 @@ const SongRecommendation: React.FC = () => {
   
     const randomTrack = await getRandomTrackFromRandomPlaylist();
     if (randomTrack) {
-      await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      await safeFetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -255,7 +291,7 @@ const SongRecommendation: React.FC = () => {
   
         const randomTrack = await getRandomTrackFromRandomPlaylist();
         if (randomTrack) {
-          await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+          await safeFetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
             method: "PUT",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -336,9 +372,10 @@ const SongRecommendation: React.FC = () => {
         </button>
 
         {!isPlaying ? (
-          <button onClick={handlePlay}>
+          <button onClick={handlePlay} disabled={!playerReady}>
             <img src="./static/PlayButtonIcon.png" alt="Play" />
           </button>
+
         ) : (
           <button onClick={handlePause}>
             <img src="./static/PauseButtonIcon.png" alt="Pause" />
