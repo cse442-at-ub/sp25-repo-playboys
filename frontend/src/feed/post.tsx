@@ -22,7 +22,7 @@ const PostPage = () => {
         if (media) formData.append('media', media);
     
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/mediaUpload.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/backend/mediaUpload.php`, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include' // for cookies
