@@ -96,7 +96,7 @@ const Feed = () => {
 
     return (
         <div className="feed-container" onWheel={handleSwipe}>
-            <div className="post">
+            <div className="post active"> {/* Removed the index comparison since we only show one post at a time */}
                 {current.media_type === 'video' ? (
                     <video
                         ref={videoRef}

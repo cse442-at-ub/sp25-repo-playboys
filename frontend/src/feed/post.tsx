@@ -31,6 +31,7 @@ const PostPage = () => {
             const result = await response.json();
             if (result.status === 'success') {
                 // Handle success
+                window.location.href = `${process.env.REACT_APP_API_URL}/#/feed`;    ;
             } else {
                 // Handle error
             }

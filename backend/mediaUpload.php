@@ -60,6 +60,15 @@
             exit;
         }
 
+        // get username $auth_token = $_COOKIE["auth_token"];
+        $stmt_cookie = $conn->prepare("SELECT username FROM cookie_authentication WHERE auth_key = ?");
+        $stmt_cookie->bind_param("s", $auth_token);
+        $stmt_cookie->execute();
+        $result = $stmt_cookie->get_result();
+        $user = $result->fetch_assoc();
+        $username = $user["username"];
+   
+
         // Move uploaded file
         if (move_uploaded_file($media['tmp_name'], $fullPath)) {
             // Insert into database
