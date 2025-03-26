@@ -4,8 +4,9 @@ require __DIR__ . "/config.php";
 require __DIR__ . "/database.php";
 
 session_start();
-
+$is_login_with_spotify = 1;
 if (!isset($_SESSION['spotify_uid'])) {
+    $is_login_with_spotify = 0;
     echo json_encode(["error" => "Unauthorized"]);
     exit();
 }

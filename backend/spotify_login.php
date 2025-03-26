@@ -9,7 +9,10 @@ $scopes = [
     'user-read-private',
     'streaming',
     'user-modify-playback-state',
-    'user-read-playback-state'
+    'user-read-playback-state',
+    'user-top-read',
+    'playlist-read-collaborative',
+    'playlist-read-private'
 ];
 
 $scope_param = implode(' ', $scopes);

@@ -55,21 +55,24 @@
     try {
         //generate random token
         $token = bin2hex(random_bytes(32));
+        $csrf_token = bin2hex(random_bytes(32));
         //add auth_key: will act as a token for user confirmation
         $delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
         $delete_old_keys->bind_param("s", $username);
         $delete_old_keys->execute();
         $delete_old_keys->close();
         
-        $insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key) VALUES (?, ?)");
-        $insert_key->bind_param("ss", $username, $token);
+        $insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key, csrf_token) VALUES (?, ?, ?)");
+        $insert_key->bind_param("sss", $username, $token, $csrf_token);
         $insert_key->execute();
         $insert_key->close();
         setcookie('auth_token', $token, [
             'expires' => time() + 3600,
-            'path' => '/'
+            'path' => '/', 
+            'HttpOnly' => true
         ]);
-        echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
+
+        echo json_encode(["status" => "success", "message" => "User logged in successfully", "csrf_token" => $csrf_token]);
 
         exit();
 

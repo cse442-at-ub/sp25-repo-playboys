@@ -1,11 +1,11 @@
 import React from "react";
 import "./forgot.css";
 import { useNavigate } from "react-router-dom";
-
+import { useCSRFToken } from "../../csrfContent";
 const ForgotPassword: React.FC = () => 
 {
     const navigate = useNavigate();
-
+    const { csrfToken } = useCSRFToken();
     const [email, setEmail] = React.useState("");
     const [emailFieldMessage, setEmailFieldMessage] = React.useState("");
     const [emailFieldError, setEmailFieldError] = React.useState("");
@@ -26,7 +26,7 @@ const ForgotPassword: React.FC = () =>
             {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json", 'CSRF-Token': csrfToken
                 },
                 body: JSON.stringify( data ),
             })
@@ -62,7 +62,7 @@ const ForgotPassword: React.FC = () =>
             {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json", 'CSRF-Token': csrfToken
                 },
                 body: JSON.stringify( data ),
             })
