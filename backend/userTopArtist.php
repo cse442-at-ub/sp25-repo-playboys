@@ -2,31 +2,30 @@
 /*Going to call spotify API for user top artist, if the user isn't logined with spotify call deezer api for random artist for now*/
 
 require __DIR__ . "/headers.php";
-require __DIR__ . "/cookieAuthHeader.php";
 require __DIR__ . "/userDatabaseGrabber.php";
+require __DIR__ . "/cookieAuthHeader.php";
 /*grabing spotify user_token from refresh_token.php*/
-session_start();
-//check if the user is logged in with spotify
-$is_login_with_spotify = 1;
-if (!isset($_SESSION['spotify_uid'])) {
-    $is_login_with_spotify = 0;
-    echo json_encode(["error" => "Unauthorized"]);
-    exit();
-}
-$spotifyId = $_SESSION['spotify_uid'];
 
-//$result is from cookieAuth.php and is the username of the user
+//check if the user is logged in with spotify
+
 $user = $result->fetch_assoc();
 $login_username = $user["username"];
+$spotifyId = "";
+
+
 
 //grab token from database
-$stmt = $conn->prepare("SELECT access_token FROM user_login_data WHERE spotify_id = ?");
-$stmt->bind_param("s", $spotifyId);
+$stmt = $conn->prepare("SELECT access_token, spotify_id FROM user_login_data WHERE username = ?");
+$stmt->bind_param("s", $login_username);
 $stmt->execute();
 $result = $stmt->get_result()->fetch_assoc();
 $top_tracks_url = "https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term";// Fetches top 10 tracks
 $access_token = $result['access_token'];
-
+$spotifyId = $result['spotify_id'];
+if($spotifyId == "" || $spotifyId == NULL){
+    echo json_encode(["error" => "Please login with Spotify"]);
+    exit();
+}
 $ch = curl_init();
 curl_setopt_array($ch, [
     CURLOPT_URL            => $top_tracks_url,
