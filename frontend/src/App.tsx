@@ -41,6 +41,7 @@ import SongRecommendation from "./song_recommendation/SongRecommendationFE";
 // Explore Page
 import Explore from "./explore/explore";
 import GenrePage from "./explore/genre";
+import ArtistPage from "./explore/artistPage";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -64,7 +65,8 @@ function App() {
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/forgot/reset/:email" element={<Reset />}/>
         <Route path="/explore" element={<Explore />} />
-        <Route path="/explore/:genre" element={<GenrePage />} />
+        <Route path="/explore/genre/:genre" element={<GenrePage />} />
+        <Route path="/explore/artist/:artist" element={<ArtistPage />} />
         <Route path="/spotify-player" element={<SpotifyPlayer />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).

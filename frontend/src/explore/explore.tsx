@@ -51,10 +51,10 @@ const Explore: React.FC = () => {
   }, []);
 
   const handleGenreClick = (genre: string) => {
-    navigate(`/explore/${genre.toLowerCase()}`);
+    navigate(`/explore/genre/${genre.toLowerCase()}`);
   };
   const handleArtistClick = (artist: string) => {
-    navigate(`/explore/${artist.toLowerCase()}`);
+    navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
   const handleSongClick = (song: string) => {
     navigate(`/explore/${song.toLowerCase()}`);
