@@ -8,6 +8,7 @@ const PostPage = () => {
     const [media, setMedia] = useState <File | null>(null);
     const [song, setSong] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [error, setError] = React.useState("");
 
     const navigate = useNavigate();
 
@@ -33,9 +34,11 @@ const PostPage = () => {
                 // Handle success
                 window.location.href = `${process.env.REACT_APP_API_URL}/#/feed`;    ;
             } else {
+                setError(result["message"]);
                 // Handle error
             }
         } catch (error) {
+            setError("An error occurred. Please try again.");
             // Handle network error
         }
     };
@@ -91,6 +94,7 @@ const PostPage = () => {
                     {isSubmitting ? "Submitting..." : "Submit Post"}
                 </button>
             </form>
+            {error && <p className="error-message">{error}</p>}
         </div>
     );
 };
