@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/CSE442/2025-Spring/cse-442ah/static/css/main.3e9bc2b2.css",
+    "main.js": "/CSE442/2025-Spring/cse-442ah/static/js/main.be57e208.js",
+    "static/js/453.8ab44547.chunk.js": "/CSE442/2025-Spring/cse-442ah/static/js/453.8ab44547.chunk.js",
+    "index.html": "/CSE442/2025-Spring/cse-442ah/index.html",
+    "main.3e9bc2b2.css.map": "/CSE442/2025-Spring/cse-442ah/static/css/main.3e9bc2b2.css.map",
+    "main.be57e208.js.map": "/CSE442/2025-Spring/cse-442ah/static/js/main.be57e208.js.map",
+    "453.8ab44547.chunk.js.map": "/CSE442/2025-Spring/cse-442ah/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3e9bc2b2.css",
+    "static/js/main.be57e208.js"
+  ]
+}

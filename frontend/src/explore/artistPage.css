@@ -1,0 +1,57 @@
+.artist-page {
+  display: flex;
+  padding: 20px;
+  font-family: sans-serif;
+  background-color: #f5f5f5;
+}
+
+.artist-content {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.artist-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.top-songs-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.songs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.song-item {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.song-item:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.song-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.song-duration {
+  font-size: 14px;
+  color: #777;
+}
