@@ -2,68 +2,133 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./feed.css";
 
-const Feed = () => {
-    const posts = [
-        { "title": "Post 1", "description": "Exploring the city", "media": "https://www.w3schools.com/html/mov_bbb.mp4", "song": "Urban Vibes" },
-        { "title": "Post 2", "description": "Chill vibes at the beach", "media": "https://www.w3schools.com/html/movie.mp4", "song": "Ocean Waves" },
-        { "title": "Post 3", "description": "Late night coding session", "media": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "song": "Lo-Fi Beats" },
-        { "title": "Post 4", "description": "Skating through the streets", "media": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "song": "Hip-Hop Flow" },
-        { "title": "Post 5", "description": "Nature getaway", "media": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "song": "Peaceful Melody" },
-        { "title": "Post 6", "description": "Night drive with neon lights", "media": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "song": "Synthwave Dream" },
-        { "title": "Post 7", "description": "Morning workout grind", "media": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4", "song": "Pump Up Anthem" },
-        { "title": "Post 8", "description": "Cozy rainy day", "media": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "song": "Relaxing Rain Sounds" },
-    ];
+interface Post {
+    post_id: number;
+    username: string;
+    title: string;
+    description: string;
+    song_name: string;
+    media_path: string;
+    media_type: 'image' | 'video';
+    created_at: string;
+}
 
+const Feed = () => {
+    const [posts, setPosts] = useState<Post[]>([]);
     const [currentPost, setCurrentPost] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const navigate = useNavigate();
 
-    // Prevent rapid scrolling by adding a small delay
-    const handleSwipe = (e: React.WheelEvent) => {
-        if (isScrolling) return; // Block further scrolling if already in transition
-        setIsScrolling(true);
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getPosts.php`, {
+                    method: "GET",
+                    credentials: 'include' // For cookies if using authentication
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    setPosts(result.posts);
+                } else {
+                    setError(result.message || 'Failed to load posts');
+                }
+            } catch (error) {
+                setError(error instanceof Error ? error.message : 'An unknown error occurred');
+                console.error("Error fetching posts:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-        // Delay to allow for smooth scrolling experience
+        fetchPosts();
+    }, []);
+
+    const handleSwipe = (e: React.WheelEvent) => {
+        if (isScrolling || isLoading || posts.length === 0) return;
+        
+        setIsScrolling(true);
         setTimeout(() => {
             if (e.deltaY > 0 && currentPost < posts.length - 1) {
                 setCurrentPost(currentPost + 1);
             } else if (e.deltaY < 0 && currentPost > 0) {
                 setCurrentPost(currentPost - 1);
             }
-            setIsScrolling(false); // Allow scrolling again after delay
-        }, 300); // Delay of 300ms for smooth transition
+            setIsScrolling(false);
+        }, 300);
     };
 
-    // Add smooth transitions to video post and content
     useEffect(() => {
         if (videoRef.current) {
-            videoRef.current.currentTime = 0; // Restart video when switching posts
+            videoRef.current.currentTime = 0;
+            if (posts[currentPost]?.media_type === 'video') {
+                videoRef.current.load();
+            }
         }
-    }, [currentPost]);
+    }, [currentPost, posts]);
+
+    if (isLoading) {
+        return <div className="feed-container loading">Loading posts...</div>;
+    }
+
+    if (error) {
+        return <div className="feed-container error">Error: {error}</div>;
+    }
+
+    if (posts.length === 0) {
+        return (
+            <div className="feed-container empty">
+                <p>No posts available</p>
+                <button onClick={() => navigate("/feed/post")}>Create First Post</button>
+            </div>
+        );
+    }
+
+    const current = posts[currentPost];
 
     return (
         <div className="feed-container" onWheel={handleSwipe}>
             <div className="post">
-                <video
-                    ref={videoRef}
-                    className="post-video"
-                    src={posts[currentPost].media}
-                    autoPlay
-                    loop
-                    muted
-                    key={currentPost} // Ensure the video restarts on post change
-                ></video>
+                {current.media_type === 'video' ? (
+                    <video
+                        ref={videoRef}
+                        className="post-video"
+                        src={current.media_path}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        key={current.post_id}
+                    />
+                ) : (
+                    <img 
+                        src={current.media_path} 
+                        alt={current.title}
+                        className="post-image"
+                        key={current.post_id}
+                    />
+                )}
+                
                 <div className="post-overlay">
                     <div className="post-info">
-                        <h2>{posts[currentPost].title}</h2>
-                        <p>{posts[currentPost].description}</p>
-                        <p className="song">🎵 {posts[currentPost].song}</p>
+                        <h2>{current.title}</h2>
+                        <p>{current.description}</p>
+                        <p className="song">🎵 {current.song_name}</p>
+                        <p className="username">@{current.username}</p>
                     </div>
                 </div>
             </div>
+            
             <div className="post-actions">
-                    <button onClick={() => navigate("/feed/post")}>Post</button>
+                <button onClick={() => navigate("/feed/post")}>Create Post</button>
             </div>
         </div>
     );
