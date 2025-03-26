@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCSRFToken } from '../csrfContent'; // importing the thing
 import "./feed.css";
 
 interface Post {
@@ -21,13 +22,15 @@ const Feed = () => {
     const [error, setError] = useState<string | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const navigate = useNavigate();
+    const {csrfToken} = useCSRFToken(); // create the token 
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getPosts.php`, {
                     method: "GET",
-                    credentials: 'include' // For cookies if using authentication
+                    credentials: 'include', // For cookies if using authentication
+                    headers: { 'CSRF-Token': csrfToken} // header we need to include
                 });
                 
                 if (!response.ok) {

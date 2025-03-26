@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./post.css";
+import { useCSRFToken } from '../csrfContent'; // importing the thing
+
 
 const PostPage = () => {
     const [title, setTitle] = useState<string>("");
@@ -9,6 +11,7 @@ const PostPage = () => {
     const [song, setSong] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [error, setError] = React.useState("");
+    const {csrfToken} = useCSRFToken(); // create the token
 
     const navigate = useNavigate();
 
@@ -23,10 +26,11 @@ const PostPage = () => {
         if (media) formData.append('media', media);
     
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/backend/mediaUpload.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/mediaUpload.php`, {
                 method: 'POST',
                 body: formData,
-                credentials: 'include' // for cookies
+                credentials: 'include', // for cookies
+                headers: { 'CSRF-Token': csrfToken} // header we need to include
             });
             
             const result = await response.json();
