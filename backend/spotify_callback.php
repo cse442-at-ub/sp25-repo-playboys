@@ -54,6 +54,10 @@ if (!isset($token_data['access_token'])) {
 }
 
 $access_token = $token_data['access_token'];
+setcookie('spotify_access_token', $access_token, [
+    'expires' => time() + 3600,
+    'path' => '/'
+]);
 $refresh_token = $token_data['refresh_token'] ?? null;
 echo "DEBUG: Received access token: $access_token<br>";
 
