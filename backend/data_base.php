@@ -12,10 +12,12 @@ CREATE TABLE password_resets (
 
 //database connection information for phpadmin sql database
 //will need to be changed when connecting to live server
+// for testing on local host use the following
 $host = "localhost";
-$username = "root";
-$password = "";
-$database = "user_login_information"; //changed based on local or server sql database name
+$username = "root"; //change to ubit on live server
+$password = ""; //change to your person number on live server
+$database = "cse442_2025_spring_team_ah_db"; //sql database name
+
 $port = 3306; //port number for sql database
 
 // Create connection

@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./post.css";
-import { useCSRFToken } from '../csrfContent'; // importing the thing
-
+import { useCSRFToken } from '../csrfContent';
 
 const PostPage = () => {
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [media, setMedia] = useState <File | null>(null);
+    const [media, setMedia] = useState<File | null>(null);
     const [song, setSong] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [error, setError] = React.useState("");
-    const {csrfToken} = useCSRFToken(); // create the token
+    const { csrfToken } = useCSRFToken();
 
     const navigate = useNavigate();
 
-    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -29,31 +27,29 @@ const PostPage = () => {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/mediaUpload.php`, {
                 method: 'POST',
                 body: formData,
-                credentials: 'include', // for cookies
-                headers: { 'CSRF-Token': csrfToken} // header we need to include
+                credentials: 'include',
+                headers: { 'CSRF-Token': csrfToken }
             });
             
             const result = await response.json();
             if (result.status === 'success') {
-                // Handle success
-                window.location.href = `${process.env.REACT_APP_API_URL}/#/feed`;    ;
+                window.location.href = `${process.env.REACT_APP_API_URL}/#/feed`;
             } else {
                 setError(result["message"]);
-                // Handle error
             }
         } catch (error) {
             setError("An error occurred. Please try again.");
-            // Handle network error
         }
     };
 
     return (
         <div className="post-page-container">
-            <h1>Create a New Post</h1>
+            <h1 className="post-h1">Create a New Post</h1>
             <form onSubmit={handleSubmit} className="post-form" encType="multipart/form-data">
-                <div className="form-group">
-                    <label htmlFor="title">Post Title</label>
+                <div className="post-form-group">
+                    <label className="post-label" htmlFor="title">Post Title</label>
                     <input
+                        className="post-input"
                         type="text"
                         id="title"
                         value={title}
@@ -62,9 +58,10 @@ const PostPage = () => {
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="description">Post Description</label>
+                <div className="post-form-group">
+                    <label className="post-label" htmlFor="description">Post Description</label>
                     <textarea
+                        className="post-textarea"
                         id="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
@@ -72,9 +69,10 @@ const PostPage = () => {
                     ></textarea>
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="media">Upload Media (Image/Video)</label>
+                <div className="post-form-group">
+                    <label className="post-label" htmlFor="media">Upload Media (Image/Video)</label>
                     <input
+                        className="post-input"
                         type="file"
                         id="media"
                         accept="image/*, video/*"
@@ -83,9 +81,10 @@ const PostPage = () => {
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="song">Song Name</label>
+                <div className="post-form-group">
+                    <label className="post-label" htmlFor="song">Song Name</label>
                     <input
+                        className="post-input"
                         type="text"
                         id="song"
                         value={song}
@@ -94,11 +93,15 @@ const PostPage = () => {
                     />
                 </div>
 
-                <button type="submit" disabled={isSubmitting}>
+                <button 
+                    className="post-button"
+                    type="submit" 
+                    disabled={isSubmitting}
+                >
                     {isSubmitting ? "Submitting..." : "Submit Post"}
                 </button>
             </form>
-            {error && <p className="error-message">{error}</p>}
+            {error && <p className="post-error-message">{error}</p>}
         </div>
     );
 };
