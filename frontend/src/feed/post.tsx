@@ -5,36 +5,44 @@ import "./post.css";
 const PostPage = () => {
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [media, setMedia] = useState<string>("");
+    const [media, setMedia] = useState <File | null>(null);
     const [song, setSong] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
     // Handle form submission
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Check if all fields are filled
-        if (!title || !description || !media || !song) {
-            alert("Please fill in all fields!");
-            return;
+        
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('song', song);
+        if (media) formData.append('media', media);
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/mediaUpload.php`, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include' // for cookies
+            });
+            
+            const result = await response.json();
+            if (result.status === 'success') {
+                // Handle success
+            } else {
+                // Handle error
+            }
+        } catch (error) {
+            // Handle network error
         }
-
-        setIsSubmitting(true);
-
-        // Simulate an API call or post submission (e.g., saving data to a server)
-        setTimeout(() => {
-            setIsSubmitting(false);
-            alert("Post submitted successfully!");
-            navigate("/feed"); // Navigate back to the feed after submission
-        }, 1000);
     };
 
     return (
         <div className="post-page-container">
             <h1>Create a New Post</h1>
-            <form onSubmit={handleSubmit} className="post-form">
+            <form onSubmit={handleSubmit} className="post-form" encType="multipart/form-data">
                 <div className="form-group">
                     <label htmlFor="title">Post Title</label>
                     <input
@@ -57,12 +65,12 @@ const PostPage = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="media">Media URL (Video/Image)</label>
+                    <label htmlFor="media">Upload Media (Image/Video)</label>
                     <input
-                        type="url"
+                        type="file"
                         id="media"
-                        value={media}
-                        onChange={(e) => setMedia(e.target.value)}
+                        accept="image/*, video/*"
+                        onChange={(e) => setMedia(e.target.files?.[0] ?? null)}
                         required
                     />
                 </div>
