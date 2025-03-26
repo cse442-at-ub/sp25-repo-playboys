@@ -10,7 +10,7 @@ const ArtistPage: React.FC = () => {
 
 useEffect(() => {
   if (artist) {
-    fetch(`http://localhost/musicApp/artistTopSongs.php?artist=${artist}`)
+    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/artistTopSongs.php?artist=${artist}`)
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
