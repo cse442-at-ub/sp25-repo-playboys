@@ -132,6 +132,7 @@ if ($result->num_rows === 0) {
 
 // Step 5: Handle session + cookies for all users
 $token = bin2hex(random_bytes(32));
+$csrf_token = bin2hex(random_bytes(32));
 echo "DEBUG: Generated new auth token: $token<br>";
 
 $delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
@@ -140,8 +141,8 @@ $delete_old_keys->execute();
 $delete_old_keys->close();
 echo "DEBUG: Old auth tokens deleted<br>";
 
-$insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key) VALUES (?, ?)");
-$insert_key->bind_param("ss", $display_name, $token);
+$insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key, csrf_token) VALUES (?, ?, ?)");
+$insert_key->bind_param("sss", $display_name, $token, $csrf_token);
 $insert_key->execute();
 $insert_key->close();
 echo "DEBUG: New auth token inserted<br>";

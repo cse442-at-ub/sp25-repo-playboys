@@ -1,11 +1,8 @@
-
-
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
 
 //landing pages
-
 import LandingPage from "./landing_page/landingPage";
 
 //Profile Components
@@ -49,11 +46,16 @@ import ArtistPage from "./explore/artistPage";
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
 
+
+// csrf wrap protection
+import { CSRFProvider } from "./csrfContent";
+
 function App() {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
 
   return (
+    <CSRFProvider>
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
@@ -90,6 +92,7 @@ function App() {
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
       </Routes>
     </Router>
+    </CSRFProvider>
   );
 }
 

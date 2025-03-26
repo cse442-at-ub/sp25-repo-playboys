@@ -1,11 +1,13 @@
-import React from "react";
+import React, { createContext, useContext, useState, ReactNode, use } from "react";
 import "./login.css";
+import { useCSRFToken } from '../../csrfContent';
 
 const Login: React.FC = () => {
 
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [error, setError] = React.useState("");
+    const {setCsrfToken} = useCSRFToken();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,6 +22,8 @@ const Login: React.FC = () => {
             body: JSON.stringify(data),
         });
         const result = await response.json();
+        const csrfToken = result["csrfToken"];
+        setCsrfToken(csrfToken);
         console.log(result);
         console.log(result["status"]);
 
