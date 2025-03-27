@@ -18,7 +18,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
 ]);
 
 $response = curl_exec($ch);
-curl_close($ch);
+curl_close(handle: $ch);
 
 $data = json_decode($response, true);
 
