@@ -12,7 +12,7 @@ const ArtistPage: React.FC = () => {
 
 useEffect(() => {
   if (artist) {
-    fetch(`http://localhost/backend/artistTopSongs.php?artist=${artist}`)
+    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/artistTopSongs.php?artist=${artist}`)
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
@@ -35,13 +35,13 @@ function formatDuration(duration: number): string {
 }
 
 // Handle song click for playing song
-const handleSongClick = async (song: string) => {
+const handleSongClick = async (song: string, artist: string) => {
   try {
     const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ song_name: song })
+      body: JSON.stringify({ song_name: song, artist_name: artist })
     });
 
     const result = await response.json();
@@ -67,7 +67,7 @@ return (
       <ul className="songs-list">
       {topSongs.map((song, index) => (
         <li key={index} className="song-item"
-        onClick={() => handleSongClick(song)}>
+        onClick={() => handleSongClick(song.name, artist || "")}>
           <span className="song-name">{song.name} </span>
           <span className="song-duration">{formatDuration(song.duration)}</span> 
         </li> ))} 

@@ -59,13 +59,13 @@ const Explore: React.FC = () => {
   const handleArtistClick = (artist: string) => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
-  const handleSongClick = async (song: string) => {
+  const handleSongClick = async (song: string, artist: string) => {
     try {
       const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ song_name: song })
+        body: JSON.stringify({ song_name: song, artist_name: artist })
       });
   
       const result = await response.json();
@@ -115,7 +115,7 @@ const Explore: React.FC = () => {
                 <div
                   className="list-item"
                   key={track.name + index}
-                  onClick={() => handleSongClick(track.name)}
+                  onClick={() => handleSongClick(track.name, track.artist.name)}
                   style={{ cursor: "pointer" }}
                 >
                   {track.name} - {track.artist.name}

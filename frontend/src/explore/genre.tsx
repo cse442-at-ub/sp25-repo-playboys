@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
 import { useNavigate } from "react-router-dom";
+import SpotifyPlayer from "../spotify_player/SpotifyPlayer";
 import "./genre.css";
 
 interface Song {
@@ -14,13 +15,29 @@ const GenrePage: React.FC = () => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-
+  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
   const navigate = useNavigate();
   const handleArtistClick = (artist: string) => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
-  const handleSongClick = (song: string) => {
-    navigate(`/explore/${song.toLowerCase()}`);
+  const handleSongClick = async (song: string, artist: string) => {
+    try {
+      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ song_name: song, artist_name: artist })
+      });
+  
+      const result = await response.json();
+      if (result.status === 'success') {
+        setActiveTrackUrl(result.embedUrl);
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error playing song:", error);
+    }
   };
 
   useEffect(() => {
@@ -59,7 +76,7 @@ const GenrePage: React.FC = () => {
         <ul className="song-list">
           {songs.map((song, index) => (
             <li key={index} className="song"
-              onClick={() => handleSongClick(song.name)}
+              onClick={() => handleSongClick(song.name, song.artist)}
               style={{ cursor: "pointer" }}
               >
               {song.name} by {song.artist}
@@ -78,6 +95,12 @@ const GenrePage: React.FC = () => {
           ))}
         </ul>
       </div>
+      {activeTrackUrl && (
+        <SpotifyPlayer
+          trackUrl={activeTrackUrl}
+          onClose={() => setActiveTrackUrl(null)}
+        />
+      )}
     </div>
   );
 };
