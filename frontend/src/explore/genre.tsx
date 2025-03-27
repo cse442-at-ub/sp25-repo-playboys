@@ -43,7 +43,7 @@ const GenrePage: React.FC = () => {
   useEffect(() => {
     const fetchGenreData = async () => {
       try {
-        const response = await fetch(`http://localhost/backend/genreTopItems.php?genre=${genre}`);
+        const response = await fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/genreTopItems.php?genre=${genre}`);
         const data = await response.json();
         if (data.status === "success") {
           setSongs(data.topSongs || []);
