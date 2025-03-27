@@ -59,10 +59,26 @@ const Explore: React.FC = () => {
   const handleArtistClick = (artist: string) => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
-  const handleSongClick = (song: string) => {
-    const embedUrl = `https://open.spotify.com/embed/track/${song}`;
-    setActiveTrackUrl(embedUrl);
+  const handleSongClick = async (song: string) => {
+    try {
+      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ song_name: song })
+      });
+  
+      const result = await response.json();
+      if (result.status === 'success') {
+        setActiveTrackUrl(result.embedUrl);
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error playing song:", error);
+    }
   };
+  
 
 
   const capitalize = (str: string): string => {

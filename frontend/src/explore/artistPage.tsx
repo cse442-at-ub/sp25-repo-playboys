@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Sidebar from '../user_profile/Sidebar';
+import SpotifyPlayer from "../spotify_player/SpotifyPlayer";
 import './artistPage.css';
 
 const ArtistPage: React.FC = () => {
   const { artist } = useParams<{ artist: string }>();
   const [topSongs, setTopSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
 
 useEffect(() => {
   if (artist) {
-    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/artistTopSongs.php?artist=${artist}`)
+    fetch(`http://localhost/backend/artistTopSongs.php?artist=${artist}`)
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
@@ -32,9 +34,25 @@ function formatDuration(duration: number): string {
   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-// Handle song click for playing song (need to update)
-const handleSongClick = (song: any) => {
-  console.log("Song clicked:", song);
+// Handle song click for playing song
+const handleSongClick = async (song: string) => {
+  try {
+    const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ song_name: song })
+    });
+
+    const result = await response.json();
+    if (result.status === 'success') {
+      setActiveTrackUrl(result.embedUrl);
+    } else {
+      console.error(result.message);
+    }
+  } catch (error) {
+    console.error("Error playing song:", error);
+  }
 };
 
 return ( 
@@ -55,6 +73,12 @@ return (
         </li> ))} 
         </ul> )} 
   </div>
+  {activeTrackUrl && (
+        <SpotifyPlayer
+          trackUrl={activeTrackUrl}
+          onClose={() => setActiveTrackUrl(null)}
+        />
+      )}
 </div> 
 ); 
 };
