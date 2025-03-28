@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/CSE442/2025-Spring/cse-442ah/static/css/main.df4bdfa4.css",
-    "main.js": "/CSE442/2025-Spring/cse-442ah/static/js/main.23e6726e.js",
+    "main.css": "/CSE442/2025-Spring/cse-442ah/static/css/main.f073e429.css",
+    "main.js": "/CSE442/2025-Spring/cse-442ah/static/js/main.0cb3dea8.js",
     "static/js/453.8ab44547.chunk.js": "/CSE442/2025-Spring/cse-442ah/static/js/453.8ab44547.chunk.js",
     "index.html": "/CSE442/2025-Spring/cse-442ah/index.html",
-    "main.df4bdfa4.css.map": "/CSE442/2025-Spring/cse-442ah/static/css/main.df4bdfa4.css.map",
-    "main.23e6726e.js.map": "/CSE442/2025-Spring/cse-442ah/static/js/main.23e6726e.js.map",
+    "main.f073e429.css.map": "/CSE442/2025-Spring/cse-442ah/static/css/main.f073e429.css.map",
+    "main.0cb3dea8.js.map": "/CSE442/2025-Spring/cse-442ah/static/js/main.0cb3dea8.js.map",
     "453.8ab44547.chunk.js.map": "/CSE442/2025-Spring/cse-442ah/static/js/453.8ab44547.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.df4bdfa4.css",
-    "static/js/main.23e6726e.js"
+    "static/css/main.f073e429.css",
+    "static/js/main.0cb3dea8.js"
   ]
 }
