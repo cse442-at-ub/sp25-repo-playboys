@@ -60,22 +60,22 @@ const GenrePage: React.FC = () => {
   }, [genre]);
 
   return (
-    <div className="genre-page">
+    <div className="gp-genre-page">
       <Sidebar />
-      <div className="genre-content">
-        <h1 className="genre-title">
+      <div className="gp-genre-content">
+        <h1 className="gp-genre-title">
           {genre ? genre.charAt(0).toUpperCase() + genre.slice(1) : "Genre"}
         </h1>
-        <p className="genre-description">
+        <p className="gp-genre-description">
           Explore the best in {genre} music—discover top tracks, albums, and artists.
         </p>
 
-        {error && <p className="text-danger">{error}</p>}
+        {error && <p className="gp-text-danger">{error}</p>}
 
-        <h2 className="section-header">🎵 Top Songs</h2>
-        <ul className="song-list">
+        <h2 className="gp-section-header">🎵 Top Songs</h2>
+        <ul className="gp-song-list">
           {songs.map((song, index) => (
-            <li key={index} className="song"
+            <li key={index} className="gp-song"
               onClick={() => handleSongClick(song.name, song.artist)}
               style={{ cursor: "pointer" }}
               >
@@ -84,10 +84,10 @@ const GenrePage: React.FC = () => {
           ))}
         </ul>
 
-        <h2 className="section-header">🌟 Top Artists</h2>
-        <ul className="artist-list">
+        <h2 className="gp-section-header">🌟 Top Artists</h2>
+        <ul className="gp-artist-list">
           {artists.map((artist, index) => (
-            <li key={index} className="artist"
+            <li key={index} className="gp-artist"
             onClick={() => handleArtistClick(artist)}
               style={{ cursor: "pointer" }}>
               {artist}

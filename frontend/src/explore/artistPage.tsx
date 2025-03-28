@@ -78,22 +78,22 @@ const ArtistPage: React.FC = () => {
 
 
   return (
-    <div className="artist-page"> <Sidebar />
-      <div className="artist-content">
-        <div className="artist-header">
+    <div className="ap-ap-artist-page"> <Sidebar />
+      <div className="ap-ap-artist-content">
+        <div className="ap-ap-artist-header">
           {artistImage && (<img src={artistImage}
-            alt={`${artist} image`} className="artist-picture" />)}
-          <h1 className="artist-title">
+            alt={`${artist} image`} className="ap-artist-picture" />)}
+          <h1 className="ap-artist-title">
             {artist ? artist.charAt(0).toUpperCase() + artist.slice(1) : "Artist"}
           </h1>
         </div>
-        <h2 className="top-songs-title">Top Songs</h2>
+        <h2 className="ap-top-songs-title">Top Songs</h2>
         {loading ? (<p>Loading...</p>) : (
-          <ul className="songs-list">
+          <ul className="ap-songs-list">
             {topSongs.map((song, index) => (
-              <li key={index} className="song-item" onClick={() => handleSongClick(song.name, artist || "")}>
-                <span className="song-name">{song.name}</span>
-                <span className="song-duration">{formatDuration(song.duration)}</span>
+              <li key={index} className="ap-song-item" onClick={() => handleSongClick(song.name, artist || "")}>
+                <span className="ap-song-name">{song.name}</span>
+                <span className="ap-song-duration">{formatDuration(song.duration)}</span>
               </li>
             ))}
           </ul>)}
