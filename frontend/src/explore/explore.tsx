@@ -3,7 +3,6 @@ import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
-import SpotifyPlayer from "../spotify_player/SpotifyPlayer"; // Adjust path if needed
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -19,9 +18,7 @@ const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
-  const [topGenres, setTopGenres] = useState<any[]>([]);
-  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
-
+  const [topGenres, setTopGenres] = useState<any[]>([]); // new state for top Genres
 
   // Fetch top artists.
   useEffect(() => {
@@ -60,22 +57,20 @@ const Explore: React.FC = () => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
   const handleSongClick = (song: string) => {
-    const embedUrl = `https://open.spotify.com/embed/track/${song}`;
-    setActiveTrackUrl(embedUrl);
+    navigate(`/explore/${song.toLowerCase()}`);
   };
-
 
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
-
+  
 
   return (
     <div className="explore-page">
       <div className="sidebar">
         <Sidebar />
       </div>
-
+      
       <div className="explore-content">
         {/* Search Bar */}
         <div className="search-bar-container">
@@ -195,14 +190,8 @@ const Explore: React.FC = () => {
         </div>
       </div>
       <div className="songrecommend">
-        <SongRecommendation />
+        <SongRecommendation/>
       </div>
-      {activeTrackUrl && (
-        <SpotifyPlayer
-          trackUrl={activeTrackUrl}
-          onClose={() => setActiveTrackUrl(null)}
-        />
-      )}
 
     </div>
   );

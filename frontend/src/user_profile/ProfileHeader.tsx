@@ -16,6 +16,7 @@ function ProfileHeader() {
     const [pendingFriends, setPendingFriends] = useState<string[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const { csrfToken } = useCSRFToken();
+
     const fetchProfile = async () => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php?user=${user || ""}`, {
@@ -77,6 +78,10 @@ function ProfileHeader() {
         }
     };
 
+    const handleFriendClick = () => {
+        navigate(`/friendlist?user=${user}`);
+    };
+
     const acceptFriendRequest = async (friendUsername: string) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
@@ -88,14 +93,12 @@ function ProfileHeader() {
 
             const result = await response.json();
             if (result.status === "success") {
-                setPendingFriends(pendingFriends.filter(name => name !== friendUsername)); // Remove from pending list
-    
-                // Increase friend count in real-time
+                setPendingFriends(pendingFriends.filter(name => name !== friendUsername));
                 setProfile((prevProfile: any) => ({
                     ...prevProfile,
                     friends: prevProfile.friends + 1,
                 }));
-            }  else {
+            } else {
                 console.error("Error accepting request:", result.message);
             }
         } catch (err) {
@@ -105,13 +108,12 @@ function ProfileHeader() {
 
     return (
         <div className="container">
-            {/* Pending Friend Requests - Mobile Friendly */}
             {pendingFriends.length > 0 && (
                 <div className="d-flex justify-content-center mt-3">
                     <div className="dropdown">
-                        <button 
-                            className="btn btn-outline-primary dropdown-toggle w-100" 
-                            type="button" 
+                        <button
+                            className="btn btn-outline-primary dropdown-toggle w-100"
+                            type="button"
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
                             Pending Friend Requests ({pendingFriends.length})
@@ -132,13 +134,12 @@ function ProfileHeader() {
                 </div>
             )}
 
-            {/* Profile Header - Mobile Adjustments */}
             <div className="row mt-4 align-items-center text-center text-md-start">
                 <div className="col-12 col-md-4 d-flex justify-content-center">
-                    <img 
-                        src={profileImageUrl || "./static/ProfilePlaceholder.png"} 
-                        alt="Profile" 
-                        className="img-fluid rounded-circle mt-3" 
+                    <img
+                        src={profileImageUrl || "./static/ProfilePlaceholder.png"}
+                        alt="Profile"
+                        className="img-fluid rounded-circle mt-3"
                         style={{ maxWidth: "150px", height: "auto" }}
                     />
                 </div>
@@ -148,10 +149,31 @@ function ProfileHeader() {
                             <h1 className="h3">{profile.username}</h1>
                             <h2 className="h5 text-muted">@{profile.username}</h2>
                             <p className="h6 mt-2">
-                                {profile.friends} Friends • {profile.followers} Followers • {profile.followings} Following
+                                <span
+                                    onClick={handleFriendClick}
+                                    style={{
+                                        cursor: "pointer",
+                                        transition: "filter 0.3s, transform 0.3s, color 0.3s, background-color 0.3s", // Added transitions for color and background-color
+                                        padding: "0 5px", // Added padding to make background more visible
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.filter = "brightness(0.6)"; // Darker shade
+                                        e.currentTarget.style.transform = "scale(1.05)"; // Slight zoom on hover
+                                        e.currentTarget.style.color = "#000000"; // Change text color on hover (black text)
+                                        e.currentTarget.style.backgroundColor = "#f0f0f0";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.filter = "brightness(1)"; // Reset brightness
+                                        e.currentTarget.style.transform = "scale(1)"; // Reset zoom effect
+                                        e.currentTarget.style.color = ""; // Reset to original color
+                                        e.currentTarget.style.backgroundColor = ""; // Reset background color
+                                    }}
+                                    >
+                                    {profile.friends} Friends
+                                </span>
+                                • {profile.followers} Followers • {profile.followings} Following
                             </p>
 
-                            {/* Action Buttons */}
                             <div className="d-flex flex-column flex-md-row justify-content-center justify-content-md-start mt-3">
                                 {profile.username === loggedInUser ? (
                                     <button className="btn btn-secondary btn-sm mt-2 mt-md-0 mx-1" onClick={() => navigate("/edit-profile")}>
@@ -192,6 +214,9 @@ function ProfileHeader() {
 }
 
 export default ProfileHeader;
+
+
+
 
 
 

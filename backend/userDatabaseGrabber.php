@@ -55,6 +55,33 @@ function isValidEmail($email){
     }
     return false;
 }
+
+function grabAllFriends($conn, $username) {
+    $friends = [];
+    $status = "friends";
+    $stmt = $conn->prepare("SELECT * FROM friend_pairs WHERE (username = ? OR friend = ?) AND status = ?");
+    $stmt->bind_param("sss", $username, $username, $status);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result ->fetch_assoc()){
+        //if the login username is placed in username sql column, their friend will be at the friend column
+        if($row["username"] == $username){
+            $friend = $row["friend"];
+            if(!in_array($friend,$friends)){
+                $friends[] = $friend;
+            }
+        
+    //if the login username is placed in friend sql column, their friend will be at the username column
+        }else if($row["friend"] == $username){
+            $friend = $row["username"];
+            if(!in_array($friend, $friends)){
+                $friends[] = $friend;
+            }
+        }
+
+    }
+    return $friends;
+}
 ?>
 
 
