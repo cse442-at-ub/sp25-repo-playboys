@@ -159,7 +159,7 @@ function SidebarSection({ title, count, friends, user}: { title: string; count?:
       <div className="d-flex justify-content-between align-items-center">
         <h4>{title}</h4>
         {title === "Friends" && (
-          <button className="btn btn-link text-primary p-0" style={{ fontSize: "14px" }} onClick={() => window.location.href = "#/friendlist?user=me"}>
+          <button className="btn btn-link text-primary p-0" style={{ fontSize: "14px" }} onClick={() => window.location.href = "#/friendlist"}>
             Show All
           </button>
         )}

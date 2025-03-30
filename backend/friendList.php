@@ -12,11 +12,16 @@ if(!isset($headers["page-source"])){
 } 
 $page = $headers["page-source"];
 
-//load max 8 friends 
-
-$friendlist = grabAllFriends($conn, $login_username);
+//load max 6 friends 
+if (isset($_GET['user']) && $_GET['user'] != '') {
+    $username = $_GET['user'];
+   
+} else {
+    $username = $login_username;
+}
+$friendlist = grabAllFriends($conn, $username);
 if(empty($friendlist)){
-    echo json_encode(["error", "empty friend list"]);
+    echo json_encode(["error", "empty friend list: ". $username]);
 }
 foreach ($friendlist as $friend){
         $friend_info = [];
@@ -25,9 +30,13 @@ foreach ($friendlist as $friend){
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
+            $status = checkFriendStatus($conn, $login_username, $friend);
             $profile = $result->fetch_assoc();
             $friend_info["name"] = $friend;
             $friend_info["image"] = $profile["profile_pic"];
+            $friend_info["status"] = $status["status"];
+            $friend_info["login_user"] = $login_username;
+
             $data[] = $friend_info;
         }
     $counter++;

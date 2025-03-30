@@ -79,7 +79,7 @@ function ProfileHeader() {
     };
 
     const handleFriendClick = () => {
-        navigate(`/friendlist?user=${user}`);
+        navigate(`/friendlist?user=${user || ""}`);
     };
 
     const acceptFriendRequest = async (friendUsername: string) => {
@@ -140,7 +140,7 @@ function ProfileHeader() {
                         src={profileImageUrl || "./static/ProfilePlaceholder.png"}
                         alt="Profile"
                         className="img-fluid rounded-circle mt-3"
-                        style={{ maxWidth: "150px", height: "auto" }}
+                        style={{ maxWidth: "150px", height: "150px" }}
                     />
                 </div>
                 <div className="col-12 col-md-8 mt-3 mt-md-0">
