@@ -46,6 +46,9 @@ import ArtistPage from "./explore/artistPage";
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
 
+// Statistics Page 
+import Statistics
+
 
 // csrf wrap protection
 import { CSRFProvider } from "./csrfContent";
