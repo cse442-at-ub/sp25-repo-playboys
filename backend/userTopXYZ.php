@@ -53,29 +53,16 @@ if(isset($top_xyz['error'])){
 }
 
 $data = [];
-if ( $type === "artists" ) 
+$index = 0;
+foreach ($top_xyz['items'] as $items)
 {
-    foreach ($top_xyz['items'] as $artists)
-    {
-        $data[] = ['name' => $artists['name'], 'image' =>$artists['images'][0]['url']];
-    }
-}
-else if ( $type === "tracks" ) 
-{
-    foreach ($top_xyz['items'] as $tracks)
-    {
-        $data[] = ['name' => $tracks['name'], 'image' =>$tracks['images'][0]['url']];
-    }
-}
-else
-{
-    echo json_encode( [ "error" => "Forbidden item type selected. Please try again." ] );
-    exit();
-}
-
-foreach ($top_xyz['items'] as $artists){
-    $data[] = ['name' => $artists['name'], 'image' =>$artists['images'][0]['url']];
-
+    $data[] = [ 'id' => $index, 
+                'rank' => $index,
+                'name' => $items['name'], 
+                'image' =>$items['images'][0]['url'],                 
+                'popularity' => $items['popularity'], 
+            ];
+    $index += 1;
 }
 
 echo json_encode($data);

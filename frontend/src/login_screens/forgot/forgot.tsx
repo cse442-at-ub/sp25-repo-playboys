@@ -26,7 +26,8 @@ const ForgotPassword: React.FC = () =>
             {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json", 'CSRF-Token': csrfToken
+                    "Content-Type": "application/json", 
+                    'CSRF-Token': csrfToken
                 },
                 body: JSON.stringify( data ),
             })
