@@ -1,7 +1,15 @@
 <?php
 require __DIR__ . "/headers.php";
+<<<<<<< HEAD
 require __DIR__ . "/config.php";
 require __DIR__ . "/data_base.php";
+=======
+require __DIR__ . "/data_base.php";
+$config = include __DIR__ . '/config.php';
+$client_id     = $config['spotify_client_id'];
+$client_secret = $config['spotify_client_secret'];
+$redirect_uri  = $config['spotify_redirect_uri'];
+>>>>>>> dev
 
 session_start();
 $is_login_with_spotify = 1;
@@ -34,7 +42,7 @@ curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => [
-        "Authorization: Basic " . base64_encode($config['spotify_client_id'] . ":" . $config['spotify_client_secret']),
+        "Authorization: Basic " . base64_encode($client_id . ":" . $client_secret),
         "Content-Type: application/x-www-form-urlencoded"
     ],
     CURLOPT_POSTFIELDS => http_build_query([
@@ -52,7 +60,7 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 if (!isset($data['access_token'])) {
-    echo json_encode(["error" => "Failed to refresh token"]);
+    echo json_encode(["error" => $response]);
     exit();
 }
 
