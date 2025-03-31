@@ -26,3 +26,4 @@ yarn-error.log*
 
 # config file
 /backend/config.php
+/frontend/node_modules
