@@ -30,7 +30,7 @@
             $fileExt = strtolower(pathinfo($media['name'], PATHINFO_EXTENSION));
             $newFileName = uniqid('', true) . '.' . $fileExt;
             $fullPath = $uploadDirectory . $newFileName;
-            $relativePath = "/CSE442/2025-Spring/cse-442ah/backend/posts/" . $newFileName; // Adjust this path according to your server setup
+            $relativePath = "backend/posts/" . $newFileName; // Adjust this path according to your server setup
 
             $allowedTypes = [
                 'image' => ['jpg', 'jpeg', 'png', 'gif'],
