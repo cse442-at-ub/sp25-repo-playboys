@@ -244,21 +244,6 @@ const SongRecommendation: React.FC = () => {
   const handleLike = async () => {
     setSwipeDirection("left");
     setLiked(true);
-    await fetch(`${process.env.REACT_APP_API_URL}likeSong.php`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        uri: currentTrack.uri,
-        name: currentTrack.name,
-        artist: currentTrack.artists.map((a: any) => a.name).join(", "),
-        album: currentTrack.album.name,
-        image: currentTrack.album.images[0]?.url,
-      }),
-    });
-    
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
     await resetState();
   };

@@ -1,25 +1,24 @@
-.ep-explore-page {
+.explore-page {
   padding: 20px;
   font-family: comic sans ms;
 }
 
 /* Search Bar */
-.ep-search-bar-container {
+.search-bar-container {
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
 }
-
-.ep-search-bar {
+.search-bar {
   width: 75%;
   padding: 5px;
   font-size: 16px;
   border-radius: 6px;
-  border: 1px dashed #000000;
+  border:1px dashed #000000;
 }
 
 /* Section Title */
-.ep-section-title {
+.section-title {
   margin: 20px 0 10px;
   font-size: 20px;
   text-align: center;
@@ -28,7 +27,7 @@
 }
 
 /* Listening Container (Top Song, Artist, Album, Genre) */
-.ep-listening-container {
+.listening-container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -36,22 +35,19 @@
   margin-bottom: 30px;
 }
 
-.ep-listening-column {
+.listening-column {
   flex: 1;
   min-width: 150px;
 }
-
-.ep-listening-column h3 {
+.listening-column h3 {
   margin-bottom: 10px;
   font-size: 16px;
 }
 
-.ep-list-item:hover,
-.ep-genre-box:hover {
+.list-item:hover, .genre-box:hover{
   filter: brightness(125%);
 }
-
-.ep-list-item {
+.list-item {
   text-align: center;
   background-color: #a3a3a3;
   padding: 5%;
@@ -60,15 +56,14 @@
 }
 
 /* Genre Section */
-.ep-genre-container {
+.genre-container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 30px;
 }
-
-.ep-genre-box {
+.genre-box {
   flex: 1;
   min-width: 100px;
   padding: 20px;
@@ -79,7 +74,7 @@
 }
 
 /* Upcoming Events */
-.ep-events-container {
+.events-container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
@@ -87,7 +82,7 @@
   margin-bottom: 50px;
 }
 
-.ep-event-circle {
+.event-circle {
   width: 120px;
   height: 120px;
   background-color: #ddd;
@@ -98,27 +93,24 @@
   justify-content: center;
   align-items: center;
 }
-
-.ep-event-date {
+.event-date {
   font-size: 14px;
   text-align: center;
   margin-bottom: 5px;
 }
-
-.ep-event-location {
+.event-location {
   font-size: 14px;
   text-align: center;
   font-weight: bold;
 }
 
-.explore-content {
+.explore-content{
   margin-right: 10%;
   margin-left: 10%;
   margin-bottom: 120px;
 }
 
-.ep-genre-box,
-.ep-artist-button {
+.genre-box, .artist-button {
   border: none;
   padding: 12px 20px;
   font-size: 16px;
@@ -130,12 +122,12 @@
   text-transform: capitalize;
 }
 
-.ep-genre-container {
+.genre-container {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.ep-songrecommend {
+.songrecommend {
   margin-bottom: 120px;
 }

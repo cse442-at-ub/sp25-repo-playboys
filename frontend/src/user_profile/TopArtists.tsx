@@ -44,7 +44,7 @@ function TopArtists() {
   };
 
   const handleArtistClick = (artist: Artist): void => {
-    navigate(`/explore/artist/${artist.name}`);
+    console.log(`Artist clicked: ${artist.name}`);
   };
 
   return (
