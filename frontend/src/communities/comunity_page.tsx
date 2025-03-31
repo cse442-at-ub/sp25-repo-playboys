@@ -26,11 +26,7 @@ const CommunityPage = () => {
             <div className="community-header">
                 <h1>Community Page</h1>
                 <div className="community-search-container">
-                    <input 
-                        type="text" 
-                        placeholder="Search for communities..." 
-                        className="community-search-input"
-                    />
+                    <input type="text" placeholder="Search for communities..." />
                 </div>
             </div>
 
@@ -41,7 +37,7 @@ const CommunityPage = () => {
                     <div className="community-item" key={index}>
                         <button className="community-button">
                             <div className="community-image"></div>
-                            <span className="community-button-text">{item}</span>
+                            <span>{item}</span>
                         </button>
                     </div>
                 ))}
@@ -54,15 +50,11 @@ const CommunityPage = () => {
                     <div className="community-item" key={index}>
                         <button className="community-button">
                             <div className="community-image"></div>
-                            <span className="community-button-text">{item}</span>
+                            <span>{item}</span>
                         </button>
                     </div>
                 ))}
             </div>
-
-            <button className="community-back-button" onClick={handleBackButton}>
-                Go Back
-            </button>
         </div>
     );
 };
