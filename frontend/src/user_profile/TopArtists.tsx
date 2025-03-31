@@ -44,7 +44,7 @@ function TopArtists() {
   };
 
   const handleArtistClick = (artist: Artist): void => {
-    navigate(`/explore/artist/${artist.name}`);
+    console.log(`Artist clicked: ${artist.name}`);
   };
 
   return (
@@ -63,7 +63,7 @@ function TopArtists() {
             </div>
           ))
         ) : (
-          <p>Loading artists...</p> // Show a loading message if artists are still being fetched
+          <p>Please Login in with Spotify</p> // Show a loading message if artists are still being fetched
         )}
       </div>
     </div>
