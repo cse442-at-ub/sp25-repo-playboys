@@ -13,7 +13,7 @@ const Login: React.FC = () => {
         e.preventDefault();
         const data = { username, password };
 
-
+        console.log(process.env.REACT_APP_API_URL);
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/login.php`, {
             method: "POST",
             headers: {
