@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCSRFToken } from '../csrfContent'; // importing the thing
 import "./feed.css";
 
 interface Post {
@@ -22,15 +21,13 @@ const Feed = () => {
     const [error, setError] = useState<string | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const navigate = useNavigate();
-    const {csrfToken} = useCSRFToken(); // create the token 
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getPosts.php`, {
                     method: "GET",
-                    credentials: 'include', // For cookies if using authentication
-                    headers: { 'CSRF-Token': csrfToken} // header we need to include
+                    credentials: 'include' // For cookies if using authentication
                 });
                 
                 if (!response.ok) {
@@ -99,7 +96,7 @@ const Feed = () => {
 
     return (
         <div className="feed-container" onWheel={handleSwipe}>
-            <div className="feed-post active"> {/* Removed the index comparison since we only show one post at a time */}
+            <div className="post active"> {/* Removed the index comparison since we only show one post at a time */}
                 {current.media_type === 'video' ? (
                     <video
                         ref={videoRef}
@@ -115,22 +112,22 @@ const Feed = () => {
                     <img 
                         src={current.media_path} 
                         alt={current.title}
-                        className="feed-post-image"
+                        className="post-image"
                         key={current.post_id}
                     />
                 )}
                 
-                <div className="feed-post-overlay">
-                    <div className="feed-post-info">
+                <div className="post-overlay">
+                    <div className="post-info">
                         <h2>{current.title}</h2>
                         <p>{current.description}</p>
-                        <p className="feed-song">🎵 {current.song_name}</p>
-                        <p className="feed-username">@{current.username}</p>
+                        <p className="song">🎵 {current.song_name}</p>
+                        <p className="username">@{current.username}</p>
                     </div>
                 </div>
             </div>
             
-            <div className="feed-post-actions">
+            <div className="post-actions">
                 <button onClick={() => navigate("/feed/post")}>Create Post</button>
             </div>
         </div>

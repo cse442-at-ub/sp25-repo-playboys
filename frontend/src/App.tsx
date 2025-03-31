@@ -32,7 +32,7 @@ import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
 import SearchPage from "./search_result_page/searchResultPage";
-
+import FriendList from "./friend_list/friendList"
 // Coummunity Components
 import CommunityPage from "./communities/comunity_page";
 
@@ -74,6 +74,7 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/explore/genre/:genre" element={<GenrePage />} />
         <Route path="/explore/artist/:artist" element={<ArtistPage />} />
+        <Route path="/spotify-player" element={<SpotifyPlayer />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
@@ -93,7 +94,7 @@ function App() {
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
         
-        
+        <Route path="/friendlist" element={<ProtectedRoute element={ <FriendList />} />} />
 
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
         <Route path="/communities" element={<CommunityPage />}/>
