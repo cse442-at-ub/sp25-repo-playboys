@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import "./Settings.css";
-
+import { useCSRFToken } from "../csrfContent";
 const options = [
   { name: "Update Profile", icon: "./static/ProfileIcon.png", path: "settings/account" }, //"settings/account/update_profile" 
   { name: "Update Email", icon: "./static/EmailIcon.png", path: "settings/account" }, //"settings/account/update_email" 
@@ -14,7 +14,7 @@ const options = [
 const SettingsAccount = () => {
 
   const navigate = useNavigate();
-
+  const { csrfToken } = useCSRFToken();
   const handleBackButton = () => {
     console.log("Go back clicked");
     navigate("/settings");
@@ -26,7 +26,7 @@ const SettingsAccount = () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/logout.php`, { 
           method: "POST", 
           credentials: "include", 
-          headers: { "Content-Type": "application/json" } 
+          headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken } 
         });
 
         const data = await response.json(); // Parse JSON response

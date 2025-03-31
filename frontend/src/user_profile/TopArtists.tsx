@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCSRFToken } from '../csrfContent';
 
 interface Artist {
     name: string;
@@ -7,12 +8,35 @@ interface Artist {
 }
 
 function TopArtists() {
-  const artists = [
-    { name: 'Drake', image: './static/Drakepfp.png' },
-    { name: 'Ado', image: './static/Adopfp.png' },
-    { name: 'Beatles', image: './static/TheBeatlespfp.png' }
-  ];
+  const [artists, setArtists] = useState<Artist[]>([]); // State to store artists data
   const navigate = useNavigate();
+  const { csrfToken } = useCSRFToken();
+  useEffect(() => {
+    // Fetch the top artists from the backend when the component mounts
+    const fetchTopArtists = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php`, {
+          method: "GET",
+          credentials: "include",
+          headers: { 'CSRF-Token': csrfToken }
+        }); 
+        if (response.ok) {
+          const data = await response.json(); // Assuming the response contains the artist list
+          if(data.includes("error")){
+            console.log("Not login to spotify");
+          }
+          setArtists(data);
+          
+        } else {
+          console.error('Error fetching top artists:', response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching top artists:", error);
+      }
+    };
+
+    fetchTopArtists();
+  }, []); // Empty dependency array to run only once when the component mounts
 
   const handleShowAllClick = () => {
     console.log("Show all clicked");
@@ -20,7 +44,7 @@ function TopArtists() {
   };
 
   const handleArtistClick = (artist: Artist): void => {
-    console.log(`Artist clicked: ${artist.name}`);
+    navigate(`/explore/artist/${artist.name}`);
   };
 
   return (
@@ -32,11 +56,15 @@ function TopArtists() {
         </button>
       </div>
       <div className="row mt-3">
-        {artists.map((artist, index) => (
-          <div key={index} className="col-6 col-sm-4 mb-3 d-flex justify-content-center">
-            <ArtistItem artist={artist} onClick={handleArtistClick} />
-          </div>
-        ))}
+        {artists.length > 0 ? (
+          artists.slice(0, 3).map((artist, index) => ( // Slice the array to get only the first three artists
+            <div key={index} className="col-6 col-sm-4 mb-3 d-flex justify-content-center">
+              <ArtistItem artist={artist} onClick={handleArtistClick} />
+            </div>
+          ))
+        ) : (
+          <p>Loading artists...</p> // Show a loading message if artists are still being fetched
+        )}
       </div>
     </div>
   );
@@ -67,3 +95,6 @@ function ArtistItem({ artist, onClick }: { artist: Artist; onClick: (artist: Art
 }
 
 export default TopArtists;
+
+
+
