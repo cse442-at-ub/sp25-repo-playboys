@@ -74,7 +74,6 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/explore/genre/:genre" element={<GenrePage />} />
         <Route path="/explore/artist/:artist" element={<ArtistPage />} />
-        <Route path="/spotify-player" element={<SpotifyPlayer />} />
 
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
