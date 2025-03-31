@@ -19,6 +19,7 @@ function FriendList() {
   };
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { csrfToken } = useCSRFToken();
 
   useEffect(() => {
@@ -53,10 +54,57 @@ function FriendList() {
     fetchFriends();
   }, [csrfToken]);
 
-  const removeFriend = (friendName: string) => {
-    // Handle removing a friend here (e.g., make an API call)
-    console.log(`Remove friend: ${friendName}`);
-  };
+  const sendFriendRequest = async (friendName: string) => {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/addFriends.php`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+            body: JSON.stringify({ potential_friend: friendName }),
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+          let po_friend = friends.find(friend => friend.name == friendName);
+          if (po_friend) {
+            po_friend["status"] = "pending";
+          }
+        } else if (result.status === "retract") {
+          let po_friend = friends.find(friend => friend.name == friendName);
+          if (po_friend) {
+            po_friend["status"] = "none";
+          }
+        } else if (result.status === "friends") {
+          let po_friend = friends.find(friend => friend.name == friendName);
+          if (po_friend) {
+            po_friend["status"] = "friends";
+          }
+        } else if(result.status === "removed"){
+          setFriends(prevFriends => prevFriends.filter(friend => friend.name !== friendName));
+          // Make an API call to remove friend from the backend as well if necessary
+          console.log(`Remove friend: ${friendName}`);
+        } 
+        else if (result.status === "error") {
+          let po_friend = friends.find(friend => friend.name == friendName);
+          if (po_friend) {
+            po_friend["status"] = "none";
+          }
+            console.error("Error sending request:", result.message);
+        }
+    } catch (err) {
+      let po_friend = friends.find(friend => friend.name == friendName);
+      if (po_friend) {
+        po_friend["status"] = "none";
+      }
+        console.error("⚠️ Network error:", err);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
 
   const goToProfile = (friendName: string) => {
     // Redirect to the friend's profile page
@@ -94,20 +142,20 @@ function FriendList() {
                 {friend.name}
               </div>
               {!user || user==loggedInUser ? (
-                <button className="remove-friend-btn" onClick={() => removeFriend(friend.name)}>
+                <button className="remove-friend-btn" onClick={() => sendFriendRequest(friend.name)} disabled={isLoading}>
                   Remove Friend
                 </button>
               ) : (
                 <>
 
                 {friend.status === "none" && friend.name != loggedInUser && (
-                    <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" >
+                    <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name)} disabled={isLoading}>
                         🤝 Add Friend
                     </button>
                 )}
 
                 {friend.status === "pending" && (
-                    <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" >
+                    <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name)} disabled={isLoading}>
                         ⏳ Pending Request
                     </button>
                 )}

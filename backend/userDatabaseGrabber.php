@@ -27,6 +27,25 @@ function checkFriendStatus($conn, $username, $friend) {
     }
 }
 
+function deleteFriend($conn, $username, $friend){
+    try {
+        $stmt = $conn->prepare("
+            DELETE FROM friend_pairs
+            WHERE (username = ? AND friend = ?) 
+               OR (username = ? AND friend = ?)
+        ");
+        $stmt->bind_param("ssss", $username, $friend, $friend, $username);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            return 1; // Deletion successful
+        } else {
+            return 0; // No rows affected, meaning no friendship existed
+        }
+    } catch (Exception $e) {
+        return false; // Handle errors if needed
+    }
+}
 function grabAllFriendRequest($conn, $username) {
     $requesters = [];
     try {
