@@ -3,7 +3,6 @@ import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
-import SpotifyPlayer from "../spotify_player/SpotifyPlayer"; // Adjust path if needed
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -19,9 +18,7 @@ const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
-  const [topGenres, setTopGenres] = useState<any[]>([]);
-  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
-
+  const [topGenres, setTopGenres] = useState<any[]>([]); // new state for top Genres
 
   // Fetch top artists.
   useEffect(() => {
@@ -59,6 +56,10 @@ const Explore: React.FC = () => {
   const handleArtistClick = (artist: string) => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
+<<<<<<< HEAD
+  const handleSongClick = (song: string) => {
+    navigate(`/explore/${song.toLowerCase()}`);
+=======
   const handleSongClick = async (song: string, artist: string) => {
     try {
       const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
@@ -77,22 +78,27 @@ const Explore: React.FC = () => {
     } catch (error) {
       console.error("Error playing song:", error);
     }
+>>>>>>> origin/dev
   };
   
-
 
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
-
+  
 
   return (
     <div className="ep-explore-page">
       <div className="ep-sidebar">
         <Sidebar />
       </div>
+<<<<<<< HEAD
+      
+      <div className="explore-content">
+=======
 
       <div className="ep-explore-content">
+>>>>>>> origin/dev
         {/* Search Bar */}
         <div className="ep-search-bar-container">
           <input
@@ -210,15 +216,14 @@ const Explore: React.FC = () => {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
+      <div className="songrecommend">
+        <SongRecommendation/>
+=======
       <div className="ep-songrecommend">
         <SongRecommendation />
+>>>>>>> origin/dev
       </div>
-      {activeTrackUrl && (
-        <SpotifyPlayer
-          trackUrl={activeTrackUrl}
-          onClose={() => setActiveTrackUrl(null)}
-        />
-      )}
 
     </div>
   );

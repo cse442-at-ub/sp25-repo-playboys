@@ -63,7 +63,7 @@ function TopArtists() {
             </div>
           ))
         ) : (
-          <p>Loading artists...</p> // Show a loading message if artists are still being fetched
+          <p>Please Login in with Spotify</p> // Show a loading message if artists are still being fetched
         )}
       </div>
     </div>
