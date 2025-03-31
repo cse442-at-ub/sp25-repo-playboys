@@ -1,0 +1,120 @@
+/* Song container */
+.song-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+  padding-right: 240px;
+}
+
+/* Song details */
+.song-details {
+  display: flex;
+  flex-direction: row;
+  background: #eee;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  min-height: 84vh;
+  max-height: 84vh;
+  align-items: flex-start;
+  position: relative; /* Needed for absolute positioning of swipe indicator */
+}
+
+/* Album Art */
+.album-art {
+  width: 200px;
+  height: 200px;
+  background: brown;
+  margin-right: 40px;
+  flex-shrink: 0;
+}
+
+/* Song Info */
+.song-info h2,
+.song-info h3 {
+  margin: 10px 0;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 12;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Swipe Indicator (appears during swipe) */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 10px;
+  opacity: 0.8;
+  color: white;
+  z-index: 10;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Like (Swipe Left) - Red Background */
+.swipe-indicator.left {
+  background: rgba(255, 0, 0, 0.8);
+}
+
+/* Skip (Swipe Right) - Blue Background */
+.swipe-indicator.right {
+  background: rgba(0, 102, 255, 0.8);
+}
+
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  .song-container {
+    padding-right: 0;
+  }
+
+  .song-details {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    min-height: 80vh;
+    max-height: 80vh;
+  }
+
+  .album-art {
+    margin-left: 36px;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+  }
+
+  .song-info {
+    text-align: center;
+  }
+
+  .controls {
+    flex-direction: row;
+    gap: 40px;
+    margin-top: 30px;
+  }
+
+  .controls button {
+    font-size: 20px;
+  }
+}
