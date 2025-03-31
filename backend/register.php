@@ -1,11 +1,12 @@
 <?php
 
     require __DIR__ . "/headers.php";
+    require __DIR__ . "/userDatabaseGrabber.php";
 
+    
     $method = $_SERVER["REQUEST_METHOD"]; // e.g. "POST"
     $data = json_decode(file_get_contents("php://input"), true); // decode JSON body
     $missingFields = [];
-
     // Check each required field
     if (empty($data["email"])) {
         $missingFields[] = "email";
@@ -29,8 +30,23 @@
         exit();
     }
 
+
+    $username = trim($data["username"]);
+    $email = trim($data["email"]);
     $password = $data["password"];
     $confirm_password = $data["confirm_password"];
+    if(strlen($username) > 15){
+        echo json_encode(["status" => "error", "message" => "Username too long, Please try again!"]);
+        exit();
+    } 
+    if(!isValidEmail($email)){
+        echo json_encode(["status" => "error", "message" => "Email Invalid. Please try again."]);
+        exit();
+    }
+    if(strlen($email) > 254){
+        echo json_encode(["status" => "error", "message" => "Email is invalid, Please try again!"]);
+        exit();
+    }
     //check if password and confirm password matches
     if($password != $confirm_password) {
         echo json_encode(["status" => "error", "message" => "Passwords do not match."]);
@@ -60,8 +76,7 @@
     
     
     //trim and grab data sent from json object from router.php
-    $email = trim($data["email"]);
-    $username = trim($data["username"]);
+    
     $followers = 0;
     $followings = 0;
     $friends = 0;

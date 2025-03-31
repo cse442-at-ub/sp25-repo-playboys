@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -10,8 +10,6 @@
 
 # production
 /build
-
-/frontend/build
 
 # misc
 .DS_Store
@@ -26,4 +24,21 @@ yarn-error.log*
 
 # config file
 /backend/config.php
+
+
+
+# node modules
 /frontend/node_modules
+
+#build
+/frontend/build
+
+#node_modules
+/frontend/node_modules
+
+#dont push build
+
+/frontend/build
+
+/frontend/node_modules
+/frontend/node_modules/.cache

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useCSRFToken } from '../csrfContent';
 
 function ProfileHeader() {
     const navigate = useNavigate();
@@ -14,13 +15,13 @@ function ProfileHeader() {
     const [isLoading, setIsLoading] = useState(false);
     const [pendingFriends, setPendingFriends] = useState<string[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
-
+    const { csrfToken } = useCSRFToken();
     const fetchProfile = async () => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php?user=${user || ""}`, {
                 method: "GET",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
             });
 
             const result = await response.json();
@@ -53,7 +54,7 @@ function ProfileHeader() {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/addFriends.php`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
                 body: JSON.stringify({ potential_friend: profile.username }),
             });
 
@@ -81,7 +82,7 @@ function ProfileHeader() {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
                 body: JSON.stringify({ friend: friendUsername, "choice": "accept" }),
             });
 
