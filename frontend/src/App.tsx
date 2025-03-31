@@ -43,6 +43,9 @@ import Explore from "./explore/explore";
 import GenrePage from "./explore/genre";
 import ArtistPage from "./explore/artistPage";
 
+//friendlist page 
+import FriendList from "./friend_list/friendList";
+
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
 
@@ -85,7 +88,7 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
-        
+        <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
         
 
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
