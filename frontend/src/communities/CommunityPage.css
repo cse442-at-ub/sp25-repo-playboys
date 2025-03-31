@@ -16,14 +16,14 @@ body, html {
 }
 
 /* Search Bar */
-.search-container {
+.community-search-container {
   text-align: center;
   padding-left: 20%;
   margin: 20px 0;
 }
 
 /* Header Styling */
-.header {
+.community-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -31,7 +31,7 @@ body, html {
 }
 
 /* Keep search bar inline */
-.search-container input {
+.community-search-container input {
   width: 80%;
   padding-left: 15px;
   padding: 10px;
@@ -41,7 +41,7 @@ body, html {
 }
 
 /* Hide Scrollbar but keep it scrollable */
-.scrollable-list {
+.community-scrollable-list {
   display: flex;
   overflow-x: auto;
   gap: 10px;
@@ -54,11 +54,11 @@ body, html {
 }
 
 /* Hide the scrollbar */
-.scrollable-list::-webkit-scrollbar {
+.community-scrollable-list::-webkit-scrollbar {
   display: none; /* Hide the scrollbar for webkit-based browsers */
 }
 
-.scrollable-list {
+.community-scrollable-list {
   scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
@@ -113,7 +113,7 @@ body, html {
 }
 
 /* Button Styling */
-.back-button {
+.community-back-button {
   padding: 10px 15px;
   font-size: 16px;
   cursor: pointer;

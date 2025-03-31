@@ -8,7 +8,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.post-h1 {
     text-align: center;
     margin-bottom: 20px;
 }
@@ -18,16 +18,16 @@ h1 {
     flex-direction: column;
 }
 
-.form-group {
+.post-form-group {
     margin-bottom: 15px;
 }
 
-label {
+.post-label {
     font-size: 14px;
     font-weight: bold;
 }
 
-input,
+.post-input,
 textarea {
     width: 100%;
     padding: 10px;
@@ -37,11 +37,11 @@ textarea {
     font-size: 16px;
 }
 
-textarea {
+.post-textarea {
     height: 100px;
 }
 
-button {
+.post-button {
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
@@ -52,10 +52,10 @@ button {
     transition: background-color 0.3s;
 }
 
-button:disabled {
+.post-button:disabled {
     background-color: #888;
 }
 
-button:hover {
+.post-button:hover {
     background-color: #0056b3;
 }

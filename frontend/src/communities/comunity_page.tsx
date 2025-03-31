@@ -23,16 +23,16 @@ const CommunityPage = () => {
 
     return (
         <div className="community-page">
-            <div className="header">
+            <div className="community-header">
                 <h1>Community Page</h1>
-                <div className="search-container">
+                <div className="community-search-container">
                     <input type="text" placeholder="Search for communities..." />
                 </div>
             </div>
 
             {/* My Communities */}
             <h2>My Communities</h2>
-            <div className="scrollable-list">
+            <div className="community-scrollable-list">
                 {myCommunities.map((item, index) => (
                     <div className="community-item" key={index}>
                         <button className="community-button">
@@ -45,7 +45,7 @@ const CommunityPage = () => {
 
             {/* Recommended Communities */}
             <h2>Recommended Communities</h2>
-            <div className="scrollable-list">
+            <div className="community-scrollable-list">
                 {recommendedCommunities.map((item, index) => (
                     <div className="community-item" key={index}>
                         <button className="community-button">
