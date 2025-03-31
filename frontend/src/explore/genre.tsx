@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar from "../user_profile/Sidebar";
-<<<<<<< HEAD
-=======
 import { useNavigate } from "react-router-dom";
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer";
->>>>>>> origin/dev
 import "./genre.css";
+
+interface Song {
+  name: string;
+  artist: string;
+}
 
 const GenrePage: React.FC = () => {
   const { genre } = useParams<{ genre: string }>();
-<<<<<<< HEAD
-=======
   const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,6 @@ const GenrePage: React.FC = () => {
 
     fetchGenreData();
   }, [genre]);
->>>>>>> origin/dev
 
   return (
     <div className="gp-genre-page">
@@ -70,14 +69,6 @@ const GenrePage: React.FC = () => {
         <p className="gp-genre-description">
           Explore the best in {genre} music—discover top tracks, albums, and artists.
         </p>
-<<<<<<< HEAD
-        <div className="song-list">
-        <div className="song">{genre} song 1</div>
-        <div className="song">{genre} song 2</div>
-        <div className="song">{genre} song 3</div>
-        <div className="song">{genre} song 4</div>
-        </div>
-=======
 
         {error && <p className="gp-text-danger">{error}</p>}
 
@@ -103,7 +94,6 @@ const GenrePage: React.FC = () => {
             </li>
           ))}
         </ul>
->>>>>>> origin/dev
       </div>
       {activeTrackUrl && (
         <SpotifyPlayer

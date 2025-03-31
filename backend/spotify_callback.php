@@ -54,6 +54,10 @@ if (!isset($token_data['access_token'])) {
 }
 
 $access_token = $token_data['access_token'];
+setcookie('spotify_access_token', $access_token, [
+    'expires' => time() + 3600,
+    'path' => '/'
+]);
 $refresh_token = $token_data['refresh_token'] ?? null;
 echo "DEBUG: Received access token: $access_token<br>";
 
@@ -95,19 +99,6 @@ if (!$login_user) {
 $login_user->bind_param("s", $display_name);
 $login_user->execute();
 $result = $login_user->get_result();
-if($result->num_rows > 0){
-    $login_user->close();
-    echo "DEBUG: User found in database<br>";
-    $update_user = $conn->prepare("UPDATE user_login_data SET access_token = ?, refresh_token = ?, email = ?, username = ? WHERE spotify_id = ?");
-    if (!$update_user) {
-        echo "DEBUG: Database prepare error (update_user): " . $conn->error . "<br>";
-        exit("DEBUG: Database error during prepare (update_user).");
-    }
-    $update_user->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
-    $update_user->execute();
-    $update_user->close();
-    echo "DEBUG: User updated in user_login_data<br>";
-}
 
 if ($result->num_rows === 0) {
     echo "DEBUG: User not found in database. Registering new user.<br>";
@@ -162,8 +153,7 @@ echo "DEBUG: New auth token inserted<br>";
 
 setcookie('auth_token', $token, [
     'expires' => time() + 3600,
-    'path' => '/',
-    'HttpOnly' => true
+    'path' => '/'
 ]);
 echo "DEBUG: Auth token cookie set<br>";
 

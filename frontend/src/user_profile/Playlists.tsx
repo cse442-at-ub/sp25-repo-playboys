@@ -58,7 +58,7 @@ function Playlists() {
             </div>
           ))
         ) : (
-          <p>Please Login in with Spotify</p> // Display a loading message until playlists are fetched
+          <p>Loading playlists...</p> // Display a loading message until playlists are fetched
         )}
       </div>
     </div>

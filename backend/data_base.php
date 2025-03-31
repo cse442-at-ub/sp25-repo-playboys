@@ -15,7 +15,7 @@ CREATE TABLE password_resets (
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "cse442_2025_spring_team_ah_db"; //changed based on local or server sql database name
+$database = "user_login_information"; //changed based on local or server sql database name
 $port = 3306; //port number for sql database
 
 // Create connection
