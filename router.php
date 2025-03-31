@@ -1,5 +1,5 @@
 <?php
-    require "backend/data_base.php";
+    require "backend/database.php";
     require "backend/user_auth.php";
 
     $requested_uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH); //grab the requested path

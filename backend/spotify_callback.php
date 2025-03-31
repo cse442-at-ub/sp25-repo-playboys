@@ -1,166 +1,97 @@
 <?php
-require __DIR__ . "/headers.php";
-$config = include __DIR__ . '/config.php';
-$client_id     = $config['spotify_client_id'];
-$client_secret = $config['spotify_client_secret'];
-$redirect_uri  = $config['spotify_redirect_uri'];
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
+
+require_once("config.php");
+require_once("database.php");
 
 session_start();
-echo "DEBUG: Starting Spotify callback process<br>";
 
-// Step 1: Check for authorization code
+$client_id = 'db12e6eb3b95401794029939949532d8';
+$client_secret = '2ab63dda8ae04db39b2409a29820fbfc';
+$redirect_uri = 'http://localhost/backend/spotify_callback.php';
+
 if (!isset($_GET['code'])) {
-    echo "DEBUG: Authorization code not provided.<br>";
-    echo json_encode(["status" => "Error", "message" => "Error retrieving authorization code."]);
+    echo json_encode(["status" => "Error", "message" => "Missing code"]);
     exit();
 }
+
 $code = $_GET['code'];
-echo "DEBUG: Received authorization code: $code<br>";
 
-// Step 2: Exchange code for access token
-$token_url = "https://accounts.spotify.com/api/token";
-$post_fields = http_build_query([
-    'grant_type'   => 'authorization_code',
-    'code'         => $code,
-    'redirect_uri' => $redirect_uri
-]);
-$headers = [
-    'Authorization: Basic ' . base64_encode($client_id . ':' . $client_secret),
-    'Content-Type: application/x-www-form-urlencoded'
-];
-
-echo "DEBUG: Requesting access token from Spotify<br>";
+// Exchange authorization code for access token
 $ch = curl_init();
-curl_setopt_array($ch, [
-    CURLOPT_URL            => $token_url,
-    CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => $post_fields,
-    CURLOPT_HTTPHEADER     => $headers,
-    CURLOPT_RETURNTRANSFER => true
+curl_setopt($ch, CURLOPT_URL, 'https://accounts.spotify.com/api/token');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+    'grant_type' => 'authorization_code',
+    'code' => $code,
+    'redirect_uri' => $redirect_uri,
+    'client_id' => $client_id,
+    'client_secret' => $client_secret,
+]));
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/x-www-form-urlencoded'
 ]);
+
 $response = curl_exec($ch);
-if (curl_errno($ch)) {
-    echo "DEBUG: cURL error during token exchange: " . curl_error($ch) . "<br>";
-    exit("DEBUG: cURL error during token exchange.");
-}
 curl_close($ch);
 
-echo "DEBUG: Spotify token response: $response<br>";
-$token_data = json_decode($response, true);
-if (!isset($token_data['access_token'])) {
-    echo "DEBUG: Access token not received. Response: $response<br>";
+$data = json_decode($response, true);
+
+if (!isset($data['access_token'])) {
     echo json_encode(["status" => "Error", "message" => "Error retrieving access token"]);
     exit();
 }
 
-$access_token = $token_data['access_token'];
-setcookie('spotify_access_token', $access_token, [
-    'expires' => time() + 3600,
-    'path' => '/'
+$access_token = $data['access_token'];
+
+//Get user info from Spotify
+$meCurl = curl_init();
+curl_setopt($meCurl, CURLOPT_URL, "https://api.spotify.com/v1/me");
+curl_setopt($meCurl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($meCurl, CURLOPT_HTTPHEADER, [
+    "Authorization: Bearer $access_token"
 ]);
-$refresh_token = $token_data['refresh_token'] ?? null;
-echo "DEBUG: Received access token: $access_token<br>";
 
-// Step 3: Get Spotify user info
-$user_profile_url = "https://api.spotify.com/v1/me";
-echo "DEBUG: Requesting user profile from Spotify<br>";
-$ch = curl_init();
-curl_setopt_array($ch, [
-    CURLOPT_URL            => $user_profile_url,
-    CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $access_token],
-    CURLOPT_RETURNTRANSFER => true
-]);
-$user_response = curl_exec($ch);
-if (curl_errno($ch)) {
-    echo "DEBUG: cURL error during user info retrieval: " . curl_error($ch) . "<br>";
-    exit("DEBUG: cURL error during user info retrieval.");
-}
-curl_close($ch);
-echo "DEBUG: Spotify user profile response: $user_response<br>";
+$meResponse = curl_exec($meCurl);
+curl_close($meCurl);
+$userData = json_decode($meResponse, true);
 
-$user_info = json_decode($user_response, true);
-if (!isset($user_info['id'])) {
-    echo "DEBUG: User ID not found in response. Response: $user_response<br>";
-    exit("DEBUG: Error retrieving user information.");
+if (!isset($userData['id']) || !isset($userData['email'])) {
+    echo json_encode(["status" => "Error", "message" => "Failed to fetch Spotify user info"]);
+    exit();
 }
 
-$spotify_id   = $user_info['id'];
-$display_name = $user_info['display_name'] ?? '';
-$email        = $user_info['email'] ?? '';
-echo "DEBUG: User info retrieved - ID: $spotify_id, Display Name: $display_name, Email: $email<br>";
+$spotify_id = $userData['id'];
+$email = $userData['email'];
 
-// Step 4: Check if user exists in DB
-echo "DEBUG: Checking if user exists in database<br>";
-$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
-if (!$login_user) {
-    echo "DEBUG: Database prepare error: " . $conn->error . "<br>";
-    exit("DEBUG: Database error during prepare (login_user).");
-}
-$login_user->bind_param("s", $display_name);
-$login_user->execute();
-$result = $login_user->get_result();
+// 👤 Check if Spotify user exists in DB
+$stmt = $conn->prepare("SELECT username FROM user_login_data WHERE spotify_id = ?");
+$stmt->bind_param("s", $spotify_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
 
-if ($result->num_rows === 0) {
-    echo "DEBUG: User not found in database. Registering new user.<br>";
-
-    $insert_new_user = $conn->prepare("INSERT INTO user_login_data (access_token, refresh_token, email, username, spotify_id) VALUES (?, ?, ?, ?, ?)");
-    if (!$insert_new_user) {
-        echo "DEBUG: Database prepare error (insert_new_user): " . $conn->error . "<br>";
-        exit("DEBUG: Database error during prepare (insert_new_user).");
-    }
-    $insert_new_user->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
-    $insert_new_user->execute();
-    echo "DEBUG: New user inserted into user_login_data<br>";
-    $insert_new_user->close();
-
-    // Profile setup
-    $username = $display_name;
-    $followers = 0;
-    $followings = 0;
-    $friends = 0;
-    $top_songs = "";
-    $top_artists = "";
-    $recent_activity = "";
-    $profile_pic = "";
-
-    $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    if (!$insert_new_profile) {
-        echo "DEBUG: Database prepare error (insert_new_profile): " . $conn->error . "<br>";
-        exit("DEBUG: Database error during prepare (insert_new_profile).");
-    }
-    $insert_new_profile->bind_param("ssissssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic);
-    $insert_new_profile->execute();
-    $insert_new_profile->close();
-    echo "DEBUG: New user inserted into user_profiles<br>";
+if ($row) {
+    // User exists, update token
+    $username = $row['username'];
+    $updateStmt = $conn->prepare("UPDATE user_login_data SET access_token = ? WHERE spotify_id = ?");
+    $updateStmt->bind_param("ss", $access_token, $spotify_id);
+    $updateStmt->execute();
+} else {
+    // User does not exist — create one
+    $generated_username = "spotify_" . uniqid();
+    $insertStmt = $conn->prepare("INSERT INTO user_login_data (spotify_id, username, email, access_token) VALUES (?, ?, ?, ?)");
+    $insertStmt->bind_param("ssss", $spotify_id, $generated_username, $email, $access_token);
+    $insertStmt->execute();
+    $username = $generated_username;
 }
 
-// Step 5: Handle session + cookies for all users
-$token = bin2hex(random_bytes(32));
-$csrf_token = bin2hex(random_bytes(32));
-echo "DEBUG: Generated new auth token: $token<br>";
+//Set session username
+$_SESSION['username'] = $username;
 
-$delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
-$delete_old_keys->bind_param("s", $display_name);
-$delete_old_keys->execute();
-$delete_old_keys->close();
-echo "DEBUG: Old auth tokens deleted<br>";
-
-$insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key, csrf_token) VALUES (?, ?, ?)");
-$insert_key->bind_param("sss", $display_name, $token, $csrf_token);
-$insert_key->execute();
-$insert_key->close();
-echo "DEBUG: New auth token inserted<br>";
-
-setcookie('auth_token', $token, [
-    'expires' => time() + 3600,
-    'path' => '/'
-]);
-echo "DEBUG: Auth token cookie set<br>";
-
-$_SESSION['username'] = $display_name;
-$_SESSION['spotify_uid'] = $spotify_id;
-
-echo "DEBUG: Redirecting user to profile page<br>";
-header('Location: ' . $config['frontend_url'] . '#/userprofile');
+// Redirect to explore page
+header("Location: http://localhost:3000/#/explore");
 exit();
-?>

@@ -23,7 +23,7 @@ const SettingsAccount = () => {
   const handleOptionClick = async (selectedPath: string) => {
     if (selectedPath === "logout") {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/logout.php`, { 
+        const response = await fetch(`${process.env.REACT_APP_API_URL}logout.php`, { 
           method: "POST", 
           credentials: "include", 
           headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken } 

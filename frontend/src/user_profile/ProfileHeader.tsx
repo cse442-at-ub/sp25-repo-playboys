@@ -18,7 +18,7 @@ function ProfileHeader() {
     const { csrfToken } = useCSRFToken();
     const fetchProfile = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php?user=${user || ""}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}getProfile.php?user=${user || ""}`, {
                 method: "GET",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
@@ -51,7 +51,7 @@ function ProfileHeader() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/addFriends.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}addFriends.php`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
@@ -79,7 +79,7 @@ function ProfileHeader() {
 
     const acceptFriendRequest = async (friendUsername: string) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}acceptFriends.php`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },

@@ -1,4 +1,28 @@
 <?php
+require_once "headers.php"; // If not already included
+require_once "config.php";  // For $conn
+
+if (!isset($_COOKIE["auth_token"])) {
+    http_response_code(401);
+    echo json_encode(["error" => "Auth token missing"]);
+    exit();
+}
+
+$auth_token = $_COOKIE["auth_token"];
+
+$stmt = $conn->prepare("SELECT username FROM cookie_authentication WHERE auth_key = ?");
+$stmt->bind_param("s", $auth_token);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    http_response_code(401);
+    echo json_encode(["error" => "Invalid auth token"]);
+    exit();
+}
+
+$row = $result->fetch_assoc();
+$username = $row["username"]; // used in likeSong.php
 
 //register function
 function register($user_info_conn, $data) {
