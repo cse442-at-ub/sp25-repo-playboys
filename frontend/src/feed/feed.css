@@ -1,5 +1,5 @@
 /* Updated post overlay positioning */
-.post-overlay {
+.feed-post-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -11,7 +11,7 @@
 }
 
 /* Updated post info alignment */
-.post-info {
+.feed-post-info {
     text-align: left; /* Left-align all text */
     margin: 0; /* Remove previous center alignment */
     width: auto; /* Let content determine width */
@@ -29,7 +29,7 @@
     touch-action: pan-y;
 }
 
-.post {
+.feed-post {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -37,12 +37,12 @@
     transition: opacity 0.5s ease;
 }
 
-.post.active {
+.feed-post.active {
     opacity: 1;
 }
 
-.post-video,
-.post-image {
+.feed-post-video,
+.feed-post-image {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -51,21 +51,21 @@
     background-color: #111;
 }
 
-.post-info h2 {
+.feed-post-info h2 {
     font-size: clamp(1.5rem, 5vw, 2.5rem);
     font-weight: 700;
     margin-bottom: 0.5rem;
     line-height: 1.2;
 }
 
-.post-info p {
+.feed-post-info p {
     font-size: clamp(1rem, 3vw, 1.2rem);
     margin: 0.25rem 0;
     line-height: 1.4;
     opacity: 0.9;
 }
 
-.song {
+.feed-song {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -74,20 +74,20 @@
     opacity: 0.8;
 }
 
-.username {
+.feed-username {
     font-weight: 600;
     color: #fff;
     margin-top: 0.5rem;
 }
 
-.post-actions {
+.feed-post-actions {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
     z-index: 10;
 }
 
-.post-actions button {
+.feed-post-actions button {
     padding: 0.75rem 1.5rem;
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(10px);
@@ -100,12 +100,12 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-.post-actions button:hover {
+.feed-post-actions button:hover {
     background: rgba(255,255,255,0.25);
     transform: translateY(-2px);
 }
 
-.loading, .error, .empty {
+.feed-loading, .error, .empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -116,7 +116,7 @@
     padding: 2rem;
 }
 
-.empty button {
+.feed-empty button {
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     background: #1DB954;
@@ -128,11 +128,11 @@
 }
 
 @media (max-width: 768px) {
-    .post-overlay {
+    .feed-post-overlay {
         padding: 1.5rem;
     }
     
-    .post-actions {
+    .feed-post-actions {
         bottom: 1.5rem;
         right: 1.5rem;
     }
