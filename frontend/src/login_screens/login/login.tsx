@@ -21,10 +21,6 @@ const Login: React.FC = () => {
             },
             body: JSON.stringify(data),
         });
-        fetch(`${process.env.REACT_APP_API_URL}backend/access_token.php`, {
-            method: 'GET',
-            credentials: 'include'
-        });
         const result = await response.json();
         const csrfToken = result["csrfToken"];
         setCsrfToken(csrfToken);
