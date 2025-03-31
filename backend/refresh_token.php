@@ -1,17 +1,17 @@
 <?php
 require __DIR__ . "/headers.php";
 require __DIR__ . "/config.php";
-require __DIR__ . "/database.php";
+require __DIR__ . "/data_base.php";
 
 session_start();
 $is_login_with_spotify = 1;
-if (!isset($_SESSION['spotify_uid'])) {
+if (!isset($_SESSION['spotify_id'])) {
     $is_login_with_spotify = 0;
     echo json_encode(["error" => "Unauthorized"]);
     exit();
 }
 
-$spotifyId = $_SESSION['spotify_uid'];
+$spotifyId = $_SESSION['spotify_id'];
 
 // Get stored refresh token from DB
 $stmt = $conn->prepare("SELECT refresh_token FROM user_login_data WHERE spotify_id = ?");
