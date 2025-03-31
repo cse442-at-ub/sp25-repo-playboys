@@ -1,15 +1,10 @@
 <?php
 require __DIR__ . "/headers.php";
-<<<<<<< HEAD
-require __DIR__ . "/config.php";
-require __DIR__ . "/data_base.php";
-=======
 require __DIR__ . "/data_base.php";
 $config = include __DIR__ . '/config.php';
 $client_id     = $config['spotify_client_id'];
 $client_secret = $config['spotify_client_secret'];
 $redirect_uri  = $config['spotify_redirect_uri'];
->>>>>>> dev
 
 session_start();
 $is_login_with_spotify = 1;
