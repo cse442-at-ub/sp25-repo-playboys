@@ -2,35 +2,27 @@ import React, { useState, useRef } from "react";
 import './SearchResultPage.css';
 
 interface Song {
-    title: string;
-    artist: string;
-    image: string;
+    album: string;
+    artists_names: string[];
+    duration: string;
+    image_url: string;
+    name: string;
+    popularity: number;
+    spotify_url: string;
+    type: string;
 }
 
-const SongResults = () => {
-    const [songs] = useState<Song[]>([
-        { title: "Song 1", artist: "Artist 1", image: './static/Drakepfp.png' },
-        { title: "Song 2", artist: "Artist 2", image: './static/Adopfp.png' },
-        { title: "Song 3", artist: "Artist 3", image: './static/TheBeatlespfp.png' },
-        { title: "Song 4", artist: "Artist 4", image: './static/Drakepfp.png' },
-        { title: "Song 5", artist: "Artist 5", image: './static/Adopfp.png' },
-        { title: "Song 6", artist: "Artist 6", image: './static/TheBeatlespfp.png' },
-        { title: "Song 7", artist: "Artist 7", image: './static/Drakepfp.png' },
-        { title: "Song 8", artist: "Artist 8", image: './static/Adopfp.png' },
-        { title: "Song 9", artist: "Artist 9", image: './static/TheBeatlespfp.png' },
-        { title: "Song 10", artist: "Artist 10", image: './static/Drakepfp.png' },
-        { title: "Song 11", artist: "Artist 11", image: './static/Adopfp.png' },
-        { title: "Song 12", artist: "Artist 12", image: './static/TheBeatlespfp.png' },
-        { title: "Song 13", artist: "Artist 13", image: './static/Drakepfp.png' },
-        { title: "Song 14", artist: "Artist 14", image: './static/Adopfp.png' },
-        { title: "Song 15", artist: "Artist 15", image: './static/TheBeatlespfp.png' },
-    ]);
+
+const SongResults = ({ data }: { data: Song[] }) => {
+
+    const songs: Song[] = data;   
+    console.log(songs);
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
 
     const handleSongClick = (song: Song): void => {
-        console.log(`Song clicked: ${song.title} by ${song.artist}`);
+        console.log(`Song clicked: ${song.name} by ${song.artists_names}`);
     };
 
     // Function to handle scrolling right
@@ -90,14 +82,12 @@ const SongItem = ({ song, onClick }: { song: Song; onClick: (song: Song) => void
             onClick={() => onClick(song)}
         >
             <img
-                src={song.image}
-                alt={`${song.title} cover`}
+                src={song.image_url}
+                alt={`${song.name} cover`}
                 className="song-image-horizontal"
             />
-            <div className="song-details">
-                <h3 className="song-title">{song.title}</h3>
-                <p className="song-artist">{song.artist}</p>
-            </div>
+                <h3 className="song-title">{song.name}</h3>
+                <p className="song-artist">{song.artists_names}</p>
         </button>
     );
 };

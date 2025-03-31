@@ -6,6 +6,8 @@ $config = include __DIR__ . '/config.php';
 $client_id = $config['spotify_client_id'];
 $client_secret = $config['spotify_client_secret'];
 
+# addding a new line to test the xamp_script
+
 // Get access token
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, 'https://accounts.spotify.com/api/token');
