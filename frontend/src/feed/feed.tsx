@@ -99,7 +99,7 @@ const Feed = () => {
 
     return (
         <div className="feed-container" onWheel={handleSwipe}>
-            <div className="feed-post active"> {/* Removed the index comparison since we only show one post at a time */}
+            <div className="feed-post active">
                 {current.media_type === 'video' ? (
                     <video
                         ref={videoRef}
@@ -119,20 +119,20 @@ const Feed = () => {
                         key={current.post_id}
                     />
                 )}
-                
-                <div className="feed-post-overlay">
-                    <div className="feed-post-info">
-                        <h2>{current.title}</h2>
-                        <p>{current.description}</p>
-                        <p className="feed-song">🎵 {current.song_name}</p>
-                        <p className="feed-username">@{current.username}</p>
-                    </div>
+                <div className=".feed-bottom-bar">
+
+                <div className="feed-post-info">
+                    <h2>{current.title}</h2>
+                    <p>{current.description}</p>
+                    <p className="feed-song">🎵 {current.song_name}</p>
+                    <p className="feed-username">@{current.username}</p>
                 </div>
-            </div>
-            
-            <div className="feed-post-actions">
-                <button onClick={() => navigate("/feed/post")}>Create Post</button>
-            </div>
+
+                <div className="feed-post-actions">
+                    <button onClick={() => navigate("/feed/post")}>Create Post</button>
+                </div>
+                </div>
+        </div>
         </div>
     );
 };
