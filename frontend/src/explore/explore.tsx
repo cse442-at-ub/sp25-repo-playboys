@@ -56,9 +56,31 @@ const Explore: React.FC = () => {
   const handleArtistClick = (artist: string) => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
   };
+<<<<<<< HEAD
   const handleSongClick = (song: string) => {
     navigate(`/explore/${song.toLowerCase()}`);
+=======
+  const handleSongClick = async (song: string, artist: string) => {
+    try {
+      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ song_name: song, artist_name: artist })
+      });
+  
+      const result = await response.json();
+      if (result.status === 'success') {
+        setActiveTrackUrl(result.embedUrl);
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error playing song:", error);
+    }
+>>>>>>> origin/dev
   };
+  
 
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -66,35 +88,40 @@ const Explore: React.FC = () => {
   
 
   return (
-    <div className="explore-page">
-      <div className="sidebar">
+    <div className="ep-explore-page">
+      <div className="ep-sidebar">
         <Sidebar />
       </div>
+<<<<<<< HEAD
       
       <div className="explore-content">
+=======
+
+      <div className="ep-explore-content">
+>>>>>>> origin/dev
         {/* Search Bar */}
-        <div className="search-bar-container">
+        <div className="ep-search-bar-container">
           <input
             type="text"
-            className="search-bar"
+            className="ep-search-bar"
             placeholder="Search for a genre, artist, songs... 🔍"
           />
         </div>
 
         {/* What Are People Listening To */}
-        <h2 className="section-title">Popularity List</h2>
-        <div className="listening-container">
+        <h2 className="ep-section-title">Popularity List</h2>
+        <div className="ep-listening-container">
           {/* Top Songs */}
-          <div className="listening-column">
+          <div className="ep-listening-column">
             <h3>
               <center>Top Songs</center>
             </h3>
             {topTracks.length > 0 ? (
               topTracks.slice(0, 5).map((track, index) => (
                 <div
-                  className="list-item"
+                  className="ep-list-item"
                   key={track.name + index}
-                  onClick={() => handleSongClick(track.name)}
+                  onClick={() => handleSongClick(track.name, track.artist.name)}
                   style={{ cursor: "pointer" }}
                 >
                   {track.name} - {track.artist.name}
@@ -105,14 +132,14 @@ const Explore: React.FC = () => {
             )}
           </div>
           {/* Top Artists */}
-          <div className="listening-column">
+          <div className="ep-listening-column">
             <h3>
               <center>Top Artists</center>
             </h3>
             {topArtists.length > 0 ? (
               topArtists.slice(0, 5).map((artist, index) => (
                 <div
-                  className="list-item"
+                  className="ep-list-item"
                   key={artist.name + index}
                   onClick={() => handleArtistClick(artist.name)}
                   style={{ cursor: "pointer" }}
@@ -125,14 +152,14 @@ const Explore: React.FC = () => {
             )}
           </div>
           {/* Top Genres */}
-          <div className="listening-column">
+          <div className="ep-listening-column">
             <h3>
               <center>Top Genres</center>
             </h3>
             {topGenres.length > 0 ? (
               topGenres.slice(0, 5).map((genre, index) => (
                 <div
-                  className="list-item"
+                  className="ep-list-item"
                   key={genre.name + index}
                   style={{ cursor: "pointer" }}
                 >
@@ -146,12 +173,12 @@ const Explore: React.FC = () => {
         </div>
 
         {/* Genre Section */}
-        <h2 className="section-title">Browse All</h2>
-        <div className="genre-container">
+        <h2 className="ep-section-title">Browse All</h2>
+        <div className="ep-genre-container">
           {genres.map((genre) => (
             <button
               key={genre.name}
-              className="genre-box"
+              className="ep-genre-box"
               style={{ backgroundColor: genre.color, cursor: "pointer" }}
               onClick={() => handleGenreClick(genre.name)}
             >
@@ -161,36 +188,41 @@ const Explore: React.FC = () => {
         </div>
 
         {/* Upcoming Events */}
-        <h2 className="section-title">Upcoming Events</h2>
-        <div className="events-container">
-          <div className="event-circle">
-            <div className="event-date">
+        <h2 className="ep-section-title">Upcoming Events</h2>
+        <div className="ep-events-container">
+          <div className="ep-event-circle">
+            <div className="ep-event-date">
               Feb 31
               <br />
               13:61 PM
             </div>
-            <div className="event-location">Metlife</div>
+            <div className="ep-event-location">Metlife</div>
           </div>
-          <div className="event-circle">
-            <div className="event-date">
+          <div className="ep-event-circle">
+            <div className="ep-event-date">
               Jan 1
               <br />
               1:11 AM
             </div>
-            <div className="event-location">Metlife</div>
+            <div className="ep-event-location">Metlife</div>
           </div>
-          <div className="event-circle">
-            <div className="event-date">
+          <div className="ep-event-circle">
+            <div className="ep-event-date">
               Aug 2
               <br />
               2:22 PM
             </div>
-            <div className="event-location">Orchard Park</div>
+            <div className="ep-event-location">Orchard Park</div>
           </div>
         </div>
       </div>
+<<<<<<< HEAD
       <div className="songrecommend">
         <SongRecommendation/>
+=======
+      <div className="ep-songrecommend">
+        <SongRecommendation />
+>>>>>>> origin/dev
       </div>
 
     </div>
