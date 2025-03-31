@@ -1,0 +1,124 @@
+/* Make the page take up the full width and height */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.community-page {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Search Bar */
+.community-search-container {
+  text-align: center;
+  padding-left: 20%;
+  margin: 20px 0;
+}
+
+/* Header Styling */
+.community-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Keep search bar inline */
+.community-search-container input {
+  width: 80%;
+  padding-left: 15px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Hide Scrollbar but keep it scrollable */
+.community-scrollable-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px;
+  white-space: nowrap;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 5px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide the scrollbar */
+.community-scrollable-list::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar for webkit-based browsers */
+}
+
+.community-scrollable-list {
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+/* Community Item Styling */
+.community-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  min-width: 250px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Community Button Styling */
+.community-button {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid transparent; /* Transparent border for the button */
+  background: transparent; /* Transparent background */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  text-align: left;
+}
+
+.community-button:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Light hover effect */
+}
+
+.community-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Ensure round shape */
+  background: gray; /* Placeholder for artist image */
+  margin-right: 10px;
+  overflow: hidden; /* Ensure the image fits inside the circle */
+}
+
+.community-image img {
+  width: 100%; /* Make image fill the circle */
+  height: 100%;
+  object-fit: cover; /* Ensure the image fills the circle without distortion */
+}
+
+/* Community Button Text */
+.community-button span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Button Styling */
+.community-back-button {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background: #000;
+  color: white;
+}

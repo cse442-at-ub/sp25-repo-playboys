@@ -1,0 +1,24 @@
+.spotify-player-wrapper {
+    position: fixed;
+    z-index: 1050;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .spotify-player-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 5px;
+    cursor: move;
+  }
+  
+  .spotify-player-controls button {
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }

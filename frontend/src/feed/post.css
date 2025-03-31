@@ -1,0 +1,94 @@
+.post-page-container {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top:30px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Centering title */
+.post-h1 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* Form styles */
+.post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Labels */
+.post-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Input fields */
+.post-input,
+.post-textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Textarea */
+.post-textarea {
+    height: 120px;
+    resize: vertical; /* Allow user to resize */
+}
+
+/* Buttons */
+.post-button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.post-button:disabled {
+    background-color: #888;
+}
+
+.post-button:hover {
+    background-color: #0056b3;
+}
+
+.post-button:active {
+    transform: scale(0.98); /* Slight press effect */
+}
+
+/* 📌 Mobile-Specific Styles */
+@media (max-width: 600px) {
+    .post-page-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .post-h1 {
+        font-size: 20px;
+    }
+
+    .post-input,
+    .post-textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .post-button {
+        font-size: 16px;
+        padding: 10px;
+    }
+}
