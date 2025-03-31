@@ -54,7 +54,7 @@ function FriendList() {
     fetchFriends();
   }, [csrfToken]);
 
-  const sendFriendRequest = async (friendName: string) => {
+  const sendFriendRequest = async (friendName: string, status: string) => {
     if (isLoading) return;
     setIsLoading(true);
 
@@ -63,7 +63,7 @@ function FriendList() {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
-            body: JSON.stringify({ potential_friend: friendName }),
+            body: JSON.stringify({ potential_friend: friendName, status: status}),
         });
 
         const result = await response.json();
@@ -85,8 +85,14 @@ function FriendList() {
         } else if(result.status === "removed"){
           setFriends(prevFriends => prevFriends.filter(friend => friend.name !== friendName));
           // Make an API call to remove friend from the backend as well if necessary
-          console.log(`Remove friend: ${friendName}`);
-        } 
+          console.log(`unfriend: ${friendName}`);
+        } else if(result.status === "other removed"){
+          let po_friend = friends.find(friend => friend.name == friendName);
+          if (po_friend) {
+            po_friend["status"] = "none";
+          }
+          console.log(`unfriend: ${friendName}`);
+        }
         else if (result.status === "error") {
           let po_friend = friends.find(friend => friend.name == friendName);
           if (po_friend) {
@@ -142,27 +148,27 @@ function FriendList() {
                 {friend.name}
               </div>
               {!user || user==loggedInUser ? (
-                <button className="remove-friend-btn" onClick={() => sendFriendRequest(friend.name)} disabled={isLoading}>
+                <button className="remove-friend-btn" onClick={() => sendFriendRequest(friend.name, "unfriend")} disabled={isLoading}>
                   Remove Friend
                 </button>
               ) : (
                 <>
 
                 {friend.status === "none" && friend.name != loggedInUser && (
-                    <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name)} disabled={isLoading}>
+                    <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name, "add")} disabled={isLoading}>
                         🤝 Add Friend
                     </button>
                 )}
 
                 {friend.status === "pending" && (
-                    <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name)} disabled={isLoading}>
+                    <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name, "pending")} disabled={isLoading}>
                         ⏳ Pending Request
                     </button>
                 )}
 
                 {friend.status === "friends" && (
-                    <button className="btn btn-secondary btn-sm mt-2 mt-md-0 mx-1" disabled>
-                        ✅ Friends
+                    <button className="btn btn-danger btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest(friend.name, "other unfriend")} disabled={isLoading}>
+                        unfriend
                     </button>
                 )}
             </>

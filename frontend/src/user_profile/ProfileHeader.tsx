@@ -47,7 +47,7 @@ function ProfileHeader() {
         fetchProfile();
     }, [user]);
 
-    const sendFriendRequest = async () => {
+    const sendFriendRequest = async (status: string) => {
         if (!profile || isLoading) return;
         setIsLoading(true);
 
@@ -56,7 +56,7 @@ function ProfileHeader() {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
-                body: JSON.stringify({ potential_friend: profile.username }),
+                body: JSON.stringify({ potential_friend: profile.username, status: status }),
             });
 
             const result = await response.json();
@@ -66,7 +66,10 @@ function ProfileHeader() {
                 setFriendStatus("none");
             } else if (result.status === "friends") {
                 setFriendStatus("friends");
-            } else if (result.status === "error") {
+            } else if (result.status === "removed"){
+                setFriendStatus("none");
+            } 
+            else if (result.status === "error") {
                 setFriendStatus("none");
                 console.error("Error sending request:", result.message);
             }
@@ -105,6 +108,10 @@ function ProfileHeader() {
             console.error("⚠️ Network error:", err);
         }
     };
+    const goToProfile = (friendName: string) => {
+        // Redirect to the friend's profile page
+        navigate(`/userprofile?user=${friendName || ""}`); 
+      };
 
     return (
         <div className="container">
@@ -121,8 +128,11 @@ function ProfileHeader() {
                         {showDropdown && (
                             <ul className="dropdown-menu show w-100">
                                 {pendingFriends.map((friend, index) => (
-                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center">
-                                        {friend}
+                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center" >
+                                        <div onClick={() => goToProfile(friend) } style={{ cursor: "pointer" }}>
+                                            {friend}
+                                        </div>
+                                        
                                         <button className="btn btn-success btn-sm" onClick={() => acceptFriendRequest(friend)}>
                                             ✅ Accept
                                         </button>
@@ -184,20 +194,20 @@ function ProfileHeader() {
                                         <button className="btn btn-primary btn-sm mt-2 mt-md-0 mx-1">➕ Follow</button>
 
                                         {friendStatus === "none" && (
-                                            <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={sendFriendRequest} disabled={isLoading}>
+                                            <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest("add")} disabled={isLoading}>
                                                 🤝 Add Friend
                                             </button>
                                         )}
 
                                         {friendStatus === "pending" && (
-                                            <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" onClick={sendFriendRequest} disabled={isLoading}>
+                                            <button className="btn btn-warning btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest("pending")} disabled={isLoading}>
                                                 ⏳ Pending Request
                                             </button>
                                         )}
 
                                         {friendStatus === "friends" && (
-                                            <button className="btn btn-secondary btn-sm mt-2 mt-md-0 mx-1" disabled>
-                                                ✅ Friends
+                                            <button className="btn btn-danger btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest("unfriend")} disabled={isLoading}>
+                                                unfriend
                                             </button>
                                         )}
                                     </>
