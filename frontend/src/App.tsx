@@ -32,7 +32,7 @@ import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
 // Coummunity Components
-import CommunityPage from "./communities/comunity_page";
+// import CommunityPage from "./communities/comunity_page";
 
 // Feed Compnents
 import Feed from "./feed/feed";
@@ -48,6 +48,9 @@ import SongRecommendation from "./song_recommendation/SongRecommendationFE";
 import Explore from "./explore/explore";
 import GenrePage from "./explore/genre";
 import ArtistPage from "./explore/artistPage";
+
+//friendlist page 
+import FriendList from "./friend_list/friendList";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -91,18 +94,7 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
-        
-        
-
-        <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
-        <Route path="/communities" element={<CommunityPage />}/>
-        <Route path="/feed" element={<Feed/>}/>
-        <Route path="/feed/post" element={<PostPage/>}/>
-
-
-
-
-        
+        <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
         
 
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />

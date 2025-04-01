@@ -33,8 +33,7 @@
             $relativePath = "backend/posts/" . $newFileName; // Adjust this path according to your server setup
 
             $allowedTypes = [
-                'image' => ['jpg', 'jpeg', 'png', 'gif'],
-                'video' => ['mp4', 'mov', 'avi', 'webm']
+                'image' => ['jpg', 'jpeg', 'png', 'gif']
             ];
 
             // Determine media type

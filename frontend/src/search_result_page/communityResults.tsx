@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import './SearchResultPage.css';
 
 interface Community {
     name: string;

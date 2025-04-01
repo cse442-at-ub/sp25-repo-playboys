@@ -160,6 +160,15 @@ echo "DEBUG: Auth token cookie set<br>";
 $_SESSION['username'] = $display_name;
 $_SESSION['spotify_uid'] = $spotify_id;
 
+// Generate auth token and save in cookie_authentication table
+$auth_token = bin2hex(random_bytes(32)); // secure random token
+setcookie("auth_token", $auth_token, time() + (86400 * 30), "/", "localhost", false, true); // 30 days, HttpOnly
+
+// Save token in DB
+$stmt = $conn->prepare("REPLACE INTO cookie_authentication (auth_key, username) VALUES (?, ?)");
+$stmt->bind_param("ss", $auth_token, $username);
+$stmt->execute();
+
 echo "DEBUG: Redirecting user to profile page<br>";
 header('Location: ' . $config['frontend_url'] . '#/userprofile');
 exit();
