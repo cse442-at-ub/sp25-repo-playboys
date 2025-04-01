@@ -10,8 +10,6 @@ node_modules/
 
 # production
 /build
-/frontend/build
-/frontend/node_modules
 
 # misc
 .DS_Store
@@ -35,12 +33,4 @@ yarn-error.log*
 #build
 /frontend/build
 
-#node_modules
-/frontend/node_modules
-
-#dont push build
-
-/frontend/build
-
-/frontend/node_modules
 /frontend/node_modules/.cache
