@@ -114,4 +114,45 @@ function login($user_info_conn, $data) {
     }
 }
 
+
+function authenticateUser() {
+    global $conn;
+
+    if (!isset($_COOKIE["auth_token"])) {
+        return ["authenticated" => false];
+    }
+
+    $auth_token = $_COOKIE["auth_token"];
+
+    // Get username from token
+    $stmt = $conn->prepare("SELECT username FROM cookie_authentication WHERE auth_key = ?");
+    $stmt->bind_param("s", $auth_token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        return ["authenticated" => false];
+    }
+
+    $row = $result->fetch_assoc();
+    $username = $row["username"];
+
+    // Get spotify_id and access_token from user_login_data
+    $stmt = $conn->prepare("SELECT spotify_id, access_token FROM user_login_data WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $userData = $stmt->get_result()->fetch_assoc();
+
+    if (!$userData || empty($userData["spotify_id"]) || empty($userData["access_token"])) {
+        return ["authenticated" => false];
+    }
+
+    return [
+        "authenticated" => true,
+        "spotify_id" => $userData["spotify_id"],
+        "access_token" => $userData["access_token"]
+    ];
+}
+
+
 ?>

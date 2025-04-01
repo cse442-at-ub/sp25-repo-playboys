@@ -6,6 +6,9 @@ header("Content-Type: application/json");
 require_once("config.php");
 require_once("database.php");
 
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.cookie_secure', '0'); // Use '1' if you're running HTTPS
+
 session_start();
 
 $client_id = 'db12e6eb3b95401794029939949532d8';
@@ -91,6 +94,17 @@ if ($row) {
 
 //Set session username
 $_SESSION['username'] = $username;
+$_SESSION['spotify_id'] = $spotify_id;
+
+// Generate auth token and save in cookie_authentication table
+$auth_token = bin2hex(random_bytes(32)); // secure random token
+setcookie("auth_token", $auth_token, time() + (86400 * 30), "/", "localhost", false, true); // 30 days, HttpOnly
+
+// Save token in DB
+$stmt = $conn->prepare("REPLACE INTO cookie_authentication (auth_key, username) VALUES (?, ?)");
+$stmt->bind_param("ss", $auth_token, $username);
+$stmt->execute();
+
 
 // Redirect to explore page
 header("Location: http://localhost:3000/#/explore");

@@ -242,35 +242,25 @@ const SongRecommendation: React.FC = () => {
   };  
 
   const handleLike = async () => {
-    console.log("Liked SONGGGGG");
-    if (!currentTrack) return;
-  
     setSwipeDirection("left");
     setLiked(true);
+  
+    // Send liked song URI to back-end
+    await fetch(`${process.env.REACT_APP_API_URL}likeSong.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        uri: currentTrack.uri,
+        name: currentTrack.name,
+        artist: currentTrack.artists.map((a: any) => a.name).join(", "),
+        album: currentTrack.album.name,
+      }),
+    });
+  
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
-  
-    try {
-      await fetch(`${process.env.REACT_APP_API_URL}likeSong.php`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          uri: currentTrack.uri,
-          name: currentTrack.name,
-          artist: currentTrack.artists.map((a: any) => a.name).join(", "),
-          album: currentTrack.album.name,
-          image: currentTrack.album.images[0]?.url
-        })
-      });
-    } catch (err) {
-      console.error("Failed to like song", err);
-    }
-  
     await resetState();
   };
-  
 
   const handleSkipSong = async () => {
     setSwipeDirection("right");
