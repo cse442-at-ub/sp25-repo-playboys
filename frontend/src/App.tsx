@@ -33,7 +33,7 @@ import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOpti
 import FriendRequest from "./Settings/community_settings/friendRequest";
 
 // Coummunity Components
-import CommunityPage from "./communities/comunity_page";
+// import CommunityPage from "./communities/comunity_page";
 
 // Feed Compnents
 import Feed from "./feed/feed";
