@@ -15,7 +15,7 @@ const GenrePage: React.FC = () => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
+  const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const navigate = useNavigate();
   const handleArtistClick = (artist: string) => {
     navigate(`/explore/artist/${artist.toLowerCase()}`);
@@ -31,7 +31,8 @@ const GenrePage: React.FC = () => {
   
       const result = await response.json();
       if (result.status === 'success') {
-        setActiveTrackUrl(result.embedUrl);
+        // Save track URL along with song title and artist name
+        setActiveTrack({ url: result.embedUrl, title: song, artist: artist });
       } else {
         console.error(result.message);
       }
@@ -95,10 +96,12 @@ const GenrePage: React.FC = () => {
           ))}
         </ul>
       </div>
-      {activeTrackUrl && (
+      {activeTrack && (
         <SpotifyPlayer
-          trackUrl={activeTrackUrl}
-          onClose={() => setActiveTrackUrl(null)}
+          trackUrl={activeTrack.url}
+          title={activeTrack.title}
+          artist={activeTrack.artist}
+          onClose={() => setActiveTrack(null)}
         />
       )}
     </div>

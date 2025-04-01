@@ -1,102 +1,88 @@
 import os
 import subprocess
 import paramiko
-import sys
 
-# Configuration
-SERVER = "aptitude.cse.buffalo.edu"  
-USERNAME = input("Enter username: ")
-PASSWORD = input("Enter password: ")
-
-# Local paths
-ROOT_DIR = os.getcwd()  # current (root) directory
-FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
-BUILD_DIR = os.path.join(FRONTEND_DIR, "build")
-
-# Remote paths
-REMOTE_ROOT = "/data/web/CSE442/2025-Spring/cse-442ah/"
-REMOTE_STATIC = "/data/web/CSE442/2025-Spring/cse-442ah/static"
-
-def run_build():
-    """Change to the frontend directory and run the npm build."""
-    print("Changing directory to:", FRONTEND_DIR)
-    os.chdir(FRONTEND_DIR)
-    
-    print("Running npm run build...")
-    # You might need to use "npm.cmd" on Windows. /////////IMPORTANT
-    result = subprocess.run(["npm.cmd", "run", "build"], capture_output=True, text=True)
-    if result.returncode != 0:
-        print("Build failed with error:")
-        print(result.stderr)
-        sys.exit(1)
-    print("Build succeeded.")
-
-def sftp_upload_file(sftp, local_path, remote_path):
-    """Upload a single file via SFTP."""
-    print(f"Uploading file {local_path} to {remote_path} ...")
-    sftp.put(local_path, remote_path)
-
-def sftp_upload_dir(sftp, local_dir, remote_dir):
+def recursive_upload(sftp, local_path, remote_path):
     """
-    Recursively upload a directory to the remote server.
-    Creates remote directories as needed.
+    Recursively uploads files and directories from local_path to remote_path using sftp.
+    Creates remote directories if they do not exist.
     """
-    # Ensure the remote directory exists
-    try:
-        sftp.stat(remote_dir)
-    except IOError:
-        print(f"Creating remote directory: {remote_dir}")
-        sftp.mkdir(remote_dir)
-
-    for root, dirs, files in os.walk(local_dir):
-        # Compute relative path and then the corresponding remote path
-        rel_path = os.path.relpath(root, local_dir)
-        remote_path = os.path.join(remote_dir, rel_path).replace("\\", "/")
+    if os.path.isdir(local_path):
         try:
-            sftp.stat(remote_path)
-        except IOError:
-            print(f"Creating remote directory: {remote_path}")
             sftp.mkdir(remote_path)
-        for file in files:
-            local_file = os.path.join(root, file)
-            remote_file = os.path.join(remote_path, file).replace("\\", "/")
-            print(f"Uploading file {local_file} to {remote_file} ...")
-            sftp.put(local_file, remote_file)
+        except IOError:
+            
+            pass
+        for item in os.listdir(local_path):
+            local_item = os.path.join(local_path, item)
+            remote_item = remote_path + "/" + item
+            if os.path.isdir(local_item):
+                recursive_upload(sftp, local_item, remote_item)
+            else:
+                sftp.put(local_item, remote_item)
+    else:
+        sftp.put(local_path, remote_path)
 
-def deploy():
-    # Step 1 & 2: Change to the /frontend directory and run the build
-    run_build()
+def main():
+    
+    root_dir = os.getcwd()
+    frontend_dir = os.path.join(root_dir, "frontend")
+    os.chdir(frontend_dir)
+    print("Changed directory to:", os.getcwd())
 
-    # Establish SSH connection and SFTP session
-    print("Connecting to remote server...")
+    
+    print("Running 'npm run build'...")
+    subprocess.run(["npm.cmd", "run", "build"], check=True)
+    print("Build complete.")
+
+    
+    server = "aptitude.cse.buffalo.edu"    
+    username = input("Enter username: ")        
+    password = input("Enter password: ")          
+    
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    try:
-        ssh.connect(SERVER, username=USERNAME, password=PASSWORD)
-    except Exception as e:
-        print(f"Failed to connect: {e}")
-        sys.exit(1)
-    
+    print(f"Connecting to server {server}...")
+    ssh.connect(server, username=username, password=password)
     sftp = ssh.open_sftp()
 
-    try:
-        # Step 4: Upload asset.manifest.json and index.html to the remote root directory
-        for filename in ["asset-manifest.json", "index.html"]:
-            local_file = os.path.join(BUILD_DIR, filename)
-            remote_file = os.path.join(REMOTE_ROOT, filename).replace("\\", "/")
-            sftp_upload_file(sftp, local_file, remote_file)
+    
+    local_build_dir = os.path.join(os.getcwd(), "build")
+    remote_root = "/data/web/CSE442/2025-Spring/cse-442ah"
+    files_to_upload = ["asset-manifest.json", "index.html"]
+    for file in files_to_upload:
+        local_file = os.path.join(local_build_dir, file)
+        remote_file = remote_root + "/" + file
+        print(f"Uploading {local_file} to {remote_file}...")
+        sftp.put(local_file, remote_file)
 
-        # Step 5: Upload the css and js directories to the remote /static directory
-        for folder in ["css", "js"]:
-            local_folder = os.path.join(BUILD_DIR, folder)
-            remote_folder = os.path.join(REMOTE_STATIC, folder).replace("\\", "/")
-            sftp_upload_dir(sftp, local_folder, remote_folder)
-    except Exception as e:
-        print("Deployment error:", e)
-    finally:
-        sftp.close()
-        ssh.close()
-        print("Deployment complete.")
+    
+    local_static_dir = os.path.join(local_build_dir, "static")
+    remote_static_dir = remote_root + "/static"
+    dirs_to_upload = ["css", "js"]
+    for directory in dirs_to_upload:
+        local_dir = os.path.join(local_static_dir, directory)
+        remote_dir = remote_static_dir + "/" + directory
+        print(f"Uploading directory {local_dir} to {remote_dir}...")
+        recursive_upload(sftp, local_dir, remote_dir)
+
+    
+    for directory in dirs_to_upload:
+        remote_dir = remote_static_dir + "/" + directory
+        chmod_command = f"chmod -R 0777 {remote_dir}"
+        print(f"Changing permissions for {remote_dir}...")
+        stdin, stdout, stderr = ssh.exec_command(chmod_command)
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status == 0:
+            print(f"Permissions changed successfully for {remote_dir}.")
+        else:
+            error_message = stderr.read().decode()
+            print(f"Error changing permissions for {remote_dir}: {error_message}")
+
+    
+    sftp.close()
+    ssh.close()
+    print("Deployment completed successfully.")
 
 if __name__ == "__main__":
-    deploy()
+    main()
