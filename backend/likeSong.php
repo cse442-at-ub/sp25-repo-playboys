@@ -20,7 +20,7 @@ session_start();
 
 require_once "config.php";
 require_once "user_auth.php";
-require_once "database.php";
+require_once "data_base.php";
 
 // CORS headers for local dev
 if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === 'http://localhost:3000') {

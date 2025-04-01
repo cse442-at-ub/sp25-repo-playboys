@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 
 // Only include database when needed
 if ($_SERVER["REQUEST_METHOD"] !== "OPTIONS") {
-    require __DIR__ . "/database.php";
+    require __DIR__ . "/data_base.php";
 }
 ?>
 <?php

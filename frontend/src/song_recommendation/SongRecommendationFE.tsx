@@ -29,7 +29,7 @@ const SongRecommendation: React.FC = () => {
 
 
   const fetchToken = async () => {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}spotifyplayer.php`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/spotifyplayer.php`, {
       credentials: "include"
     });
     
@@ -39,7 +39,7 @@ const SongRecommendation: React.FC = () => {
 
   const refreshAccessToken = async (): Promise<string | null> => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}refresh_token.php`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}backend/refresh_token.php`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -246,7 +246,7 @@ const SongRecommendation: React.FC = () => {
     setLiked(true);
   
     // Send liked song URI to back-end
-    await fetch(`${process.env.REACT_APP_API_URL}likeSong.php`, {
+    await fetch(`${process.env.REACT_APP_API_URL}backend/likeSong.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . "/headers.php";
 require __DIR__ . "/config.php";
-require __DIR__ . "/database.php";
+require __DIR__ . "/data_base.php";
 
 session_start();
 $is_login_with_spotify = 1;

@@ -14,7 +14,7 @@ function Playlists() {
     // Fetch the playlists from the backend when the component mounts
     const fetchPlaylists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}userTopPlaylist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopPlaylist.php`, {
           method: "GET",
           credentials: "include",
           headers: { 'CSRF-Token': csrfToken }

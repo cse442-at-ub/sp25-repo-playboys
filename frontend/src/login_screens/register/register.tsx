@@ -14,7 +14,7 @@ const Register: React.FC = () => {
         const data = {username, email, password, confirm_password};
         console.log(data);
 
-        const response = await fetch( `${process.env.REACT_APP_API_URL}register.php`, {
+        const response = await fetch( `${process.env.REACT_APP_API_URL}backend/register.php`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
