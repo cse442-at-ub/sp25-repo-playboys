@@ -31,8 +31,6 @@ import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
-import SearchPage from "./search_result_page/searchResultPage";
-
 // Coummunity Components
 import CommunityPage from "./communities/comunity_page";
 
