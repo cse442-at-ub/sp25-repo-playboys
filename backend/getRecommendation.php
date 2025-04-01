@@ -25,32 +25,33 @@ if (!isset($_SESSION['username'])) {
 
 $username = $_SESSION['username'];
 
-//Get access token from DB
-$stmt = $conn->prepare("SELECT access_token FROM user_login_data WHERE username = ?");
+// Get access token and spotify_id from DB
+$stmt = $conn->prepare("SELECT access_token, spotify_id FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$result || !$result['access_token']) {
-    echo json_encode(["error" => "Access token not found"]);
+if (!$result || !$result['access_token'] || !$result['spotify_id']) {
+    echo json_encode(["error" => "Access token or Spotify ID not found"]);
     exit();
 }
 
 $token = $result['access_token'];
+$spotify_id = $result['spotify_id'];
 
 // Get liked song URIs
 $likedUris = [];
-$stmt = $conn->prepare("SELECT uri FROM liked_songs WHERE spotify_id = ?");
+$stmt = $conn->prepare("SELECT song_uri FROM liked_songs WHERE spotify_id = ?");
 $stmt->bind_param("s", $spotify_id);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($row = $res->fetch_assoc()) {
-    $likedUris[] = $row['uri'];
+    $likedUris[] = $row['song_uri'];
 }
 $stmt->close();
 
-//Choose a random artist
+// Choose a random artist from user's top artists
 $topArtistsUrl = "https://api.spotify.com/v1/me/top/artists?limit=5";
 $topData = json_decode(file_get_contents($topArtistsUrl, false, stream_context_create([
     "http" => [
@@ -66,7 +67,7 @@ if (empty($topData['items'])) {
 $artist = $topData['items'][array_rand($topData['items'])];
 $artistID = $artist['id'];
 
-//Get top tracks for the artist
+// Get top tracks for the artist
 $tracksUrl = "https://api.spotify.com/v1/artists/$artistID/top-tracks?country=US";
 $tracksData = json_decode(file_get_contents($tracksUrl, false, stream_context_create([
     "http" => [
@@ -88,7 +89,7 @@ if (!$selectedTrack) {
     exit();
 }
 
-//Send back track data
+// Send back track data
 echo json_encode([
     "name" => $selectedTrack['name'],
     "artist" => $selectedTrack['artists'][0]['name'],
