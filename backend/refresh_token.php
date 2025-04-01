@@ -1,17 +1,20 @@
 <?php
 require __DIR__ . "/headers.php";
-require __DIR__ . "/config.php";
 require __DIR__ . "/data_base.php";
+$config = include __DIR__ . '/config.php';
+$client_id     = $config['spotify_client_id'];
+$client_secret = $config['spotify_client_secret'];
+$redirect_uri  = $config['spotify_redirect_uri'];
 
 session_start();
 $is_login_with_spotify = 1;
-if (!isset($_SESSION['spotify_id'])) {
+if (!isset($_SESSION['spotify_uid'])) {
     $is_login_with_spotify = 0;
     echo json_encode(["error" => "Unauthorized"]);
     exit();
 }
 
-$spotifyId = $_SESSION['spotify_id'];
+$spotifyId = $_SESSION['spotify_uid'];
 
 // Get stored refresh token from DB
 $stmt = $conn->prepare("SELECT refresh_token FROM user_login_data WHERE spotify_id = ?");
@@ -34,7 +37,7 @@ curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => [
-        "Authorization: Basic " . base64_encode($config['spotify_client_id'] . ":" . $config['spotify_client_secret']),
+        "Authorization: Basic " . base64_encode($client_id . ":" . $client_secret),
         "Content-Type: application/x-www-form-urlencoded"
     ],
     CURLOPT_POSTFIELDS => http_build_query([
@@ -52,7 +55,7 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 if (!isset($data['access_token'])) {
-    echo json_encode(["error" => "Failed to refresh token"]);
+    echo json_encode(["error" => $response]);
     exit();
 }
 
