@@ -70,8 +70,9 @@ const ArtistPage: React.FC = () => {
   
       const result = await response.json();
       if (result.status === 'success') {
+        console.log(result)
         // Save track URL along with song title and artist name
-        setActiveTrack({ url: result.embedUrl, title: song, artist: artist });
+        setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
       } else {
         console.error(result.message);
       }
