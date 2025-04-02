@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCSRFToken } from "../csrfContent";
 import "./friendList.css";
-
+import UserSearchBar from "../searchUser/searchUserBar";
 interface Friend {
   name: string;
   image: string;
@@ -122,6 +122,9 @@ function FriendList() {
       <div className="friendlist-header">
         <button className="friendlist-back-button" aria-label="Go back" onClick={handleBackButton}>←</button>
         <h2 className="friendlist-title">{user ? `${user}'s Friends` : "My Friends"}</h2>
+        <div className="friendlist-search-bar-container">
+          <UserSearchBar onSearch={(query) => console.log("Searching for:", query)} />
+        </div>
       </div>
 
       <div className="friendlist">
@@ -141,6 +144,7 @@ function FriendList() {
                 />
               </div>
               <div
+              
                 className="friend-name"
                 onClick={() => goToProfile(friend.name)} // Redirect to the friend's profile
                 style={{ cursor: "pointer" }}
