@@ -1,0 +1,94 @@
+/* src/components/UserSearchBar.css */
+.user-search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f4f4f4; /* Light background for the search bar */
+    padding: 8px 12px;
+    border-radius: 25px; /* Rounded edges */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  }
+  
+  .user-search-bar-input {
+    width: 250px; /* Set the width for the search input */
+    padding: 8px 12px;
+    border: none;
+    border-radius: 20px; /* Rounded edges */
+    font-size: 14px;
+    outline: none; /* Remove the default focus outline */
+    margin-right: 8px;
+    transition: all 0.3s ease; /* Smooth transition for focus */
+  }
+  
+  .user-search-bar-input:focus {
+    border: 2px solid #4CAF50; /* Green border on focus */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Slight shadow on focus */
+  }
+  
+  .user-search-bar-button {
+    padding: 8px 16px;
+    background-color: #4CAF50; /* Green button */
+    color: white;
+    border: none;
+    border-radius: 20px; /* Rounded button */
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease; /* Smooth transition for hover */
+  }
+  
+  .user-search-bar-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  .user-search-bar-button:focus {
+    outline: none;
+  }
+  
+  .user-search-bar-loading {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .user-search-bar-results-dropdown {
+    position: absolute;
+    top: 40px; /* Adjust based on your design */
+    width: 250px; /* Match the width of the input field */
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-search-bar-result-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .user-search-bar-result-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .user-search-bar-result-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .user-search-bar-result-name {
+    font-size: 14px;
+  }
+  
+  .user-search-bar-no-results {
+    padding: 5px;
+    text-align: center;
+    color: #888;
+    font-size: 12px; 
+    font-style: italic;
+  }
+  
