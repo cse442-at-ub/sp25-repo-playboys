@@ -108,7 +108,6 @@ if ($result->num_rows === 0) {
     $insert_new_user->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
     $insert_new_user->execute();
     echo "DEBUG: New user inserted into user_login_data<br>";
-    $insert_new_user->close();
 
     // Profile setup
     $username = $display_name;
@@ -122,17 +121,16 @@ if ($result->num_rows === 0) {
     $Communities = json_encode([]); // Store as an empty JSON array instead of ""
 
     //insert newly registered user into database
-    $insert_new_user->execute();
 
     // Get the last inserted user ID
     $user_id = $conn->insert_id;
-
+    echo "DEBUG: TRYING TO INSERT INTO PROFILE DB";
     // Insert new user profile into `user_profiles`
     $insert_new_profile = $conn->prepare("
-        INSERT INTO user_profiles (id, username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic, Communities) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic, Communities) 
+        VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-    $insert_new_profile->bind_param("issiiisssss", $user_id, $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic, $Communities);
+    $insert_new_profile->bind_param("ssiiisssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic, $Communities);
     $insert_new_profile->execute();
     $insert_new_profile->close();
     echo "DEBUG: New user inserted into user_profiles<br>";
