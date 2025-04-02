@@ -3,17 +3,13 @@ import './statistics.css';
 import { useNavigate } from "react-router-dom";
 import { useCSRFToken } from "../csrfContent";
 
-type TimeFrame = 'Last Month' | 'Last 90 Days' | 'Last Year';
+type TimeRange = 'Last Month' | 'Last 90 Days' | 'Last Year';
 type ItemType = 'Top Artists' | 'Top Songs';
 type Limit = 1 | 3 | 5 | 10 | 15 | 20 | 25 | 50 | 100;
 
-const COLORS = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
-    '#FF9F40', '#8AC926', '#1982C4', '#6A4C93', '#FFC5C5',
-    '#FF7700', '#5F4B8B', '#F15BB5', '#00BBF9', '#00F5D4'
-];
+const COLORS = [ '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC926', '#1982C4', '#6A4C93', '#FFC5C5', '#FF7700', '#5F4B8B', '#F15BB5', '#00BBF9', '#00F5D4' ];
 
-interface Artist 
+interface ListeningItem
 {
     id: number;
     rank: number;
@@ -21,17 +17,6 @@ interface Artist
     image: string;
     popularity: number;
 }
-
-interface Track
-{
-    id: number;
-    rank: number;
-    name: string;
-    image: string;
-    popularity: number;
-}
-
-type ListeningItem = Artist | Track;
 
 const StatisticsDetails: React.FC = ( props ) => 
 {
@@ -41,15 +26,16 @@ const StatisticsDetails: React.FC = ( props ) =>
     const { csrfToken } = useCSRFToken();
 
     const [ itemType, setItemType ] = useState< ItemType >( 'Top Artists' );
-    const [ timeRange, setTimeRange ] = useState< TimeFrame >( 'Last Month' );
+    const [ timeRange, setTimeRange ] = useState< TimeRange >( 'Last Month' );
     const [ topX, setTopX ] = useState< Limit >( 10 );
   
-    const getDisplayData = async ( ItemType : ItemType, timeFrame: TimeFrame, limit: Limit ) => 
+    const getDisplayData = async () => 
     {
-        const requested_data = { type: itemType, time_range: timeFrame, limit: limit };
+        const data_to_request = { type: itemType, time_range: timeRange, limit: topX };
 
         try 
         {
+            console.log( "fetching userTopXYZ..." );
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopXYZ.php`, 
             {
                 credentials: "include",
@@ -58,17 +44,24 @@ const StatisticsDetails: React.FC = ( props ) =>
                     'Content-Type': 'application/json', 
                     'CSRF-Token': csrfToken 
                 },
-                body: JSON.stringify( requested_data )
+                body: JSON.stringify( data_to_request )
             });
+            console.log( "fetched userTopXYZ..." );
 
             if ( response.ok ) 
             {
-                const data = await response.json();
-                
-                if( data.includes( "error" ) ) {
-                    console.log( "Not logged into Spotify" );
+                try {
+                    console.log( "response is okay..." );
+                    const data = await response.json();
+                    console.log( data );
+                    
+                    console.log( "setting displayData..." );
+                    setDisplayData( data );
                 }
-                setDisplayData( data );
+                catch ( error ) 
+                {
+                    console.error( "Not logged into Spotify" );
+                }
             } 
             else 
             {
@@ -81,12 +74,12 @@ const StatisticsDetails: React.FC = ( props ) =>
         }
     };
     
-    getDisplayData( itemType, timeRange, topX );
+    getDisplayData();
     const topItem = displayData.length > 0 ? displayData[0] : null
 
     const handleClickBack = () => 
     {
-        window.location.href = "#/statistics";
+        navigate( "/statistics" );
     };
     
     return (
@@ -97,8 +90,8 @@ const StatisticsDetails: React.FC = ( props ) =>
                 <div className="statistics-filters">
                     <select 
                         className="statistics-select"
-                        value={timeRange}
-                        onChange={(e) => setTimeRange(e.target.value as TimeFrame)}
+                        value={ timeRange }
+                        onChange={ ( e ) => setTimeRange( e.target.value as TimeRange ) }
                     >
                         <option value="Last Month">Last Month</option>
                         <option value="Last 90 Days">Last 90 Days</option>
@@ -107,29 +100,28 @@ const StatisticsDetails: React.FC = ( props ) =>
                     
                     <select 
                         className="statistics-select"
-                        value={itemType}
-                        onChange={(e) => setItemType(e.target.value as ItemType)}
+                        value={ itemType }
+                        onChange={ ( e ) => setItemType( e.target.value as ItemType ) }
                     >
                         <option value="Top Artists">Top Artists</option>
                         <option value="Top Songs">Top Songs</option>
-                        <option value="Top Albums">Top Albums</option>
                     </select>
                 </div>
             </header>
             
             <div className="detailed-leaderboard">
-                <h2 className="detailed-leaderboard-title"> {itemType} - {timeRange} </h2>
+                <h2 className="detailed-leaderboard-title"> Top { topX } { itemType } - { timeRange } </h2>
                 
                 <div className="detailed-grid">
                     { displayData.map( ( item ) => (
                         <div key={item.id} className="detailed-item">
-                            <span className="detailed-item-rank">{item.rank}</span>
+                            <span className="detailed-item-rank">{ item.rank }</span>
                             
                             <div className="detailed-item-image-container">
                                 { item.image ? (
                                 <img 
-                                    src={item.image} 
-                                    alt={item.name} 
+                                    src={ item.image } 
+                                    alt={ item.name } 
                                     className="detailed-item-image"
                                 />
                                 ) : (
@@ -140,9 +132,9 @@ const StatisticsDetails: React.FC = ( props ) =>
                             </div>
                             
                             <div className="detailed-item-details">
-                                <div className="detailed-item-name">{item.name}</div>
+                                <div className="detailed-item-name">{ item.name }</div>
                                 <div className="detailed-item-stats">
-                                {item.popularity} plays · {item.popularity.toFixed(1)}%
+                                { item.popularity } plays · { item.popularity.toFixed( 1 ) }%
                                 </div>
                             </div>
                         </div>

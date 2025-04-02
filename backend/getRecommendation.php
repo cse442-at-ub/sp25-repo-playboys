@@ -30,6 +30,7 @@ $stmt = $conn->prepare("SELECT access_token FROM user_login_data WHERE username 
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if (!$result || !$result['access_token']) {
     echo json_encode(["error" => "Access token not found"]);
@@ -38,52 +39,52 @@ if (!$result || !$result['access_token']) {
 
 $token = $result['access_token'];
 
+// Get liked song URIs
+$likedUris = [];
+$stmt = $conn->prepare("SELECT uri FROM liked_songs WHERE spotify_id = ?");
+$stmt->bind_param("s", $spotify_id);
+$stmt->execute();
+$res = $stmt->get_result();
+while ($row = $res->fetch_assoc()) {
+    $likedUris[] = $row['uri'];
+}
+$stmt->close();
+
 //Choose a random artist
-$artistList = ["Bring Me The Horizon", "Ariana Grande", "Taylor Swift", "Kendrick Lamar", "Billie Eilish"];
-$chosenArtist = $artistList[array_rand($artistList)];
+$topArtistsUrl = "https://api.spotify.com/v1/me/top/artists?limit=5";
+$topData = json_decode(file_get_contents($topArtistsUrl, false, stream_context_create([
+    "http" => [
+        "header" => "Authorization: Bearer $token"
+    ]
+])), true);
 
-//Search Spotify for that artist
-$searchUrl = "https://api.spotify.com/v1/search?q=" . urlencode($chosenArtist) . "&type=artist&limit=1";
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $searchUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer $token"
-]);
-$searchResponse = curl_exec($ch);
-curl_close($ch);
-
-$searchData = json_decode($searchResponse, true);
-if (empty($searchData['artists']['items'][0]['id'])) {
-    echo json_encode(["error" => "Artist not found"]);
+if (empty($topData['items'])) {
+    echo json_encode(["error" => "No top artists found"]);
     exit();
 }
 
-$artistID = $searchData['artists']['items'][0]['id'];
+$artist = $topData['items'][array_rand($topData['items'])];
+$artistID = $artist['id'];
 
 //Get top tracks for the artist
 $tracksUrl = "https://api.spotify.com/v1/artists/$artistID/top-tracks?country=US";
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $tracksUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer $token"
-]);
-$tracksResponse = curl_exec($ch);
-curl_close($ch);
+$tracksData = json_decode(file_get_contents($tracksUrl, false, stream_context_create([
+    "http" => [
+        "header" => "Authorization: Bearer $token"
+    ]
+])), true);
 
-$tracksData = json_decode($tracksResponse, true);
+// Find first previewable + not-liked track
 $selectedTrack = null;
-
 foreach ($tracksData['tracks'] as $track) {
-    if (!empty($track['preview_url'])) {
+    if (!empty($track['preview_url']) && !in_array($track['uri'], $likedUris)) {
         $selectedTrack = $track;
         break;
     }
 }
 
 if (!$selectedTrack) {
-    echo json_encode(["error" => "No preview found"]);
+    echo json_encode(["error" => "No previewable or new track found"]);
     exit();
 }
 

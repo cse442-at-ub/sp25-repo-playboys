@@ -23,7 +23,7 @@ function Sidebar() {
     if (isMobile) setActiveTab("Explore");
   };
   const handleMyStatClick = () => {
-    console.log("My Stat clicked");
+    navigate('/statistics');
     if (isMobile) setActiveTab("My Stat");
   };
   const handleMyProfileClick = () => {
