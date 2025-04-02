@@ -17,7 +17,7 @@ const CommunityResultsProfile = () => {
         // Function to fetch communities
         const fetchCommunities = async () => {
             try {
-                var response = await fetch('/backend/getProfile.php', {
+                var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
                     method: 'GET', // Or 'GET' depending on your API
                     headers: {
                         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const CommunityResultsProfile = () => {
 
 
     const handleCommunityClick = async(community: Community) => {
-        var response = await fetch('/backend/getProfile.php', {
+        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
             method: 'GET', // Or 'GET' depending on your API
             headers: {
                 'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const CommunityResultsProfile = () => {
             console.error("Error fetching profile:", results);
         }
         console.log("checking if user is part of the commuitty");
-        var response = await fetch('/backend/communities_functions/checkUser.php', {
+        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/checkUser.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const CommunityResultsProfile = () => {
         if (results === true) {
             // remove user to community
             console.log("removing user to community");
-            var response = await fetch('/backend/communities_functions/leave_community.php', {
+            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/leave_community.php`, {
                 method: 'POST', // Or 'GET' depending on your API
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const CommunityResultsProfile = () => {
 
             // reove community from user profile
             console.log("removing comm from pfp");
-            var response = await fetch('/backend/communities_functions/removecomtopfp.php', {
+            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/removecomtopfp.php`, {
                 method: 'POST', // Or 'GET' depending on your API
                 headers: {
                     'Content-Type': 'application/json',
