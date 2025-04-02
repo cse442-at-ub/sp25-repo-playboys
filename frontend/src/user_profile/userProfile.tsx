@@ -5,7 +5,7 @@ import TopArtists from './TopArtists';
 import Playlists from './Playlists';
 import Sidebar from './Sidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CommunityResults from '../search_result_page/communityResults';
+import CommunityResultsProfile from './comunity_profile';
 
 
 const UserProfile: React.FC = () => {
@@ -16,7 +16,7 @@ const UserProfile: React.FC = () => {
           <ProfileHeader />
           <div className="mb-4"><TopArtists /></div>
           <div className="mb-4"><Playlists /></div>
-          <div className="mb-4"><CommunityResults /></div>
+          <div className="mb-4"><CommunityResultsProfile /></div>
         </div>
         <div className="col-12 col-lg-3" style={{ paddingLeft: '0' }}>
           <Sidebar />

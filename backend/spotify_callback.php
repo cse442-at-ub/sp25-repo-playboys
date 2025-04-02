@@ -122,13 +122,20 @@ if ($result->num_rows === 0) {
     $top_artists = "";
     $recent_activity = "";
     $profile_pic = "";
+    $Communities = json_encode([]); // Store as an empty JSON array instead of ""
 
-    $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    if (!$insert_new_profile) {
-        echo "DEBUG: Database prepare error (insert_new_profile): " . $conn->error . "<br>";
-        exit("DEBUG: Database error during prepare (insert_new_profile).");
-    }
-    $insert_new_profile->bind_param("ssissssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic);
+    //insert newly registered user into database
+    $insert_new_user->execute();
+
+    // Get the last inserted user ID
+    $user_id = $conn->insert_id;
+
+    // Insert new user profile into `user_profiles`
+    $insert_new_profile = $conn->prepare("
+        INSERT INTO user_profiles (id, username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic, Communities) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $insert_new_profile->bind_param("issiiisssss", $user_id, $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic, $Communities);
     $insert_new_profile->execute();
     $insert_new_profile->close();
     echo "DEBUG: New user inserted into user_profiles<br>";
