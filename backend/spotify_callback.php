@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . "/headers.php";
+require __DIR__ . '/data_base.php';
 $config = include __DIR__ . '/config.php';
 $client_id     = $config['spotify_client_id'];
 $client_secret = $config['spotify_client_secret'];
@@ -91,12 +92,8 @@ echo "DEBUG: User info retrieved - ID: $spotify_id, Display Name: $display_name,
 
 // Step 4: Check if user exists in DB
 echo "DEBUG: Checking if user exists in database<br>";
-$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
-if (!$login_user) {
-    echo "DEBUG: Database prepare error: " . $conn->error . "<br>";
-    exit("DEBUG: Database error during prepare (login_user).");
-}
-$login_user->bind_param("s", $display_name);
+$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE spotify_id = ?");
+$login_user->bind_param("s", $spotify_id);
 $login_user->execute();
 $result = $login_user->get_result();
 
@@ -158,16 +155,7 @@ setcookie('auth_token', $token, [
 echo "DEBUG: Auth token cookie set<br>";
 
 $_SESSION['username'] = $display_name;
-$_SESSION['spotify_uid'] = $spotify_id;
-
-// Generate auth token and save in cookie_authentication table
-$auth_token = bin2hex(random_bytes(32)); // secure random token
-setcookie("auth_token", $auth_token, time() + (86400 * 30), "/", "localhost", false, true); // 30 days, HttpOnly
-
-// Save token in DB
-$stmt = $conn->prepare("REPLACE INTO cookie_authentication (auth_key, username) VALUES (?, ?)");
-$stmt->bind_param("ss", $auth_token, $username);
-$stmt->execute();
+$_SESSION['spotify_id'] = $spotify_id;
 
 echo "DEBUG: Redirecting user to profile page<br>";
 header('Location: ' . $config['frontend_url'] . '#/userprofile');
