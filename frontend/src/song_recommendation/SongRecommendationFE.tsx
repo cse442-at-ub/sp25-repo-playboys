@@ -24,6 +24,7 @@ const SongRecommendation: React.FC = () => {
   const controls = useAnimation();
   const playerRef = useRef<any>(null);
   const [remainingTime, setRemainingTime] = useState<number>(MAX_PLAY_DURATION);
+  const alreadyLoadedRef = useRef(false);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -34,6 +35,7 @@ const SongRecommendation: React.FC = () => {
     });
     
     const data = await res.json();
+    console.log("Fetched token:", data);
     setToken(data.access_token);
   };
 
@@ -124,15 +126,27 @@ const SongRecommendation: React.FC = () => {
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
         name: "Web Playback Player",
-        getOAuthToken: (cb: (token: string) => void) => cb(token!),
+        getOAuthToken: async (cb: (token: string) => void) => {
+          if (!token) {
+            const refreshed = await refreshAccessToken();
+            if (refreshed) cb(refreshed);
+          } else {
+            cb(token);
+          }
+        },        
         volume: 0.8,
       });
   
       playerRef.current = player;
   
+
       player.addListener("ready", async ({ device_id }: any) => {
         setDeviceId(device_id);
         setPlayerReady(true);
+
+        if (alreadyLoadedRef.current) return;
+        alreadyLoadedRef.current = true;        
+
         await safeFetch("https://api.spotify.com/v1/me/player", {
           method: "PUT",
           headers: {
@@ -141,7 +155,7 @@ const SongRecommendation: React.FC = () => {
           },
           body: JSON.stringify({ device_ids: [device_id], play: true }),
         });
-  
+
         const randomTrack = await getRandomTrackFromRandomPlaylist();
         if (randomTrack) {
           await safeFetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
@@ -168,7 +182,7 @@ const SongRecommendation: React.FC = () => {
   
       player.connect();
     };
-  }, [token]);  
+  }, []);  
 
   useEffect(() => {
     if (isPlaying && currentTrack) {
@@ -244,21 +258,20 @@ const SongRecommendation: React.FC = () => {
   const handleLike = async () => {
     setSwipeDirection("left");
     setLiked(true);
-    await fetch(`${process.env.REACT_APP_API_URL}likeSong.php`, {
+  
+    // Send liked song URI to back-end
+    await fetch(`${process.env.REACT_APP_API_URL}backend/likeSong.php`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
         uri: currentTrack.uri,
         name: currentTrack.name,
         artist: currentTrack.artists.map((a: any) => a.name).join(", "),
         album: currentTrack.album.name,
-        image: currentTrack.album.images[0]?.url,
       }),
     });
-    
+  
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
     await resetState();
   };

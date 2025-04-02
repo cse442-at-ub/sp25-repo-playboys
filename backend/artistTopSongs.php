@@ -4,8 +4,8 @@ header("Content-Type: application/json");
 require_once 'config.php'; 
 
 // Get the access token from the session
-if (isset($_SESSION['access_token'])) {
-    $accessToken = $_SESSION['access_token'];
+if (isset($_COOKIE['spotify_access_token'])) {
+    $accessToken = $_COOKIE['spotify_access_token'];
 } else {
     echo json_encode([
         "status" => "error",

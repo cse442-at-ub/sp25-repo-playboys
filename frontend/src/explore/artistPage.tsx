@@ -13,7 +13,7 @@ const ArtistPage: React.FC = () => {
   const { artist } = useParams<{ artist: string }>();
   const [topSongs, setTopSongs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
+  const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [artistImage, setArtistImage] = useState<string | null>(null);
 
 
@@ -61,18 +61,23 @@ const ArtistPage: React.FC = () => {
 
   const handleSongClick = async (song: string, artist: string) => {
     try {
-      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ song_name: song, artist_name: artist }) });
+      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ song_name: song, artist_name: artist })
+      });
+  
       const result = await response.json();
       if (result.status === 'success') {
-        setActiveTrackUrl(result.embedUrl);
-
+        console.log(result)
+        // Save track URL along with song title and artist name
+        setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
       } else {
         console.error(result.message);
-
       }
     } catch (error) {
       console.error("Error playing song:", error);
-
     }
   };
 
@@ -98,8 +103,14 @@ const ArtistPage: React.FC = () => {
             ))}
           </ul>)}
       </div>
-      {activeTrackUrl && (<SpotifyPlayer trackUrl={activeTrackUrl}
-        onClose={() => setActiveTrackUrl(null)} />)}
+      {activeTrack && (
+        <SpotifyPlayer
+          trackUrl={activeTrack.url}
+          title={activeTrack.title}
+          artist={activeTrack.artist}
+          onClose={() => setActiveTrack(null)}
+        />
+      )}
     </div>);
 };
 

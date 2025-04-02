@@ -3,10 +3,12 @@ import './SpotifyPlayer.css';
 
 interface SpotifyPlayerProps {
   trackUrl: string;
+  title: string;
+  artist: string;
   onClose: () => void;
 }
 
-const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, onClose }) => {
+const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, onClose }) => {
   const [width, setWidth] = useState<number>(500);
   const [height, setHeight] = useState<number>(150);
   const [position, setPosition] = useState({ x: 20, y: 20 });
@@ -69,13 +71,14 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, onClose }) => {
         <button onClick={decreaseSize}>➖</button>
         <button onClick={onClose}>❌</button>
       </div>
-      <iframe
-        src={trackUrl}
-        width={width}
-        height={height}
-        allow="encrypted-media"
-        title="Spotify Player"
-      ></iframe>
+      <div className="audio-player-info" style={{ padding: "8px", textAlign: "center" }}>
+        <strong>{title}</strong> - <em>{artist}</em>
+      </div>
+      <audio controls
+        style={{ width: width, height: height }}
+      >
+        <source src={trackUrl} />
+      </audio>
     </div>
   );
 };

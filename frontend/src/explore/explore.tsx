@@ -20,8 +20,7 @@ const Explore: React.FC = () => {
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
   const [topGenres, setTopGenres] = useState<any[]>([]);
-  const [activeTrackUrl, setActiveTrackUrl] = useState<string | null>(null);
-
+  const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
 
   // Fetch top artists.
   useEffect(() => {
@@ -70,7 +69,8 @@ const Explore: React.FC = () => {
   
       const result = await response.json();
       if (result.status === 'success') {
-        setActiveTrackUrl(result.embedUrl);
+        // Save track URL along with song title and artist name
+        setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
       } else {
         console.error(result.message);
       }
@@ -79,12 +79,9 @@ const Explore: React.FC = () => {
     }
   };
   
-
-
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
-
 
   return (
     <div className="ep-explore-page">
@@ -213,13 +210,14 @@ const Explore: React.FC = () => {
       <div className="ep-songrecommend">
         <SongRecommendation />
       </div>
-      {activeTrackUrl && (
+      {activeTrack && (
         <SpotifyPlayer
-          trackUrl={activeTrackUrl}
-          onClose={() => setActiveTrackUrl(null)}
+          trackUrl={activeTrack.url}
+          title={activeTrack.title}
+          artist={activeTrack.artist}
+          onClose={() => setActiveTrack(null)}
         />
       )}
-
     </div>
   );
 };
