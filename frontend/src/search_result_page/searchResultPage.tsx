@@ -94,7 +94,7 @@ const SearchResultPage = () => {
                     <ArtistResults data={artists} />
                 </div>
                 <div className="community-results">
-                    <CommunityResults />
+                    <CommunityResults data={artists}/>
                 </div>
                 <div className="event-results">
                     <EventResults />

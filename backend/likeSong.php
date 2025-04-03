@@ -1,20 +1,8 @@
 <?php
-// CORS: handle preflight + main request
-$allowed_origin = "http://localhost:3000";
-if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
-    header("Access-Control-Allow-Origin: $allowed_origin");
-    header("Access-Control-Allow-Credentials: true");
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Headers: Content-Type");
-    header("Access-Control-Allow-Methods: POST, OPTIONS");
-    http_response_code(200);
-    exit();
-}
-
-ini_set('session.cookie_samesite', 'Lax');
-ini_set('session.cookie_secure', '0'); // Use '1' if you're running HTTPS
+// CORS headers
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
 
 session_start();
 
@@ -22,36 +10,27 @@ require_once "config.php";
 require_once "user_auth.php";
 require_once "data_base.php";
 
-// CORS headers for local dev
-if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === 'http://localhost:3000') {
-    header("Access-Control-Allow-Origin: http://localhost:3000");
-}
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+global $conn;
 
-// Check if user is authenticated and get Spotify ID
+// Authenticate user
 $auth = authenticateUser();
-if (!$auth["authenticated"]) {
-    error_log("Auth failed: " . json_encode($_SESSION)); // Optional
-    echo json_encode(["status" => "error", "message" => "Unauthorized"]);
+if (!$auth || !$auth["authenticated"]) {
+    echo json_encode(["error" => "Unauthorized"]);
     exit;
 }
-
 $spotify_id = $auth["spotify_id"];
 $access_token = $auth["access_token"];
 
-// Parse POST body
-$data = json_decode(file_get_contents("php://input"), true);
-if (!isset($data["uri"])) {
-    echo json_encode(["status" => "error", "message" => "Missing song URI"]);
+// Parse input safely
+$raw = file_get_contents("php://input");
+$data = json_decode($raw, true);
+if (!$data || !isset($data["uri"])) {
+    echo json_encode(["error" => "Missing song URI"]);
     exit;
 }
 $song_uri = $data["uri"];
 
-// Connect to database
-$conn = getDB();
-
-// Check if song already liked
+// Check if already liked
 $stmt = $conn->prepare("SELECT 1 FROM liked_songs WHERE spotify_id = ? AND song_uri = ?");
 $stmt->bind_param("ss", $spotify_id, $song_uri);
 $stmt->execute();
@@ -88,7 +67,7 @@ if (!$playlist_id) {
     $responseData = json_decode($response, true);
 
     if (!isset($responseData["id"])) {
-        echo json_encode(["status" => "error", "message" => "Failed to create playlist"]);
+        echo json_encode(["error" => "Failed to create playlist"]);
         exit;
     }
     $playlist_id = $responseData["id"];
@@ -117,4 +96,3 @@ $stmt->bind_param("ss", $spotify_id, $song_uri);
 $stmt->execute();
 
 echo json_encode(["status" => "success", "playlist_id" => $playlist_id]);
-?>

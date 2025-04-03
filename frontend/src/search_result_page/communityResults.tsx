@@ -1,34 +1,144 @@
 import React, { useState, useRef } from "react";
+import { useCSRFToken } from '../csrfContent';
 
-interface Community {
-    name: string;
-    image: string;
+
+interface Artist {
+    followers :number,
+    genres: string[],
+    image_url: string,
+    name: string,
+    popularity: number, 
 }
 
-const CommunityResults = () => {
-    const [communities] = useState<Community[]>([
-        { name: "Long ass name for testing", image: './static/Drakepfp.png' },
-        { name: "Community 2", image: './static/Drakepfp.png' },
-        { name: "Community 3", image: './static/Drakepfp.png' },
-        { name: "Community 4", image: './static/Drakepfp.png' },
-        { name: "Community 5", image: './static/Drakepfp.png' },
-        { name: "Community 6", image: './static/Drakepfp.png' },
-        { name: "Community 7", image: './static/Drakepfp.png' },
-        { name: "Community 8", image: './static/Drakepfp.png' },
-        { name: "Community 9", image: './static/TheBeatlespfp.png' },
-        { name: "Community 10", image: './static/TheBeatlespfp.png' },
-        { name: "Community 11", image: './static/TheBeatlespfp.png' },
-        { name: "Community 12", image: './static/Community12.png' },
-        { name: "Community 13", image: './static/Community13.png' },
-        { name: "Community 14", image: './static/Community14.png' },
-        { name: "Long ass name for testing", image: './static/Community15.png' },
-    ]);
+const CommunityResults = ({ data }: {data: Artist[]}) => {
+
+    const artists: Artist[] = data;
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
+    const {csrfToken} = useCSRFToken();
 
-    const handleCommunityClick = (community: Community): void => {
+    const handleCommunityClick = async(community: Artist) => {
+        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+            method: 'GET', // Or 'GET' depending on your API
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            },
+        });
+        var results = await response.json();
+        if (results["status"] === "success") {
+            var user = results["loggedInUser"];
+            console.log(`user: ${user}`);
+        } else {
+            console.error("Error fetching profile:", results);
+        }
         console.log(`Community clicked: ${community.name}`);
+        console.log("creating community");
+        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/create_comunity.php`, {
+            method: 'POST', // Or 'GET' depending on your API
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                "name": community.name,
+                "image": community.image_url,
+                "user": user
+            })
+        }); 
+        var results = await response.json();
+        console.log(results)
+
+        console.log("checking if user is part of the commuitty");
+        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/checkUser.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                "name": community.name,
+                "image": community.image_url,
+                "user": user
+            })
+        }); 
+        var results = await response.json();
+        console.log(results)
+
+        // ADDDING
+        if (results === false) {
+            // add user to community
+            console.log("adding user to  community");
+            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/join_community.php`, {
+                method: 'POST', // Or 'GET' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                    'CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    "name": community.name,
+                    "image": community.image_url,
+                    "user": user
+                })
+            });
+            var results = await response.json();
+            console.log(results)
+            
+            // add community to user profile
+            console.log("adding community to profile");
+            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/addcomtopfp.php`, {
+                method: 'POST', // Or 'GET' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                    'CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    "name": community.name,
+                    "image": community.image_url,
+                    "user": user
+                })
+            });
+            var results = await response.json();
+            console.log(results)
+        }
+
+        // REMOVING
+        if (results === true) {
+            // remove user to community
+            console.log("removing user to  community");
+            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/leave_community.php`, {
+                method: 'POST', // Or 'GET' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                    'CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    "name": community.name,
+                    "image": community.image_url,
+                    "user": user
+                })
+            });
+            var results = await response.json();
+            console.log(results)
+
+            // reove community from user profile
+            console.log("removing comm from pfp");
+            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/removecomtopfp.php`, {
+                method: 'POST', // Or 'GET' depending on your API
+                headers: {
+                    'Content-Type': 'application/json',
+                    'CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    "name": community.name,
+                    "image": community.image_url,
+                    "user": user
+                })
+            });
+            var results = await response.json();
+            console.log(results)
+        }
     };
 
     const handleScrollRight = () => {
@@ -52,13 +162,13 @@ const CommunityResults = () => {
             onMouseLeave={() => setIsHovered(false)}
         >
             <h2 className="community-results-title">Community Results</h2>
-            {communities.length === 0 ? (
+            {artists.length === 0 ? (
                 <p>No Communities were found</p>
             ) : (
                 <>
                     <div className="community-results-horizontal-scroll" ref={scrollContainerRef}>
-                        {communities.map((community, index) => (
-                            <CommunityItem key={index} community={community} onClick={handleCommunityClick} />
+                        {artists.map((artist, index) => (
+                            <CommunityItem key={index} community={artist} onClick={handleCommunityClick} />
                         ))}
                     </div>
                     {isHovered && (
@@ -77,14 +187,14 @@ const CommunityResults = () => {
     );
 };
 
-const CommunityItem = ({ community, onClick }: { community: Community; onClick: (community: Community) => void }) => {
+const CommunityItem = ({ community, onClick }: { community: Artist; onClick: (community: Artist) => void }) => {
     return (
         <button
             className="community-item-horizontal"
             onClick={() => onClick(community)}
         >
             <img
-                src={community.image}
+                src={community.image_url}
                 alt={`${community.name} image`}
                 className="community-image-horizontal"
             />

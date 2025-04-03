@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . "/headers.php";
+require __DIR__ . '/data_base.php';
 $config = include __DIR__ . '/config.php';
 $client_id     = $config['spotify_client_id'];
 $client_secret = $config['spotify_client_secret'];
@@ -91,12 +92,8 @@ echo "DEBUG: User info retrieved - ID: $spotify_id, Display Name: $display_name,
 
 // Step 4: Check if user exists in DB
 echo "DEBUG: Checking if user exists in database<br>";
-$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
-if (!$login_user) {
-    echo "DEBUG: Database prepare error: " . $conn->error . "<br>";
-    exit("DEBUG: Database error during prepare (login_user).");
-}
-$login_user->bind_param("s", $display_name);
+$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE spotify_id = ?");
+$login_user->bind_param("s", $spotify_id);
 $login_user->execute();
 $result = $login_user->get_result();
 
@@ -111,7 +108,6 @@ if ($result->num_rows === 0) {
     $insert_new_user->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
     $insert_new_user->execute();
     echo "DEBUG: New user inserted into user_login_data<br>";
-    $insert_new_user->close();
 
     // Profile setup
     $username = $display_name;
@@ -122,13 +118,19 @@ if ($result->num_rows === 0) {
     $top_artists = "";
     $recent_activity = "";
     $profile_pic = "";
+    $Communities = json_encode([]); // Store as an empty JSON array instead of ""
 
-    $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    if (!$insert_new_profile) {
-        echo "DEBUG: Database prepare error (insert_new_profile): " . $conn->error . "<br>";
-        exit("DEBUG: Database error during prepare (insert_new_profile).");
-    }
-    $insert_new_profile->bind_param("ssissssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic);
+    //insert newly registered user into database
+
+    // Get the last inserted user ID
+    $user_id = $conn->insert_id;
+    echo "DEBUG: TRYING TO INSERT INTO PROFILE DB";
+    // Insert new user profile into `user_profiles`
+    $insert_new_profile = $conn->prepare("
+        INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic, Communities) 
+        VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $insert_new_profile->bind_param("ssiiisssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic, $Communities);
     $insert_new_profile->execute();
     $insert_new_profile->close();
     echo "DEBUG: New user inserted into user_profiles<br>";
@@ -158,16 +160,7 @@ setcookie('auth_token', $token, [
 echo "DEBUG: Auth token cookie set<br>";
 
 $_SESSION['username'] = $display_name;
-$_SESSION['spotify_uid'] = $spotify_id;
-
-// Generate auth token and save in cookie_authentication table
-$auth_token = bin2hex(random_bytes(32)); // secure random token
-setcookie("auth_token", $auth_token, time() + (86400 * 30), "/", "localhost", false, true); // 30 days, HttpOnly
-
-// Save token in DB
-$stmt = $conn->prepare("REPLACE INTO cookie_authentication (auth_key, username) VALUES (?, ?)");
-$stmt->bind_param("ss", $auth_token, $username);
-$stmt->execute();
+$_SESSION['spotify_id'] = $spotify_id;
 
 echo "DEBUG: Redirecting user to profile page<br>";
 header('Location: ' . $config['frontend_url'] . '#/userprofile');

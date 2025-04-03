@@ -74,11 +74,11 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       <div className="audio-player-info" style={{ padding: "8px", textAlign: "center" }}>
         <strong>{title}</strong> - <em>{artist}</em>
       </div>
-      <audio
-        src={trackUrl}
-        controls
+      <audio controls
         style={{ width: width, height: height }}
-      ></audio>
+      >
+        <source src={trackUrl} />
+      </audio>
     </div>
   );
 };
