@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useCSRFToken } from "../csrfContent";
 
 type TimeFrame = "short_term" | "medium_term" | "long_term";
-type ItemType = "artists" | "songs";
+type ItemType = "artists" | "tracks";
 
 const COLORS = [ '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',  '#FF9F40', '#8AC926', '#1982C4', '#6A4C93', '#FFC5C5', '#FF7700', '#5F4B8B', '#F15BB5', '#00BBF9', '#00F5D4' ];
 
@@ -34,7 +34,7 @@ const StatisticsOverview: React.FC = ( props ) =>
 
         try 
         {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTop50X.php?type=${itemType}&time_range=${timeRange}.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTop50X.php?type=${itemType}&time_range=${timeRange}`, {
                 method: "GET",
                 headers: { 
                     "Content-Type": "application/json", 
@@ -42,7 +42,7 @@ const StatisticsOverview: React.FC = ( props ) =>
                 }
             });
 
-            console.log( `fetched backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}.php` );
+            console.log( `fetched backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}` );
 
             if ( response.ok )
             {
@@ -50,7 +50,7 @@ const StatisticsOverview: React.FC = ( props ) =>
                 {
                     console.log( "response is okay..." );
                     const text = await response.text();
-                    console.log("text: ", text);
+                    console.log("text: " + text);
                     const data = JSON.parse( text )
                     console.log( "data: " + data );
                     
@@ -64,12 +64,12 @@ const StatisticsOverview: React.FC = ( props ) =>
             }
             else
             {
-                console.error( `error: response not ok: error fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}.php` );
+                console.error( `error: response not ok: error fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}` );
             }
         }
         catch ( error ) 
         {
-            console.error( `error: error caught fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}.php\n\n` + error );
+            console.error( `error: error caught fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}\n\n` + error );
         }
         finally 
         {
@@ -79,7 +79,7 @@ const StatisticsOverview: React.FC = ( props ) =>
 
     useEffect(() => {
         getDisplayData();
-    }, [ itemType, timeRange, topX ]) ;
+    }, [ itemType, timeRange, topX ]);
 
     const topItem = displayData.length > 0 ? displayData[0] : null
   
@@ -97,36 +97,38 @@ const StatisticsOverview: React.FC = ( props ) =>
   
     return (
         <div className="statistics-container">
+            <header className="statistics-header">
+                <button onClick={ handleClickBack } className="statistics-title" >« </button>
+                <h1 className="statistics-title">Statistics</h1>
+                
+                <div className="statistics-filters">
+                    <select 
+                        className="statistics-select"
+                        value={ timeRange }
+                        onChange={ ( e ) => setTimeRange( e.target.value as TimeFrame ) }
+                    >
+                            <option value="short_term">Last Month</option>
+                            <option value="medium_term">Last 90 Days</option>
+                            <option value="long_term">Last Year</option>
+                    </select>
+                    
+                    <select 
+                        className="statistics-select"
+                        value={ itemType }
+                        onChange={ ( e ) => setItemType( e.target.value as ItemType ) }
+                    >
+                            <option value="artists">Top Artists</option>
+                            <option value="tracks">Top Songs</option>
+                    </select>
+                </div>
+            </header>
+        
             { loading ? ( 
-                <p>Loading CAMDEN WAS HERE...</p> 
+                <div className="statistics-content">
+                    <p>Loading...</p> 
+                </div>
             ) : (
             <>
-                <header className="statistics-header">
-                    <button onClick={ handleClickBack } className="statistics-title" >« </button>
-                    <h1 className="statistics-title">Statistics</h1>
-                    
-                    <div className="statistics-filters">
-                        <select 
-                            className="statistics-select"
-                            value={ timeRange }
-                            onChange={ ( e ) => setTimeRange( e.target.value as TimeFrame ) }
-                        >
-                                <option value="short_term">Last Month</option>
-                                <option value="medium_term">Last 90 Days</option>
-                                <option value="long_term">Last Year</option>
-                        </select>
-                        
-                        <select 
-                            className="statistics-select"
-                            value={ itemType }
-                            onChange={ ( e ) => setItemType( e.target.value as ItemType ) }
-                        >
-                                <option value="artists">Top Artists</option>
-                                <option value="songs">Top Songs</option>
-                        </select>
-                    </div>
-                </header>
-            
                 <div className="statistics-content">
                     <div className="statistics-graphic-container">
                         <div className="statistics-circle-graphic">
@@ -179,7 +181,7 @@ const StatisticsOverview: React.FC = ( props ) =>
                     <div className="statistics-leaderboard-container">
                         <div className="statistics-leaderboard">
                             <h2 className="leaderboard-title">
-                            Top { topX } { itemType } - { timeRange }
+                            Top { topX } { itemType === "artists"? "Artists" : "Songs" } - { timeRange === "short_term"? "Last Month" : timeRange === "medium_term"? "Last 90 Days" : "Last Year" }
                             </h2>
                             
                             <div className="leaderboard-items">

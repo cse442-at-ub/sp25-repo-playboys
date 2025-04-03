@@ -2,28 +2,17 @@ import React, { useState, useRef } from "react";
 import './SearchResultPage.css';
 
 interface Artist {
-    name: string;
-    image: string;
+    followers :number,
+    genres: string[],
+    image_url: string,
+    name: string,
+    popularity: number, 
 }
 
-const ArtistResults = () => {
-    const [artists] = useState<Artist[]>([
-        { name: "Artist 1", image: './static/Drakepfp.png' },
-        { name: "Artist 2", image: './static/Adopfp.png' },
-        { name: "Artist 3", image: './static/TheBeatlespfp.png' },
-        { name: "Artist 4", image: './static/Drakepfp.png' },
-        { name: "Artist 5", image: './static/Adopfp.png' },
-        { name: "Artist 6", image: './static/TheBeatlespfp.png' },
-        { name: "Artist 7", image: './static/Drakepfp.png' },
-        { name: "Artist 8", image: './static/Adopfp.png' },
-        { name: "Artist 9", image: './static/TheBeatlespfp.png' },
-        { name: "Artist 10", image: './static/Drakepfp.png' },
-        { name: "Artist 11", image: './static/Adopfp.png' },
-        { name: "Artist 12", image: './static/TheBeatlespfp.png' },
-        { name: "Artist 13", image: './static/Drakepfp.png' },
-        { name: "Artist 14", image: './static/Adopfp.png' },
-        { name: "Artist 15", image: './static/TheBeatlespfp.png' },
-    ]);
+const ArtistResults = ({ data }: {data: Artist[]}) => {
+
+    const artists: Artist[] = data;
+   
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
@@ -86,7 +75,7 @@ const ArtistItem = ({ artist, onClick }: { artist: Artist; onClick: (artist: Art
             onClick={() => onClick(artist)}
         >
             <img
-                src={artist.image}
+                src={artist.image_url}
                 alt={`${artist.name} image`}
                 className="artist-image-horizontal"
             />

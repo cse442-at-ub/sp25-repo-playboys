@@ -34,7 +34,16 @@
         ");
 
 
-        //accept friend request
+        // friend request status
+
+
+        //check if friend request still exist
+        $status = checkFriendStatus($conn, $username, $friend);
+        if($status["status"] == "none"){
+            echo json_encode(["status" => "success", "message" => "friend request disappeared"]);
+            exit();
+        }
+        
 
 
         // update status to friends

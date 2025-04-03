@@ -60,19 +60,29 @@ curl_setopt_array( $ch, [
 ]);
 
 $response = curl_exec( $ch );
-$httpCode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-
-curl_close( $ch );
-
-// Did the cURL request succeed?
-if ( $httpCode !== 200 ) 
+if ( curl_errno( $ch ) ) 
 {
     echo json_encode( [
         "status" => "error", 
-        "message" => "$httpCode: Failed to fetch data from Spotify. Please try again.",
+        "message" => "encountered cURL error: " . curl_error( $ch ),
     ]);
-    exit();
+} 
+else 
+{
+    $httpCode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+
+    // Did the cURL request succeed?
+    if ( $httpCode !== 200 ) 
+    {
+        echo json_encode( [
+            "status" => "error", 
+            "message" => "$httpCode: Failed to fetch data from Spotify. Please try again.",
+        ]);
+        exit();
+    }
 }
+
+curl_close( $ch );
 
 // It did! We've got the users listening data! Make it a dictionary.
 $page = json_decode( $response, true );

@@ -31,6 +31,12 @@ import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
+// Coummunity Components
+// import CommunityPage from "./communities/comunity_page";
+
+// Feed Compnents
+import Feed from "./feed/feed";
+import PostPage from "./feed/post";
 import SearchPage from "./search_result_page/searchResultPage";
 import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 //import all mobile views for setting
@@ -46,6 +52,8 @@ import ArtistPage from "./explore/artistPage";
 // Statistics
 import StatisticsOverview from "./statistics_page/statistics_overview";
 import StatisticsDetails from "./statistics_page/statistics_details";
+//friendlist page 
+import FriendList from "./friend_list/friendList";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -93,6 +101,9 @@ function App() {
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
         
       
+        <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
+        
+
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
         </Routes>
     </Router>
