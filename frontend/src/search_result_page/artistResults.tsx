@@ -1,4 +1,6 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
 import './SearchResultPage.css';
 
 interface Artist {
@@ -12,13 +14,14 @@ interface Artist {
 const ArtistResults = ({ data }: {data: Artist[]}) => {
 
     const artists: Artist[] = data;
+    const navigate = useNavigate();
    
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
 
     const handleArtistClick = (artist: Artist): void => {
-        console.log(`Artist clicked: ${artist.name}`);
+        navigate(`/explore/artist/${artist.name.toLowerCase()}`);
     };
 
     const handleScrollRight = () => {
