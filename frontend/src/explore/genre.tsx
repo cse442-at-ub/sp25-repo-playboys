@@ -22,7 +22,7 @@ const GenrePage: React.FC = () => {
   };
   const handleSongClick = async (song: string, artist: string) => {
     try {
-      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -44,7 +44,7 @@ const GenrePage: React.FC = () => {
   useEffect(() => {
     const fetchGenreData = async () => {
       try {
-        const response = await fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/genreTopItems.php?genre=${genre}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/genreTopItems.php?genre=${genre}`);
         const data = await response.json();
         if (data.status === "success") {
           setSongs(data.topSongs || []);

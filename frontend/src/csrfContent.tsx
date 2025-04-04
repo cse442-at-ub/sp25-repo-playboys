@@ -17,7 +17,14 @@ export const useCSRFToken = () => {
 };
 
 export const CSRFProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [csrfToken, setCsrfToken] = useState<string>('');
+  const [csrfToken, setCsrfTokenState] = useState<string>(() => {
+    return localStorage.getItem("csrfToken") || "";
+  });
+
+  const setCsrfToken = (token: string) => {
+    setCsrfTokenState(token);
+    localStorage.setItem("csrfToken", token); // Store token persistently
+  };
 
   return (
     <CSRFContext.Provider value={{ csrfToken, setCsrfToken }}>
@@ -25,3 +32,4 @@ export const CSRFProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     </CSRFContext.Provider>
   );
 };
+

@@ -25,7 +25,7 @@ try{
         echo json_encode(["status" => "error", "message" => "CSRF doesn't exist"]);
 
     }
-    if(!isset($headers['CSRF-Token']) && $row["csrf_token"] != $headers["CSRF-Token"]){
+    if(!isset($headers['CSRF-Token']) && $result["csrf_token"] != $headers["CSRF-Token"]){
         echo json_encode(["status" => "error", "message" => "Invalid CSRF Token ". $headers["CSRF-Token"]]);
         //return to the homepage if cookies are invalid/not found in our database 
         exit();

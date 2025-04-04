@@ -4,7 +4,8 @@
 $allowedOrigins = [
     "http://localhost:3000",
     "https://se-dev.cse.buffalo.edu",
-    "http://localhost"
+    "http://localhost",
+    "https://se-prod.cse.buffalo.edu",
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';

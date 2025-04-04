@@ -14,13 +14,13 @@
 .friendlist-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 30px; /* Increased gap for more space between back button and title */
+  justify-content: flex-start; /* Align items to the left */
+  gap: 10px; /* Smaller gap between the back button and title */
   font-size: 24px;
   font-weight: bold;
   background-color: white;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 20px 30px; /* Increased padding for more space around the header */
+  padding: 20px 30px; /* Maintain padding for a clean look */
   width: 100%;
   position: fixed;
   top: 0;
@@ -52,6 +52,8 @@
 
 .friendlist-title {
   margin: 0;
+  font-size: 24px; /* Ensure the font size matches */
+  white-space: nowrap; /* Prevent the title from wrapping to a new line */
 }
 
 /* List of friends */

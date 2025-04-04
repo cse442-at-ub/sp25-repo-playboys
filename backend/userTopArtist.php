@@ -13,7 +13,6 @@ $login_username = $user["username"];
 $spotifyId = "";
 
 
-
 //grab token from database
 $stmt = $conn->prepare("SELECT access_token, spotify_id FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $login_username);

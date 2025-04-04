@@ -32,6 +32,7 @@ function FriendList() {
         });
 
         if (response.ok) {
+          console.log(csrfToken);
           const data = await response.json();
           if (data.includes("error")) {
             console.log("Error fetching friends or user not authenticated");
@@ -39,7 +40,7 @@ function FriendList() {
             setFriends(data); // Populate the friends list
             if(loggedInUser == null){
               setLoggedInUser(data[0]["login_user"]);
-              console.log("logined user: ", loggedInUser);
+              console.log("logined in friend user: ", loggedInUser);
             }
 
           }
@@ -121,7 +122,9 @@ function FriendList() {
     <div className="friendlist-container">
       <div className="friendlist-header">
         <button className="friendlist-back-button" aria-label="Go back" onClick={handleBackButton}>←</button>
-        <h2 className="friendlist-title">{user ? `${user}'s Friends` : "My Friends"}</h2>
+        <h2 className="friendlist-title">
+          {user === loggedInUser || user === "" || user === null ? "My Friends" : `${user}'s Friends`}
+        </h2>
         <div className="friendlist-search-bar-container">
           <UserSearchBar onSearch={(query) => console.log("Searching for:", query)} />
         </div>
