@@ -4,6 +4,7 @@
 require __DIR__ . "/headers.php";
 require __DIR__ . "/userDatabaseGrabber.php";
 require __DIR__ . "/cookieAuthHeader.php";
+//require __DIR__ . "/refresh_token.php"; // This file is used to refresh the token if it is expired
 /*grabing spotify user_token from refresh_token.php*/
 
 //check if the user is logged in with spotify
@@ -12,6 +13,28 @@ $user = $result->fetch_assoc();
 $login_username = $user["username"];
 $spotifyId = "";
 
+if(isset($_GET['user'])) {
+    if($_GET['user'] != $login_username){
+        if($_GET['user'] != ''){
+            $stmt = $conn->prepare("SELECT spotify_id FROM user_login_data WHERE username = ?");
+            $stmt->bind_param("s", $_GET['user']);
+            $stmt->execute();
+            $result = $stmt->get_result()->fetch_assoc();
+            if($result == NULL){
+                echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
+                exit();
+            }
+            if($result['spotify_id'] == "" || $result['spotify_id'] == NULL){
+                echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
+                exit();
+            }
+            $login_username = $_GET['user'];
+        }
+
+        
+    }
+   
+}
 
 
 //grab token from database

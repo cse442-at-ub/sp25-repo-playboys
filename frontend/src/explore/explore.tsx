@@ -24,7 +24,7 @@ const Explore: React.FC = () => {
 
   // Fetch top artists.
   useEffect(() => {
-    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topArtists.php`)
+    fetch(`${process.env.REACT_APP_API_URL}backend/topArtists.php`)
       .then((response) => response.json())
       .then((data) => {
         setTopArtists(data);
@@ -34,7 +34,7 @@ const Explore: React.FC = () => {
 
   // Fetch top songs.
   useEffect(() => {
-    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topSongs.php`)
+    fetch(`${process.env.REACT_APP_API_URL}backend/topSongs.php`)
       .then((response) => response.json())
       .then((data) => {
         setTopTracks(data);
@@ -44,7 +44,7 @@ const Explore: React.FC = () => {
 
   // Fetch top genres.
   useEffect(() => {
-    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/topGenres.php`)
+    fetch(`${process.env.REACT_APP_API_URL}backend/topGenres.php`)
       .then((response) => response.json())
       .then((data) => {
         setTopGenres(data);
@@ -60,7 +60,7 @@ const Explore: React.FC = () => {
   };
   const handleSongClick = async (song: string, artist: string) => {
     try {
-      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

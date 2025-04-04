@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCSRFToken } from '../csrfContent';
 interface Playlist {
   name: string;
@@ -7,6 +7,9 @@ interface Playlist {
 }
 
 function PlaylistsView() {
+  const [searchParams] = useSearchParams();
+  const user = searchParams.get("user") || "";
+  const [username, setUsername] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]); // State to store playlist data
   const navigate = useNavigate();
   const { csrfToken } = useCSRFToken();
@@ -14,7 +17,7 @@ function PlaylistsView() {
     // Fetch the playlists from the backend when the component mounts
     const fetchPlaylists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopPlaylist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopPlaylist.php?user=${(user && user !== "null") ? user : ""}`, {
           method: "GET",
           credentials: "include",
           headers: { 'CSRF-Token': csrfToken }
@@ -34,8 +37,34 @@ function PlaylistsView() {
       }
     };
 
+    const fetchUsername = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php`, {
+          method: "GET",
+          credentials: "include",
+          headers: { 'CSRF-Token': csrfToken }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.login_user) {
+            setUsername(data.login_user);
+            console.log("Logged in user:", data.login_user);
+          } else {
+            console.log("Username not found in response");
+          }
+        } else {
+          console.error("Failed to fetch username:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      }
+    };
+    
+    setPlaylists([]);
+    setUsername("");
+    fetchUsername();
     fetchPlaylists();
-  }, []); // Dependency array ensures the fetch runs once when the component mounts
+  }, [user]); // Dependency array ensures the fetch runs once when the component mounts
 
   const handleBackButton = () => {
     console.log("Back button clicked");
@@ -58,7 +87,11 @@ function PlaylistsView() {
             </div>
           ))
         ) : (
-          <p>Please Login in with Spotify</p> // Display a loading message until playlists are fetched
+          username === (user) || ((user || "") === "") ? (
+            <p>Please Login in with Spotify</p>
+          ) : (
+            <p>{user} has no Playlist</p>
+          )
         )}
       </div>
     </div>

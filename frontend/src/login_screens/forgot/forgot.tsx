@@ -22,7 +22,7 @@ const ForgotPassword: React.FC = () =>
 
         try
         {
-            const response = await fetch( `${process.env.REACT_APP_API_URL}sp25-repo-playboys/backend/send_forgot_pwd_email.php`, 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}backend/send_forgot_pwd_email.php`, 
             {
                 method: "POST",
                 headers: {
@@ -59,7 +59,7 @@ const ForgotPassword: React.FC = () =>
 
         try
         {
-            const response = await fetch( `${process.env.REACT_APP_API_URL}sp25-repo-playboys/backend/verify_email_code.php`, 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}backend/verify_email_code.php`, 
             {
                 method: "POST",
                 headers: {

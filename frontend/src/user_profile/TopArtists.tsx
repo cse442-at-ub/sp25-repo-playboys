@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCSRFToken } from '../csrfContent';
 
 interface Artist {
@@ -8,14 +8,19 @@ interface Artist {
 }
 
 function TopArtists() {
+  const [searchParams] = useSearchParams();
+  const user = searchParams.get("user");
+  const [username, setUsername] = useState("");
   const [artists, setArtists] = useState<Artist[]>([]); // State to store artists data
   const navigate = useNavigate();
+  
   const { csrfToken } = useCSRFToken();
+  
   useEffect(() => {
     // Fetch the top artists from the backend when the component mounts
     const fetchTopArtists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php?user=${(user && user !== "null") ? user : ""}`, {
           method: "GET",
           credentials: "include",
           headers: { 'CSRF-Token': csrfToken }
@@ -35,16 +40,44 @@ function TopArtists() {
       }
     };
 
-    fetchTopArtists();
-  }, []); // Empty dependency array to run only once when the component mounts
+  const fetchUsername = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php`, {
+        method: "GET",
+        credentials: "include",
+        headers: { 'CSRF-Token': csrfToken }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.login_user) {
+          setUsername(data.login_user);
+          console.log("Logged in user:", data.login_user);
+        } else {
+          console.log("Username not found in response");
+        }
+      } else {
+        console.error("Failed to fetch username:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching username:", error);
+    }
+  };
+
+  setArtists([]);
+  setUsername("");
+  fetchTopArtists();
+  fetchUsername(); // <- NEW
+
+}, [user]);
 
   const handleShowAllClick = () => {
     console.log("Show all clicked");
-    navigate('/top-artists');
+    navigate('/top-artists?user=' + (user && user !== "null" ? user : "")); // Pass the user parameter to the new route
   };
 
   const handleArtistClick = (artist: Artist): void => {
     console.log(`Artist clicked: ${artist.name}`);
+    navigate(`/explore/artist/${artist.name.toLowerCase()}`);
   };
 
   return (
@@ -63,7 +96,11 @@ function TopArtists() {
             </div>
           ))
         ) : (
-          <p>Please Login in with Spotify</p> // Show a loading message if artists are still being fetched
+          username === (user) || ((user || "") === "") ? (
+            <p>Please Login in with Spotify</p>
+          ) : (
+            <p>{user} has no Top Artist</p>
+          )
         )}
       </div>
     </div>

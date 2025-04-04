@@ -20,7 +20,7 @@ const ResetPassword: React.FC = () =>
     
         try
         {
-            const response = await fetch( `${process.env.REACT_APP_API_URL}sp25-repo-playboys/backend/reset_forgotten_pwd.php`, 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}backend/reset_forgotten_pwd.php`, 
 			{
                 method: "POST",
                 headers: {

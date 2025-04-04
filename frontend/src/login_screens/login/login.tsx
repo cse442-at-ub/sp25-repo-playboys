@@ -26,13 +26,13 @@ const Login: React.FC = () => {
             credentials: 'include'
         });
         const result = await response.json();
-        const csrfToken = result["csrfToken"];
+        const csrfToken = result["csrf_token"];
         setCsrfToken(csrfToken);
         console.log(result);
         console.log(result["status"]);
 
         if (result["status"] === "success") {
-            window.location.href = `#/userprofile?user=${username}`;
+            window.location.href = `#/explore`;
         } else {
             setError(result["message"]);
         }
@@ -51,6 +51,7 @@ const Login: React.FC = () => {
     <div className="auth-container">
         <div className="login-box">
             <h2>Login</h2>
+            <h1>{}</h1>
             <form onSubmit={handleSubmit}>
                 <label>Username</label>
                 <input type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />

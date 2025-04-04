@@ -19,7 +19,7 @@ const ArtistPage: React.FC = () => {
 
   useEffect(() => {
     if (artist) { // Fetch top songs
-      fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/artistTopSongs.php?artist=${artist}`)
+      fetch(`${process.env.REACT_APP_API_URL}backend/artistTopSongs.php?artist=${artist}`)
         .then(response => response.json()).then(data => {
           if (data.status === 'success') {
             setTopSongs(data.topSongs);
@@ -32,7 +32,7 @@ const ArtistPage: React.FC = () => {
         });
 
       // Fetch artist picture from Spotify
-      fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/getArtistPic.php?artist=${artist}`)
+      fetch(`${process.env.REACT_APP_API_URL}backend/getArtistPic.php?artist=${artist}`)
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') {
@@ -61,7 +61,7 @@ const ArtistPage: React.FC = () => {
 
   const handleSongClick = async (song: string, artist: string) => {
     try {
-      const response = await fetch('https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/playSong.php', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

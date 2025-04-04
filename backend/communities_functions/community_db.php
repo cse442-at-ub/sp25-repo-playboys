@@ -194,8 +194,6 @@ function getCommunties($conn, $user){
 
     $Communities = json_decode($Communities, true); // Decode the members if it's a JSON array
     return $Communities;
-
-
 }
 
 

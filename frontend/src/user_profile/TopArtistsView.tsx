@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCSRFToken } from '../csrfContent';
 interface Artist {
   name: string;
@@ -7,6 +7,9 @@ interface Artist {
 }
 
 function TopArtistsView() {
+  const [searchParams] = useSearchParams();
+  const user = searchParams.get("user");
+  const [username, setUsername] = useState("");
   const [artists, setArtists] = useState<Artist[]>([]); // State to store fetched artist data
   const navigate = useNavigate();
   const { csrfToken } = useCSRFToken();
@@ -14,7 +17,7 @@ function TopArtistsView() {
     // Fetch the top artists from the backend when the component mounts
     const fetchTopArtists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php?user=${(user && user !== "null") ? user : ""}`, {
           method: 'GET',
           credentials: 'include',
           headers: { 'CSRF-Token': csrfToken }
@@ -33,7 +36,29 @@ function TopArtistsView() {
         console.error('Error fetching top artists:', error);
       }
     };
-
+    const fetchUsername = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php?user=${(user && user !== "null") ? user : ""}`, {
+          method: "GET",
+          credentials: "include",
+          headers: { 'CSRF-Token': csrfToken }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.login_user) {
+            setUsername(data.login_user);
+            console.log("Logged in user:", data.login_user);
+          } else {
+            console.log("Username not found in response");
+          }
+        } else {
+          console.error("Failed to fetch username:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      }
+    };
+    fetchUsername(); // Fetch username when the component mounts
     fetchTopArtists();
   }, []); // Dependency array ensures fetch runs once when the component mounts
 
@@ -62,7 +87,11 @@ function TopArtistsView() {
             </div>
           ))
         ) : (
-          <p>Please Login in with Spotify</p> // Show a loading message if artists are still being fetched
+          username === (user) || ((user || "") === "") ? (
+            <p>Please Login in with Spotify</p>
+          ) : (
+            <p>{user} has no Top Artist</p>
+          )
         )}
       </div>
     </div>

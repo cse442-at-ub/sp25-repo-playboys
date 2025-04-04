@@ -39,6 +39,8 @@ import Feed from "./feed/feed";
 import PostPage from "./feed/post";
 import SearchPage from "./search_result_page/searchResultPage";
 import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
+
+
 //import all mobile views for setting
 
 //Import SongRecommendation
@@ -75,9 +77,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/forgot/reset/:email" element={<Reset />}/>
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/explore/genre/:genre" element={<GenrePage />} />
-        <Route path="/explore/artist/:artist" element={<ArtistPage />} />
+        <Route path="/explore" element={<ProtectedRoute element={<Explore />} />} />
+        <Route path="/explore/genre/:genre" element={<ProtectedRoute element={<GenrePage />} />} />
+        <Route path="/explore/artist/:artist" element={<ProtectedRoute element={<ArtistPage />} />} />
         <Route path="/forgot/reset" element={<Reset />} />
         <Route path="/statistics" element={<StatisticsOverview />} />
         <Route path="/statistics/details" element={<StatisticsDetails />} />
@@ -103,9 +105,11 @@ function App() {
       
         <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
         
-
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
-        </Routes>
+  
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/feed/post" element={<PostPage />} />
+      </Routes>
     </Router>
     </CSRFProvider>
   );
