@@ -77,6 +77,7 @@ function TopArtists() {
 
   const handleArtistClick = (artist: Artist): void => {
     console.log(`Artist clicked: ${artist.name}`);
+    navigate(`/explore/artist/${artist.name.toLowerCase()}`);
   };
 
   return (
