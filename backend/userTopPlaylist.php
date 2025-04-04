@@ -12,6 +12,30 @@ $spotifyId = "";
 $user = $result->fetch_assoc();
 $login_username = $user["username"];
 
+
+if(isset($_GET['user'])) {
+    if($_GET['user'] != $login_username){
+        if($_GET['user'] != ''){
+            $stmt = $conn->prepare("SELECT spotify_id FROM user_login_data WHERE username = ?");
+            $stmt->bind_param("s", $_GET['user']);
+            $stmt->execute();
+            $result = $stmt->get_result()->fetch_assoc();
+            if($result == NULL){
+                echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
+                exit();
+            }
+            if($result['spotify_id'] == "" || $result['spotify_id'] == NULL){
+                echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
+                exit();
+            }
+            $login_username = $_GET['user'];
+        }
+
+        
+    }
+   
+}
+
 // Grab token from database
 $stmt = $conn->prepare("SELECT access_token, spotify_id FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $login_username);
