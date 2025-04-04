@@ -51,12 +51,14 @@ import Explore from "./explore/explore";
 import GenrePage from "./explore/genre";
 import ArtistPage from "./explore/artistPage";
 
+// Statistics
+import StatisticsOverview from "./statistics_page/statistics_overview";
+import StatisticsDetails from "./statistics_page/statistics_details";
 //friendlist page 
 import FriendList from "./friend_list/friendList";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
-
 
 // csrf wrap protection
 import { CSRFProvider } from "./csrfContent";
@@ -78,7 +80,10 @@ function App() {
         <Route path="/explore" element={<ProtectedRoute element={<Explore />} />} />
         <Route path="/explore/genre/:genre" element={<ProtectedRoute element={<GenrePage />} />} />
         <Route path="/explore/artist/:artist" element={<ProtectedRoute element={<ArtistPage />} />} />
-
+        <Route path="/forgot/reset" element={<Reset />} />
+        <Route path="/statistics" element={<StatisticsOverview />} />
+        <Route path="/statistics/details" element={<StatisticsDetails />} />
+      
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
         */}
@@ -96,10 +101,12 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        
+      
         <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
         
         <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
-
+  
         <Route path="/feed" element={<Feed />} />
         <Route path="/feed/post" element={<PostPage />} />
       </Routes>

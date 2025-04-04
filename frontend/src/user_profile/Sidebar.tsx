@@ -63,7 +63,7 @@ function Sidebar() {
 
   const menuItems = [
     { icon: "./static/ExploreIcon.png", text: "Explore", handleClick: () => navigate('/explore') },
-    { icon: "./static/StatisticIcon.png", text: "My Stat", handleClick: () => console.log("My Stat clicked") },
+    { icon: "./static/StatisticIcon.png", text: "My Stat", handleClick: () => navigate('/statistics') },
     { icon: "./static/ProfileIcon.png", text: "My Profile", handleClick: () => window.location.href = "#/userprofile" },
     { icon: "./static/SettingIcon.png", text: "Setting", handleClick: () => window.location.href = "#/settings" },
   ];
