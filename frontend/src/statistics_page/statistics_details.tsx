@@ -26,7 +26,7 @@ const StatisticsDetails: React.FC = ( props ) =>
 
     const [ itemType, setItemType ] = useState< ItemType >( "artists" );
     const [ timeRange, setTimeRange ] = useState< TimeRange >( "medium_term" );
-    const [ topX, setTopX ] = useState< Limit >( 10 );
+    const [ topX, setTopX ] = useState< Limit >( 50 );
     const [ loading, setLoading ] = useState<boolean>(true);
 
 
@@ -36,7 +36,7 @@ const StatisticsDetails: React.FC = ( props ) =>
 
         try 
         {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTop50Xlocal.php?type=${itemType}&time_range=${timeRange}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTop50X.php?type=${itemType}&time_range=${timeRange}`, {
                 method: "GET",
                 headers: { 
                     "Content-Type": "application/json", 
@@ -44,17 +44,18 @@ const StatisticsDetails: React.FC = ( props ) =>
                 }
             });
 
-            console.log( `fetched backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}` );
+            console.log( `fetched backend/userTop50X.php?type=${itemType}&time_range=${timeRange}` );
 
             if ( response.ok )
             {
+                console.log( "response is okay..." );
                 try 
                 {
-                    console.log( "response is okay..." );
                     const text = await response.text();
-                    console.log("text: " + text);
+                    console.log("response text: " + text);
+
                     const data = JSON.parse( text )
-                    console.log( "data: " + data );
+                    console.log( "response -> data: " + data );
                     
                     console.log( "displaying data..." );
                     setDisplayData( data );
@@ -66,12 +67,12 @@ const StatisticsDetails: React.FC = ( props ) =>
             }
             else
             {
-                console.error( `error: response not ok: error fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}` );
+                console.error( `error: response not ok: error fetching .../backend/userTop50X.php?type=${itemType}&time_range=${timeRange}` );
             }
         }
         catch ( error ) 
         {
-            console.error( `error: error caught fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}\n\n` + error );
+            console.error( `error: error caught fetching .../backend/userTop50X.php?type=${itemType}&time_range=${timeRange}\n\n` + error );
         }
         finally 
         {
@@ -83,8 +84,6 @@ const StatisticsDetails: React.FC = ( props ) =>
         getDisplayData();
     }, [ itemType, timeRange, topX ]) ;    
     
-    const topItem = displayData.length > 0 ? displayData[0] : null
-
     const handleClickBack = () => 
     {
         navigate( "/statistics" );
@@ -101,9 +100,9 @@ const StatisticsDetails: React.FC = ( props ) =>
                         value={ timeRange }
                         onChange={ ( e ) => setTimeRange( e.target.value as TimeRange ) }
                     >
-                        <option value="Last Month">Last Month</option>
-                        <option value="Last 90 Days">Last 90 Days</option>
-                        <option value="Last Year">Last Year</option>
+                        <option value="short_term">Last Month</option>
+                        <option value="medium_term">Last 90 Days</option>
+                        <option value="long_term">Last Year</option>
                     </select>
                     
                     <select 
@@ -111,8 +110,8 @@ const StatisticsDetails: React.FC = ( props ) =>
                         value={ itemType }
                         onChange={ ( e ) => setItemType( e.target.value as ItemType ) }
                     >
-                        <option value="Top Artists">Top Artists</option>
-                        <option value="Top Songs">Top Songs</option>
+                        <option value="artists">Top Artists</option>
+                        <option value="tracks">Top Songs</option>
                     </select>
                 </div>
             </header>
@@ -148,7 +147,7 @@ const StatisticsDetails: React.FC = ( props ) =>
                                 <div className="detailed-item-details">
                                     <div className="detailed-item-name">{ item.name }</div>
                                     <div className="detailed-item-stats">
-                                    { item.popularity } plays · { item.popularity.toFixed( 1 ) }%
+                                    Popularity Score: { item.popularity }
                                     </div>
                                 </div>
                             </div>

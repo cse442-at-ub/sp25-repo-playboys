@@ -70,8 +70,8 @@
 }
 
 .circle-center-content {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,20 +81,21 @@
 }
 
 .circle-rank {
-  font-size: 8px;
+  width: 50%;
+  height: 50%;
+  font-size: 18px;
   font-weight: 600;
   color: #555;
   margin-bottom: 4px;
 }
 
 .circle-name {
-  font-size: 8px;
-  font-weight: 700;
+  width: 50%;
+  height: 50%;
+  font-size: 18px;
+  font-weight: 600;
   color: #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
+  margin-bottom: 4px;
 }
 
 .statistics-leaderboard-container {

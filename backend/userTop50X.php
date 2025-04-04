@@ -54,52 +54,55 @@ $url = "https://api.spotify.com/v1/me/top/$type?limit=50&time_range=$time_range"
 
 $ch = curl_init();
 curl_setopt_array( $ch, [
-        CURLOPT_URL            => $top_artists_url,
+        CURLOPT_URL            => $url,
         CURLOPT_HTTPHEADER     => [ "Authorization: Bearer $access_token" ],
         CURLOPT_RETURNTRANSFER => true
 ]);
 
 $response = curl_exec( $ch );
-if ( curl_errno( $ch ) ) 
-{
-    echo json_encode( [
-        "status" => "error", 
-        "message" => "encountered cURL error: " . curl_error( $ch ),
-    ]);
-} 
-else 
-{
-    $httpCode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
-    // Did the cURL request succeed?
-    if ( $httpCode !== 200 ) 
-    {
-        echo json_encode( [
-            "status" => "error", 
-            "message" => "$httpCode: Failed to fetch data from Spotify. Please try again.",
-        ]);
-        exit();
-    }
-}
+// // Did the cURL request succeed?
+// if ( curl_errno( $ch ) ) 
+// {
+//     echo 'cURL error: ' . curl_error($ch);
+// } 
+// else 
+// {
+//     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
+//     if ( $httpCode !== 200 ) 
+//     {
+//         echo json_encode( [
+//             "status" => "error", 
+//             "message" => "$httpCode: Failed to fetch data from Spotify. Please try again.",
+//         ]);
+//         exit();
+//     }
+// }
 
 curl_close( $ch );
 
 // It did! We've got the users listening data! Make it a dictionary.
 $page = json_decode( $response, true );
 
-// Check to see if the user has ever even listened to music before lol
-if( $page[ "total" ] <= 0 ) 
-{
-    echo json_encode( [
-        "status" => "error", 
-        "message" => "Fetched user data from Spotify, but there is none. User literally does not listen to music.",
-    ]);
+if( isset( $page[ "error" ] ) ){
+    echo json_encode( [ "error" => $response ] );
     exit();
 }
 
+// Check to see if the user has ever even listened to music before lol
+// if( $page[ "total" ] <= 0 ) 
+// {
+//     echo json_encode( [
+//         "status" => "error", 
+//         "message" => "Fetched user data from Spotify, but there is none. User literally does not listen to music.",
+//     ]);
+//     exit();
+// }
+
 // User has listened to music before. Cool. Take everything we need and hand it back to frontend.
 $data = [];
-$index = 0;
+$index = 1;
 foreach ( $page[ "items" ] as $item )
 {
     $data[] = [ 

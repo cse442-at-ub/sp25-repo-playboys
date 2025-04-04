@@ -42,17 +42,18 @@ const StatisticsOverview: React.FC = ( props ) =>
                 }
             });
 
-            console.log( `fetched backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}` );
+            console.log( `fetched backend/userTop50X.php?type=${itemType}&time_range=${timeRange}` );
 
             if ( response.ok )
             {
+                console.log( "response is okay..." );
                 try 
                 {
-                    console.log( "response is okay..." );
                     const text = await response.text();
-                    console.log("text: " + text);
+                    console.log("response text: " + text);
+
                     const data = JSON.parse( text )
-                    console.log( "data: " + data );
+                    console.log( "response -> data: " + data );
                     
                     console.log( "displaying data..." );
                     setDisplayData( data );
@@ -64,12 +65,12 @@ const StatisticsOverview: React.FC = ( props ) =>
             }
             else
             {
-                console.error( `error: response not ok: error fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}` );
+                console.error( `error: response not ok: error fetching .../backend/userTop50Xlocal.php?type=${itemType}&time_range=${timeRange}` );
             }
         }
         catch ( error ) 
         {
-            console.error( `error: error caught fetching backend/userTop100Xlocal.php?type=${itemType}&time_range=${timeRange}\n\n` + error );
+            console.error( `error: error caught fetching .../backend/userTop50Xlocal.php?type=${itemType}&time_range=${timeRange}\n\n` + error );
         }
         finally 
         {
@@ -162,15 +163,13 @@ const StatisticsOverview: React.FC = ( props ) =>
                                     );
                                 })}
                             
-                            <circle cx="50" cy="50" r="30" fill="white" />
+                            <circle cx="50" cy="50" r="50" fill="white" />
                             
                             { topItem && (
-                                <foreignObject x="20" y="20" width="60" height="60">
+                                <foreignObject x="20" y="20" width="100" height="100">
                                 <div className="circle-center-content">
                                     <div className="circle-rank">#1</div>
-                                    <div className="circle-name">
-                                    { topItem.name }
-                                    </div>
+                                    <div className="circle-name"> { topItem.name } </div>
                                 </div>
                                 </foreignObject>
                             )}
@@ -200,21 +199,21 @@ const StatisticsOverview: React.FC = ( props ) =>
                                         <div className="item-image-placeholder">
                                             <span>No image</span>
                                         </div>
-                                        )}
+                                        ) }
                                     </div>
-                                    
+
                                     <div className="item-details">
-                                        <div className="item-name">{item.name}</div>
-                                        <div className="item-time">
-                                        { Math.floor( item.popularity / 60)} hrs { item.popularity % 60 } mins
-                                        </div>
+                                        <div className="item-name">{ item.name }</div>
+                                        {/* <div className="item-time">
+                                        {Math.floor(item.playTimeMinutes / 60)} hrs {item.playTimeMinutes % 60} mins
+                                        </div> */}
                                     </div>
                                     
                                     <div className="item-stats">
-                                        <div className="item-play-count">{ item.popularity >= 0? item.popularity : "%" }</div>
-                                        <div className="item-percentage">{ item.popularity.toFixed( 1 ) }%</div>
+                                        <div className="item-play-count">{ item.popularity }</div>
+                                        <div className="item-percentage">Popularity Score</div>
                                     </div>
-                                    </div>
+                                </div>
                                 ))}
                             </div>
                             
