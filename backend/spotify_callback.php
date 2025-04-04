@@ -96,7 +96,18 @@ $login_user = $conn->prepare("SELECT * FROM user_login_data WHERE spotify_id = ?
 $login_user->bind_param("s", $spotify_id);
 $login_user->execute();
 $result = $login_user->get_result();
+if ($result->num_rows > 0) {
+    $update = $conn->prepare("
+        UPDATE user_login_data
+        SET access_token = ?, refresh_token = ?, email = ?, username = ?
+        WHERE spotify_id = ?
+  ");
+  
+  $update->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
+  $update->execute();
+  echo "DEBUG: New user updated into user_login_data<br>";
 
+}
 if ($result->num_rows === 0) {
     echo "DEBUG: User not found in database. Registering new user.<br>";
 
