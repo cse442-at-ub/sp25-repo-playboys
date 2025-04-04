@@ -8,7 +8,7 @@ interface Playlist {
 
 function Playlists() {
   const [searchParams] = useSearchParams();
-  const user = searchParams.get("user");
+  const user = searchParams.get("user") || "";
   const [username, setUsername] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]); // State to store playlist data
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function Playlists() {
     // Fetch the playlists from the backend when the component mounts
     const fetchPlaylists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopPlaylist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopPlaylist.php?user=${(user && user !== "null") ? user : ""}`, {
           method: "GET",
           credentials: "include",
           headers: { 'CSRF-Token': csrfToken }
@@ -59,14 +59,15 @@ function Playlists() {
         console.error("Error fetching username:", error);
       }
     };
-  
+    setPlaylists([]);
+    setUsername("");
     fetchUsername();
     fetchPlaylists();
-  }, []); // Dependency array ensures the fetch runs once when the component mounts
+  }, [user]); // Dependency array ensures the fetch runs once when the component mounts
 
   const handleShowAllClick = () => {
     console.log("Show all clicked");
-    navigate('/playlist-view');
+    navigate('/playlist-view?user=' + (user && user !== "null" ? user : "")); // Navigate to the playlist view page
   };
 
   return (

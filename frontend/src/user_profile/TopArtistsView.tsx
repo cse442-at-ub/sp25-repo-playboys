@@ -17,7 +17,7 @@ function TopArtistsView() {
     // Fetch the top artists from the backend when the component mounts
     const fetchTopArtists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php?user=${(user && user !== "null") ? user : ""}`, {
           method: 'GET',
           credentials: 'include',
           headers: { 'CSRF-Token': csrfToken }
@@ -38,7 +38,7 @@ function TopArtistsView() {
     };
     const fetchUsername = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php?user=${(user && user !== "null") ? user : ""}`, {
           method: "GET",
           credentials: "include",
           headers: { 'CSRF-Token': csrfToken }

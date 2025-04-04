@@ -15,11 +15,12 @@ function TopArtists() {
   const navigate = useNavigate();
   
   const { csrfToken } = useCSRFToken();
+  
   useEffect(() => {
     // Fetch the top artists from the backend when the component mounts
     const fetchTopArtists = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopArtist.php?user=${(user && user !== "null") ? user : ""}`, {
           method: "GET",
           credentials: "include",
           headers: { 'CSRF-Token': csrfToken }
@@ -62,14 +63,16 @@ function TopArtists() {
     }
   };
 
+  setArtists([]);
+  setUsername("");
   fetchTopArtists();
   fetchUsername(); // <- NEW
 
-}, []);
+}, [user]);
 
   const handleShowAllClick = () => {
     console.log("Show all clicked");
-    navigate('/top-artists');
+    navigate('/top-artists?user=' + (user && user !== "null" ? user : "")); // Pass the user parameter to the new route
   };
 
   const handleArtistClick = (artist: Artist): void => {
@@ -95,7 +98,7 @@ function TopArtists() {
           username === (user) || ((user || "") === "") ? (
             <p>Please Login in with Spotify</p>
           ) : (
-            <p>{user} has no Playlist</p>
+            <p>{user} has no Top Artist</p>
           )
         )}
       </div>
