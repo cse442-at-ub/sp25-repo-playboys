@@ -32,7 +32,7 @@ const Login: React.FC = () => {
         console.log(result["status"]);
 
         if (result["status"] === "success") {
-            window.location.href = `#/userprofile?user=${username}`;
+            window.location.href = `#/explore`;
         } else {
             setError(result["message"]);
         }
