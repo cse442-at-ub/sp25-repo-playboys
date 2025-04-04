@@ -28,15 +28,15 @@ try{
         $profile = $result->fetch_assoc();
         if($login_username == $username){
             $list_pending_friends = grabAllFriendRequest($conn, $login_username);
-
             echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "isFriend" => "none", "pendingFriends" => $list_pending_friends["pending_requests"] , "profile_pic" => $profile["profile_pic"]]);
             exit();
         } else {
             $friend_checker = checkFriendStatus($conn, $login_username, $username);
-            
             echo json_encode(["status" => "success", "profile" => $profile, "loggedInUser" => $login_username, "friendStatus" => $friend_checker["status"], "profile_pic" => $profile["profile_pic"]]);
             exit();
         }
+
+        
         
     } else {
         echo json_encode(["status" => "error", "message" => "No profile found, Please Login", "User" => $username]);

@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { useCSRFToken } from "../../csrfContent";
 const FriendRequests = () => {
     const [pendingFriends, setPendingFriends] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
-
+    const { csrfToken } = useCSRFToken();
     const fetchFriendRequests = async () => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getFriendRequestsList.php`, {
                 method: "GET",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
             });
 
             const result = await response.json();
@@ -35,7 +35,7 @@ const FriendRequests = () => {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
                 body: JSON.stringify({ friend: friendUsername, "choice": "accepted" }),
             });
 
@@ -55,7 +55,7 @@ const FriendRequests = () => {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
                 body: JSON.stringify({ friend: friendUsername, "choice": "declined" }),
             });
 

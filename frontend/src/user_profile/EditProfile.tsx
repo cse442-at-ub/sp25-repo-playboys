@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Image, Button, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useCSRFToken } from '../csrfContent';
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -11,13 +12,16 @@ const EditProfile = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null); // to store the image URL
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const { csrfToken } = useCSRFToken();
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/updateProfile.php`, {
           method: "GET",
           credentials: "include",
+          headers: {
+            "CSRF-Token": csrfToken
+          }
         });
         const result = await response.json();
 
@@ -48,7 +52,7 @@ const EditProfile = () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}backend/updateProfile.php`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
         body: JSON.stringify({ username, email }),
         credentials: "include",
       });
@@ -94,6 +98,7 @@ const EditProfile = () => {
         method: "POST",
         body: formData,
         credentials: "include",
+        headers: { "CSRF-Token": csrfToken}
       });
       const result = await response.json();
 

@@ -84,6 +84,7 @@
     $top_artists = "";
     $recent_activity = "";
     $profile_pic = "";
+    $Communities = json_encode([]); // Store as an empty JSON array instead of ""
 
     
     $missingFields = [];
@@ -124,9 +125,15 @@
         //insert newly registered user into database
         $insert_new_user->execute();
 
-        //make new user profile table for new user
-        $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic) VALUES (?, ?, ? , ? , ? , ? , ? , ?, ?)");
-        $insert_new_profile->bind_param("sssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic);
+        // Get the last inserted user ID
+        $user_id = $conn->insert_id;
+
+        // Insert new user profile into `user_profiles`
+        $insert_new_profile = $conn->prepare("
+            INSERT INTO user_profiles (id, username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic, Communities) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $insert_new_profile->bind_param("issiiisssss", $user_id, $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic, $Communities);
         $insert_new_profile->execute();
         echo json_encode(["status" => "success", "message" => "User registered successfully"]);
     

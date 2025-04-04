@@ -1,6 +1,6 @@
 <?php
 // Allow CORS
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 
 // Only include database when needed
 if ($_SERVER["REQUEST_METHOD"] !== "OPTIONS") {
-    require __DIR__ . "/database.php";
+    require __DIR__ . "/data_base.php";
 }
 ?>
 <?php
