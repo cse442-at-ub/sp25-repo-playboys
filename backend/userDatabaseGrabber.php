@@ -27,6 +27,25 @@ function checkFriendStatus($conn, $username, $friend) {
     }
 }
 
+function deleteFriend($conn, $username, $friend){
+    try {
+        $stmt = $conn->prepare("
+            DELETE FROM friend_pairs
+            WHERE (username = ? AND friend = ?) 
+               OR (username = ? AND friend = ?)
+        ");
+        $stmt->bind_param("ssss", $username, $friend, $friend, $username);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            return 1; // Deletion successful
+        } else {
+            return 0; // No rows affected, meaning no friendship existed
+        }
+    } catch (Exception $e) {
+        return false; // Handle errors if needed
+    }
+}
 function grabAllFriendRequest($conn, $username) {
     $requesters = [];
     try {
@@ -44,4 +63,44 @@ function grabAllFriendRequest($conn, $username) {
         return "Error: " . $e->getMessage();
     }
 }
+
+function isValidEmail($email){
+    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+    if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+        list($user, $domain) = explode('@', $email);
+        if(checkdnsrr($domain, 'MX') || checkdnsrr($domain, 'A')){ //checks for MX or A records
+            return true;
+        }
+    }
+    return false;
+}
+
+function grabAllFriends($conn, $username) {
+    $friends = [];
+    $status = "friends";
+    $stmt = $conn->prepare("SELECT * FROM friend_pairs WHERE (username = ? OR friend = ?) AND status = ?");
+    $stmt->bind_param("sss", $username, $username, $status);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result ->fetch_assoc()){
+        //if the login username is placed in username sql column, their friend will be at the friend column
+        if($row["username"] == $username){
+            $friend = $row["friend"];
+            if(!in_array($friend,$friends)){
+                $friends[] = $friend;
+            }
+        
+    //if the login username is placed in friend sql column, their friend will be at the username column
+        }else if($row["friend"] == $username){
+            $friend = $row["username"];
+            if(!in_array($friend, $friends)){
+                $friends[] = $friend;
+            }
+        }
+
+    }
+    return $friends;
+}
 ?>
+
+

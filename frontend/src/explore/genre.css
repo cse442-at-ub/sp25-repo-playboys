@@ -1,0 +1,50 @@
+.gp-genre-page {
+  display: flex;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.gp-genre-content {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.gp-genre-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.gp-genre-description {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.gp-section-header {
+  font-size: 22px;
+  font-weight: 600;
+  margin-left: 20px;
+  color: #333;
+}
+
+.gp-song-list,
+.gp-artist-list {
+  list-style: none;
+  padding-right: 20%;
+}
+
+.gp-song,
+.gp-artist {
+  background: #f9f9f9;
+  margin-bottom: 8px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.gp-song:hover,
+.gp-artist:hover {
+  background: #eaeaea;
+}
