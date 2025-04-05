@@ -12,6 +12,7 @@ echo "DEBUG: Starting Spotify callback process<br>";
 // Step 1: Check for authorization code
 if (!isset($_GET['code'])) {
     echo "DEBUG: Authorization code not provided.<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
     echo json_encode(["status" => "Error", "message" => "Error retrieving authorization code."]);
     exit();
 }
@@ -42,6 +43,7 @@ curl_setopt_array($ch, [
 $response = curl_exec($ch);
 if (curl_errno($ch)) {
     echo "DEBUG: cURL error during token exchange: " . curl_error($ch) . "<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
     exit("DEBUG: cURL error during token exchange.");
 }
 curl_close($ch);
@@ -50,6 +52,7 @@ echo "DEBUG: Spotify token response: $response<br>";
 $token_data = json_decode($response, true);
 if (!isset($token_data['access_token'])) {
     echo "DEBUG: Access token not received. Response: $response<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
     echo json_encode(["status" => "Error", "message" => "Error retrieving access token"]);
     exit();
 }
@@ -82,7 +85,9 @@ echo "DEBUG: Spotify user profile response: $user_response<br>";
 $user_info = json_decode($user_response, true);
 if (!isset($user_info['id'])) {
     echo "DEBUG: User ID not found in response. Response: $user_response<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
     exit("DEBUG: Error retrieving user information.");
+    
 }
 
 $spotify_id   = $user_info['id'];
