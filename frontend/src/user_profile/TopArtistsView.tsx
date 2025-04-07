@@ -104,19 +104,35 @@ interface ArtistCardProps {
 }
 
 function ArtistCard({ name, image }: ArtistCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/explore/artist/${encodeURIComponent(name)}`); // or any route you want
+  };
+
   return (
-    <div className="text-center">
+    <button
+      onClick={handleClick}
+      className="text-center border-0 bg-transparent"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        cursor: "pointer",
+      }}
+    >
       <img
         src={image}
         alt={`${name}'s profile`}
         className="img-fluid rounded-circle mb-2"
-        style={{ width: '90px', height: '90px' }} // Smaller size for mobile
+        style={{ width: '90px', height: '90px' }}
       />
       <h2 className="h6 fw-bold text-truncate" style={{ maxWidth: '100px' }}>
         {name}
       </h2>
-    </div>
+    </button>
   );
 }
+
 
 export default TopArtistsView;

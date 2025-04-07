@@ -11,10 +11,22 @@ interface SpotifyPlayerProps {
 const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, onClose }) => {
   const [width, setWidth] = useState<number>(500);
   const [height, setHeight] = useState<number>(150);
-  const [position, setPosition] = useState({ x: 20, y: 20 });
+  const [position, setPosition] = useState({ x: 0, y: 0 }); // Default; will update in useEffect
   const dragRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
+
+  React.useEffect(() => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth <= 768) {
+      setPosition({
+        x: screenWidth * 0.75,
+        y: screenHeight * 0.10
+      });
+    }
+  }, []);
 
   const increaseSize = () => {
     setWidth(width + 100);

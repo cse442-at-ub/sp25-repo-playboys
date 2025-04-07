@@ -29,7 +29,7 @@ const PlaylistPage: React.FC = () => {
           setLoading(false);
         });
 
-      // Fetch playlist image (if applicable)
+      // Fetch playlist image
       fetch(`${process.env.REACT_APP_API_URL}backend/getPlaylistImage.php?playlist=${encodeURIComponent(playlistName)}`)
         .then(response => response.json())
         .then(data => {

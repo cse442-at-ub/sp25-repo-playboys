@@ -10,6 +10,7 @@ import UserProfile from "./user_profile/userProfile";
 import TopArtistsView from "./user_profile/TopArtistsView";
 import EditProfile from "./user_profile/EditProfile";
 import PlaylistsView from "./user_profile/PlaylistsView";
+import SinglePlaylist from "./user_profile/SinglePlaylist";
 // Import mobile Profile
 
 // Import mobile Login and Sign Up
@@ -38,7 +39,6 @@ import FriendRequest from "./Settings/community_settings/friendRequest";
 import Feed from "./feed/feed";
 import PostPage from "./feed/post";
 import SearchPage from "./search_result_page/searchResultPage";
-import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 
 
 //import all mobile views for setting
@@ -56,6 +56,7 @@ import StatisticsOverview from "./statistics_page/statistics_overview";
 import StatisticsDetails from "./statistics_page/statistics_details";
 //friendlist page 
 import FriendList from "./friend_list/friendList";
+
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
@@ -101,6 +102,7 @@ function App() {
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/playlists/:playlistName" element={<SinglePlaylist />} />
         
       
         <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />

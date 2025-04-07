@@ -82,7 +82,7 @@ function Playlists() {
         {playlists.length > 0 ? (
           playlists.map((playlist, index) => (
             <div key={index} className="col-6 col-md-4">
-              <PlaylistItem playlist={playlist} onClick={() => console.log(playlist.name)} />
+              <PlaylistItem playlist={playlist} onClick={() => {navigate(`/playlists/`+playlist.name)}} />
             </div>
           ))
         ) : (
