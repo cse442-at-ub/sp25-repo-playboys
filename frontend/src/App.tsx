@@ -41,7 +41,9 @@ import PostPage from "./feed/post";
 import SearchPage from "./search_result_page/searchResultPage";
 
 
-//import all mobile views for setting
+//import Community Page
+import CommunityPage from "./communities/CommunityPage";
+import CreateCommunityPage from "./communities/CreateCommunityPage";
 
 //Import SongRecommendation
 import SongRecommendation from "./song_recommendation/SongRecommendationFE";
@@ -98,6 +100,8 @@ function App() {
         <Route path="/settings/account/delete_account" element={<ProtectedRoute element={ <DeleteAccount />} />} />
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
+        <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
+        <Route path="/community/:id" element={<CommunityPage />} />
         <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
