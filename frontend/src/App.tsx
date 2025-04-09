@@ -43,6 +43,7 @@ import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 
 //import Community Page
 import CommunityPage from "./communities/CommunityPage";
+import CreateCommunityPage from "./communities/CreateCommunityPage";
 
 //Import SongRecommendation
 import SongRecommendation from "./song_recommendation/SongRecommendationFE";
