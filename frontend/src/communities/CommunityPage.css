@@ -1,15 +1,22 @@
 .community-page {
     max-width: 600px;
     margin: 0 auto;
+    padding: 2rem 1rem;
     font-family: Arial, sans-serif;
-    padding-bottom: 2rem;
+    padding-bottom: relative;
+  }
+  .back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    z-index: 1000;
   }
 
-  .back-button img {
-    width: 24px;
-    height: 24px;
-  }
-  
   .community-header {
     position: relative;
     text-align: center;
