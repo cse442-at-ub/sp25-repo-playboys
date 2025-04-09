@@ -1,12 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCSRFToken } from '../csrfContent';
 import "./CreateCommunityPage.css";
-import Sidebar from "../user_profile/Sidebar";
 
 const CreateCommunityPage: React.FC = () => {
   const navigate = useNavigate();
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [communityName, setCommunityName] = useState("");
+  const { csrfToken } = useCSRFToken();
+  const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+        });
+
+        const data = await res.json();
+        if (data.status === "success") {
+          setLoggedInUser(data.loggedInUser);
+        }
+      } catch (err) {
+        console.error("Failed to fetch logged-in user:", err);
+      }
+    };
+
+    fetchLoggedInUser();
+  }, []);
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -19,25 +43,36 @@ const CreateCommunityPage: React.FC = () => {
   };
 
   const handleCreate = async () => {
-    const userId = parseInt(localStorage.getItem("user_id") || "0");
+    if (!communityName || !loggedInUser) {
+      alert("Missing community name or user.");
+      return;
+    }
   
-    const response = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/createCommunity.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: communityName,
-        background_image: backgroundImage,
-        user_id: userId,
-      }),
-    });
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/createCommunity.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+        credentials: "include",
+        body: JSON.stringify({
+          community_name: communityName,
+          background_image: backgroundImage || "",
+          user_id: loggedInUser
+        })
+      });
   
-    const result = await response.json();
-    if (result.success) {
-      navigate("/community/" + result.community_id);
-    } else {
-      alert("Failed to create community");
+      const result = await response.json();
+      if (result.status === "success") {
+        alert("Community created!");
+        navigate("/userprofile");
+      } else {
+        alert(result.message || "Failed to create community.");
+      }
+    } catch (err) {
+      console.error("Error creating community:", err);
+      alert("Network error while creating community.");
     }
   };
+  
   
 
   return (
@@ -76,9 +111,6 @@ const CreateCommunityPage: React.FC = () => {
       <div className="create-community-buttons">
         <button className="cancel-btn" onClick={() => navigate(-1)}>Cancel</button>
         <button className="create-btn" onClick={handleCreate}>Create</button>
-      </div>
-      <div className="side-column">
-        <Sidebar />
       </div>
     </div>
   );
