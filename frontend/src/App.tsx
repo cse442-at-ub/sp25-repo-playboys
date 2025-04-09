@@ -41,7 +41,8 @@ import SearchPage from "./search_result_page/searchResultPage";
 import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 
 
-//import all mobile views for setting
+//import Community Page
+import CommunityPage from "./communities/CommunityPage";
 
 //Import SongRecommendation
 import SongRecommendation from "./song_recommendation/SongRecommendationFE";
