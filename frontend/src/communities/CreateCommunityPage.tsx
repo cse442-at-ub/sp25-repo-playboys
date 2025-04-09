@@ -18,10 +18,27 @@ const CreateCommunityPage: React.FC = () => {
     }
   };
 
-  const handleCreate = () => {
-    // send data to backend here in the future
-    console.log("Creating community:", { communityName, backgroundImage });
+  const handleCreate = async () => {
+    const userId = parseInt(localStorage.getItem("user_id") || "0");
+  
+    const response = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/createCommunity.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: communityName,
+        background_image: backgroundImage,
+        user_id: userId,
+      }),
+    });
+  
+    const result = await response.json();
+    if (result.success) {
+      navigate("/community/" + result.community_id);
+    } else {
+      alert("Failed to create community");
+    }
   };
+  
 
   return (
     <div className="create-community-page">
