@@ -125,7 +125,7 @@ const CommunityResultsProfile = () => {
     };
     return (
         <div>
-        <h1>My Comunities</h1>
+        <h1>My Communities</h1>
           {/* Map through the communities array and display the name */}
           {communities.map((community, index) => (
             <div key={index}>
