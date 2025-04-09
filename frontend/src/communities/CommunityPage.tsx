@@ -1,152 +1,132 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "./CommunityPage.css";
 import Sidebar from "../user_profile/Sidebar";
+import { useCSRFToken } from "../csrfContent";
+
+interface Community {
+  name: string;
+  background_image: string;
+}
 
 const CommunityPage: React.FC = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { csrfToken } = useCSRFToken();
 
-  // Like and post modal states
-  const [liked, setLiked] = useState(false);
+  const [community, setCommunity] = useState<Community | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
+
+  // Modal States
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postCaption, setPostCaption] = useState("");
   const [postImage, setPostImage] = useState<string | null>(null);
 
-  // Placeholder background logic
-  const community = {
-    name: "Rock Lover",
-    backgroundImage: "", // Leave empty to trigger placeholder
-  };
-  const placeholderBg =
-    process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
-  const backgroundImg = community.backgroundImage || placeholderBg;
+  useEffect(() => {
+    const fetchCommunity = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}backend/custom_communities/getCommunityById.php?id=${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "CSRF-Token": csrfToken,
+            },
+            credentials: "include",
+          }
+        );
 
-  // Sample post
-  const post = {
-    username: "Username",
-    profilePic:
-      process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png",
-    caption:
-      "This is the caption text for the post. It has a max of 250 characters.",
-    postImage: "", // Empty = no image
+        const result = await res.json();
+        if (result.name) {
+          setCommunity(result);
+        } else {
+          setError(result.message || "Community not found");
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError("Failed to load community");
+      }
+    };
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}backend/getProfile.php`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "CSRF-Token": csrfToken,
+            },
+            credentials: "include",
+          }
+        );
+        const result = await res.json();
+        if (result.status === "success") {
+          setLoggedInUser(result.loggedInUser);
+        }
+      } catch (err) {
+        console.error("Failed to fetch user", err);
+      }
+    };
+
+    fetchCommunity();
+    fetchUser();
+  }, [id, csrfToken]);
+
+  if (error) {
+    return (
+      <div className="community-page">
+        <button className="back-button" onClick={() => navigate(-1)}>←</button>
+        <h2>{error}</h2>
+      </div>
+    );
+  }
+
+  if (!community) {
+    return (
+      <div className="community-page">
+        <button className="back-button" onClick={() => navigate(-1)}>←</button>
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
+
+  const handleCreate = () => {
+    console.log("Creating post:", postCaption, postImage);
+    setShowCreatePost(false);
+    setPostCaption("");
+    setPostImage(null);
   };
 
   return (
     <div className="community-page">
-      
-      {!showCreatePost && (
-        <button className="back-button" onClick={() => navigate(-1)}>
-          ←
-        </button>
-      )}
+      <button className="back-button" onClick={() => navigate(-1)}>←</button>
 
-
-      {/* Header */}
       <div className="community-header">
         <img
           className="background-image"
-          src={backgroundImg}
+          src={
+            community.background_image ||
+            process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg"
+          }
           alt="Community Background"
         />
         <h1 className="community-name">{community.name}</h1>
       </div>
 
-      {/* Single Post */}
-      <div className="post">
-        <div className="post-header">
-          <img
-            src={post.profilePic}
-            alt="Profile"
-            className="profile-pic"
-          />
-          <span className="username">{post.username}</span>
-        </div>
+      {/* Floating + Button */}
+      <button className="floating-add-btn" onClick={() => setShowCreatePost(true)}>+</button>
 
-        <div className="caption">{post.caption}</div>
-
-        {post.postImage && (
-          <img
-            className="post-image"
-            src={post.postImage}
-            alt="Post"
-          />
-        )}
-
-        <div className="controls">
-          <button
-            className={`heart-btn ${liked ? "liked" : ""}`}
-            onClick={() => setLiked(!liked)}
-          >
-            <img
-              src={
-                liked
-                  ? process.env.PUBLIC_URL + "/static/HeartIconLike.png"
-                  : process.env.PUBLIC_URL + "/static/HeartIconUnlike.png"
-              }
-              alt="Like"
-            />
-          </button>
-          <button className="comment-btn">
-            <img
-              src={
-                process.env.PUBLIC_URL + "/static/CommentIcon.png"
-              }
-              alt="Comment"
-            />
-          </button>
-        </div>
-
-        {/* Comments */}
-        <div className="comments-section">
-          <div className="comment">
-            <img
-              src={
-                process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"
-              }
-              alt="Commenter"
-              className="comment-profile-pic"
-            />
-            <div className="comment-content">
-              <span className="comment-username">User1</span>
-              <p className="comment-text">
-                This is a short comment, up to 100 characters max!
-              </p>
-            </div>
-          </div>
-
-          <div className="comment">
-            <img
-              src={
-                process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"
-              }
-              alt="Commenter"
-              className="comment-profile-pic"
-            />
-            <div className="comment-content">
-              <span className="comment-username">User2</span>
-              <p className="comment-text">
-                Here's another example of a comment someone might write.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Floating Add Button*/}
-      <button
-        className="floating-add-btn"
-        onClick={() => setShowCreatePost(true)}>+
-      </button>
-
-      {/* Create Post Modal*/}
+      {/* Create Post Modal */}
       {showCreatePost && (
         <div className="create-post-modal">
           <div className="create-post-box">
             <div className="post-header">
               <img
-                src={
-                  process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"
-                }
+                src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"}
                 className="profile-pic"
                 alt="pfp"
               />
@@ -162,16 +142,10 @@ const CommunityPage: React.FC = () => {
 
             <div
               className="image-upload"
-              onClick={() =>
-                document.getElementById("post-image-upload")?.click()
-              }
+              onClick={() => document.getElementById("post-image-upload")?.click()}
             >
               {postImage ? (
-                <img
-                  src={postImage}
-                  className="uploaded-image"
-                  alt="Post Preview"
-                />
+                <img src={postImage} className="uploaded-image" alt="Post Preview" />
               ) : (
                 <p>Click to upload Image</p>
               )}
@@ -193,33 +167,13 @@ const CommunityPage: React.FC = () => {
             </div>
 
             <div className="create-post-buttons">
-              <button
-                className="cancel-btn"
-                onClick={() => {
-                  setShowCreatePost(false);
-                  setPostCaption("");
-                  setPostImage(null);
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="create-btn"
-                onClick={() => {
-                  console.log("Creating post:", postCaption, postImage);
-                  setShowCreatePost(false);
-                  setPostCaption("");
-                  setPostImage(null);
-                }}
-              >
-                Create
-              </button>
+              <button className="cancel-btn" onClick={() => setShowCreatePost(false)}>Cancel</button>
+              <button className="create-btn" onClick={handleCreate}>Create</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Sidebar (stays at the bottom) */}
       <div className="side-column">
         <Sidebar />
       </div>
