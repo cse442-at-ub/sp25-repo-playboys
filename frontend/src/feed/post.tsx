@@ -119,16 +119,20 @@ const PostPage = () => {
                 </div>
                 
                 <div className="post-form-group">
+                    <label className="post-label" htmlFor="community">Choose a community</label>
                     <select
-                    value={community}
-                    onChange={(e) => setCommunity(e.target.value)}
+                        className="post-input"
+                        id="community"
+                        value={community}
+                        onChange={(e) => setCommunity(e.target.value)}
+                        required
                     >
+                        <option value="" disabled>Select a community</option>
                         {communities.map((community, index) => (
                             <option key={index} value={community}>{community}</option>
                         ))}
                     </select>
                 </div>
-
 
                 <button 
                     className="post-button"
