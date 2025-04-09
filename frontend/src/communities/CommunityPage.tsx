@@ -17,11 +17,24 @@ const CommunityPage: React.FC = () => {
   const [community, setCommunity] = useState<Community | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+
 
   // Modal States
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postCaption, setPostCaption] = useState("");
   const [postImage, setPostImage] = useState<string | null>(null);
+
+  const fetchPosts = async () => {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getPostsByCommunity.php?community_id=${id}`, {
+      credentials: "include",
+      headers: { "CSRF-Token": csrfToken }
+    });
+    const data = await res.json();
+    if (data.success) setPosts(data.posts);
+  };
+  
+
 
   useEffect(() => {
     const fetchCommunity = async () => {
@@ -71,7 +84,7 @@ const CommunityPage: React.FC = () => {
         console.error("Failed to fetch user", err);
       }
     };
-
+    fetchPosts();
     fetchCommunity();
     fetchUser();
   }, [id, csrfToken]);
@@ -94,12 +107,35 @@ const CommunityPage: React.FC = () => {
     );
   }
 
-  const handleCreate = () => {
-    console.log("Creating post:", postCaption, postImage);
-    setShowCreatePost(false);
-    setPostCaption("");
-    setPostImage(null);
+  const handleCreate = async () => {
+    if (!loggedInUser || !postCaption) return;
+  
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/createPost.php`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "CSRF-Token": csrfToken
+      },
+      body: JSON.stringify({
+        caption: postCaption,
+        image: postImage || "",
+        community_id: id,
+        username: loggedInUser
+      })
+    });
+  
+    const result = await res.json();
+    if (result.success) {
+      setShowCreatePost(false);
+      setPostCaption("");
+      setPostImage(null);
+      fetchPosts(); // Refresh post list
+    } else {
+      alert(result.message);
+    }
   };
+  
 
   return (
     <div className="community-page">
@@ -173,6 +209,30 @@ const CommunityPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <div className="posts-container">
+        {posts.length === 0 ? (
+          <p>No posts yet. Be the first to post!</p>
+        ) : (
+          posts.map((post) => (
+            <div key={post.post_id} className="post">
+              <div className="post-header">
+                <img
+                  src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"}
+                  className="profile-pic"
+                  alt="Profile"
+                />
+                <span className="username">{post.username}</span>
+              </div>
+              <div className="caption">{post.caption}</div>
+              {post.image && (
+                <img src={post.image} className="post-image" alt="Post" />
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
 
       <div className="side-column">
         <Sidebar />
