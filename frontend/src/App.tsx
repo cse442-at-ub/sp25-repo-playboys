@@ -41,7 +41,8 @@ import SearchPage from "./search_result_page/searchResultPage";
 import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 
 
-//import all mobile views for setting
+//import Community Page
+import CommunityPage from "./communities/CommunityPage";
 
 //Import SongRecommendation
 import SongRecommendation from "./song_recommendation/SongRecommendationFE";
@@ -72,7 +73,7 @@ function App() {
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
-        <Route path="/" element={ <LandingPage />} />
+        <Route path="/" element={ <CommunityPage />} />
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
