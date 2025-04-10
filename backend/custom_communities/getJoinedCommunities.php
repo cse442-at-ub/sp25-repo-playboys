@@ -23,9 +23,9 @@ if ($res->num_rows === 0) {
 }
 $user_id = $res->fetch_assoc()["id"];
 
-// Get joined communities
+// Get joined communities including background_image
 $stmt = $conn->prepare(
-    "SELECT c.community_id, c.name
+    "SELECT c.community_id, c.name, c.background_image
      FROM pb_community_members m
      JOIN pb_communities c ON m.community_id = c.community_id
      WHERE m.user_id = ?"
@@ -38,7 +38,8 @@ $communities = [];
 while ($row = $res->fetch_assoc()) {
     $communities[] = [
         "id" => $row["community_id"],
-        "name" => $row["name"]
+        "name" => $row["name"],
+        "background_image" => $row["background_image"]
     ];
 }
 
