@@ -7,6 +7,8 @@ import { useCSRFToken } from "../csrfContent";
 interface Community {
   name: string;
   background_image: string;
+  creator_id: number;
+  creator_username: string;
 }
 
 const CommunityPage: React.FC = () => {
@@ -18,6 +20,7 @@ const CommunityPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
+  const [isMember, setIsMember] = useState<boolean>(false);
 
 
   // Modal States
@@ -79,14 +82,31 @@ const CommunityPage: React.FC = () => {
         const result = await res.json();
         if (result.status === "success") {
           setLoggedInUser(result.loggedInUser);
+          checkMembership(result.loggedInUser);
         }
       } catch (err) {
         console.error("Failed to fetch user", err);
       }
     };
+
+    const checkMembership = async (username: string) => {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/checkMembership.php`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ username, community_id: id })
+      });
+      const result = await res.json();
+      setIsMember(result.is_member);
+    };    
+
     fetchPosts();
     fetchCommunity();
     fetchUser();
+    
   }, [id, csrfToken]);
 
   if (error) {
@@ -135,6 +155,27 @@ const CommunityPage: React.FC = () => {
       alert(result.message);
     }
   };
+
+  const toggleMembership = async () => {
+    const endpoint = isMember ? "leaveCommunity.php" : "joinCommunity.php";
+  
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/${endpoint}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "CSRF-Token": csrfToken
+      },
+      body: JSON.stringify({ username: loggedInUser, community_id: id })
+    });
+  
+    const result = await res.json();
+    if (result.success) {
+      setIsMember(!isMember);
+    } else {
+      alert(result.message);
+    }
+  };  
   
 
   return (
@@ -144,14 +185,23 @@ const CommunityPage: React.FC = () => {
       <div className="community-header">
         <img
           className="background-image"
-          src={
-            community.background_image ||
-            process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg"
-          }
+          src={community.background_image || process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg"}
           alt="Community Background"
         />
         <h1 className="community-name">{community.name}</h1>
+
+        {loggedInUser && community && (
+          loggedInUser !== community.creator_username && (
+            <button
+              className={`join-btn ${isMember ? "joined" : ""}`}
+              onClick={toggleMembership}
+            >
+              {isMember ? "Joined" : "Join"}
+            </button>
+          )
+        )}
       </div>
+
 
       {/* Floating + Button */}
       <button className="floating-add-btn" onClick={() => setShowCreatePost(true)}>+</button>

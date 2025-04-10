@@ -12,50 +12,40 @@ const CommunityResultsProfile = () => {
   const { csrfToken } = useCSRFToken();
 
   useEffect(() => {
-    const fetchCommunities = async () => {
+    const fetchJoinedCommunities = async () => {
       try {
-        // Step 1: Get logged in user
         const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken,
+            'CSRF-Token': csrfToken
           },
-          credentials: 'include',
+          credentials: 'include'
         });
-
         const profileData = await profileRes.json();
-        if (profileData.status !== "success") {
-          console.error("Could not fetch profile");
-          return;
-        }
-
-        const user = profileData.loggedInUser;
-
-        // Step 2: Fetch communities created by the user
-        const commsRes = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getCommunities.php`, {
+        const username = profileData.loggedInUser;
+    
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getJoinedCommunities.php`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken,
+            'CSRF-Token': csrfToken
           },
           credentials: 'include',
-          body: JSON.stringify({ user }),
+          body: JSON.stringify({ user: username })
         });
-
-        const commsData = await commsRes.json();
-
-        if (commsData.status === "success") {
-          setCommunities(commsData.communities); // ✅ Update state
-        } else {
-          console.error("Unexpected response:", commsData);
+    
+        const data = await res.json();
+        if (data.status === "success") {
+          setCommunities(data.communities);
         }
-      } catch (err) {
-        console.error("Error fetching communities", err);
+      } catch (error) {
+        console.error("Error loading joined communities", error);
       }
     };
+    
 
-    fetchCommunities();
+    fetchJoinedCommunities();
   }, [csrfToken]);
 
   return (

@@ -3,13 +3,15 @@ require __DIR__ . "/../headers.php";
 require __DIR__ . "/../cookieAuthHeader.php";
 require __DIR__ . "/../data_base.php";
 
-// Check request method
+// Debugging line (remove after testing)
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["success" => false, "message" => "Invalid request method"]);
     exit();
 }
 
-// Parse JSON body
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (
@@ -22,9 +24,9 @@ if (
 
 $communityName = trim($data['community_name']);
 $backgroundImage = isset($data['background_image']) ? $data['background_image'] : null;
-$username = trim($data['user_id']); // Still a username from frontend
+$username = trim($data['user_id']); // Still a username
 
-// 1. Look up user_login_data.id from username
+// Lookup user ID from username
 $stmt = $conn->prepare("SELECT id FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -38,17 +40,25 @@ if ($result->num_rows === 0) {
 $row = $result->fetch_assoc();
 $creatorId = $row['id'];
 
-// 2. Insert into pb_communities
-$insert = $conn->prepare("INSERT INTO pb_communities (name, background_image, creator_id) VALUES (?, ?, ?)");
-$insert->bind_param("ssi", $communityName, $backgroundImage, $creatorId);
+// Insert community
+$stmt = $conn->prepare("INSERT INTO pb_communities (name, background_image, creator_id) VALUES (?, ?, ?)");
+$stmt->bind_param("ssi", $communityName, $backgroundImage, $creatorId);
+if (!$stmt->execute()) {
+    echo json_encode(["success" => false, "message" => "Failed to create community"]);
+    exit();
+}
+$communityId = $conn->insert_id;
 
-if ($insert->execute()) {
-    echo json_encode(["success" => true, "message" => "Community created successfully"]);
-} else {
-    echo json_encode(["success" => false, "message" => "Insert failed: " . $insert->error]);
+// Auto-join creator as member
+$stmt = $conn->prepare("INSERT INTO pb_community_members (user_id, community_id) VALUES (?, ?)");
+$stmt->bind_param("ii", $creatorId, $communityId);
+if (!$stmt->execute()) {
+    echo json_encode(["success" => false, "message" => "Failed to auto-join user"]);
+    exit();
 }
 
-$insert->close();
+echo json_encode(["success" => true, "message" => "Community created successfully", "community_id" => $communityId]);
+
 $stmt->close();
 $conn->close();
 ?>
