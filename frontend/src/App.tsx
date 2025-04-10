@@ -80,9 +80,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/forgot/reset/:email" element={<Reset />}/>
-        <Route path="/explore" element={<ProtectedRoute element={<Explore />} />} />
-        <Route path="/explore/genre/:genre" element={<ProtectedRoute element={<GenrePage />} />} />
-        <Route path="/explore/artist/:artist" element={<ProtectedRoute element={<ArtistPage />} />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/explore/genre/:genre" element={<GenrePage />} />
+        <Route path="/explore/artist/:artist" element={<ArtistPage />} />
         <Route path="/forgot/reset" element={<Reset />} />
         <Route path="/statistics" element={<StatisticsOverview />} />
         <Route path="/statistics/details" element={<StatisticsDetails />} />

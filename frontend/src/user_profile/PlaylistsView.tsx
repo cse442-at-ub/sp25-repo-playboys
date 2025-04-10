@@ -83,7 +83,8 @@ function PlaylistsView() {
         {playlists.length > 0 ? (
           playlists.map((playlist, index) => (
             <div className="col d-flex justify-content-center" key={index}>
-              <PlaylistItem playlist={playlist} onClick={() => console.log(playlist.name)} />
+              <PlaylistItem playlist={playlist} onClick={() => 
+                console.log(`/playlists/`+playlist.name+`?user=`+user)} />
             </div>
           ))
         ) : (
