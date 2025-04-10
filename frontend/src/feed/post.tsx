@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./post.css";
 import { useCSRFToken } from '../csrfContent';
@@ -8,11 +8,34 @@ const PostPage = () => {
     const [description, setDescription] = useState<string>("");
     const [media, setMedia] = useState<File | null>(null);
     const [song, setSong] = useState<string>("");
+    const [community, setCommunity] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [error, setError] = React.useState("");
     const { csrfToken } = useCSRFToken();
-
+    const [communities, setCommunities] = useState<string[]>([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchCommunities = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getAllcomms.php`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'CSRF-Token': csrfToken }
+                });
+
+                const data = await response.json();
+                const names = data.map((community: { community_name: string }) => community.community_name);
+                setCommunities(names);
+            } catch (error) {
+                console.error("Error fetching communities:", error);
+            }
+        };
+        fetchCommunities();
+    }, []);
+
+    
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -22,6 +45,7 @@ const PostPage = () => {
         formData.append('description', description);
         formData.append('song', song);
         if (media) formData.append('media', media);
+        formData.append('community', community);
     
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/mediaUpload.php`, {
@@ -92,6 +116,22 @@ const PostPage = () => {
                         onChange={(e) => setSong(e.target.value)}
                         required
                     />
+                </div>
+                
+                <div className="post-form-group">
+                    <label className="post-label" htmlFor="community">Choose a community</label>
+                    <select
+                        className="post-input"
+                        id="community"
+                        value={community}
+                        onChange={(e) => setCommunity(e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>Select a community</option>
+                        {communities.map((community, index) => (
+                            <option key={index} value={community}>{community}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <button 
