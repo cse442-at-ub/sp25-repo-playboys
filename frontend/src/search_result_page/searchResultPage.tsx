@@ -100,9 +100,8 @@ const SearchResultPage = () => {
                     <EventResults />
                 </div>
             </div>
-            <div className="sidebar-container">
-                <Sidebar />
-            </div>
+            
+            <Sidebar />
         </div>
     );
 };
