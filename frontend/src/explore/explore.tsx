@@ -28,7 +28,7 @@ const Explore: React.FC = () => {
 
   // Fetch top artists.
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}backend/topArtists.php`)
+    fetch(`${process.env.REACT_APP_API_URL}backend/explore/topArtists.php`)
       .then((response) => response.json())
       .then((data) => {
         setTopArtists(data);
@@ -38,7 +38,7 @@ const Explore: React.FC = () => {
 
   // Fetch top songs.
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}backend/topSongs.php`)
+    fetch(`${process.env.REACT_APP_API_URL}backend/explore/topSongs.php`)
       .then((response) => response.json())
       .then((data) => {
         setTopTracks(data);
@@ -48,7 +48,7 @@ const Explore: React.FC = () => {
 
   // Fetch top genres.
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}backend/topGenres.php`)
+    fetch(`${process.env.REACT_APP_API_URL}backend/explore/topGenres.php`)
       .then((response) => response.json())
       .then((data) => {
         setTopGenres(data);
@@ -83,7 +83,7 @@ const Explore: React.FC = () => {
   };
   const handleSongClick = async (song: string, artist: string) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/explore/playSong.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
