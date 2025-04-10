@@ -136,7 +136,7 @@ function Sidebar() {
         style={{ backgroundColor: "#04dd4b", height: "100px", padding: "10px" }}
       >
         <img
-          src="/static/logo.jpg"
+          src={process.env.PUBLIC_URL + "/static/logo.jpg"}
           alt="Logo"
           style={{
             height: "100%",

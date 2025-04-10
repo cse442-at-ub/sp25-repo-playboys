@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ onLogin, onSignUp }) => {
   return (
     <div className="d-flex justify-content-between align-items-center py-3 px-3">
       <img
-        src="/static/logo.jpg"
+        src={process.env.PUBLIC_URL + "/static/logo.jpg"}
         alt="Logo"
         style={{
           height: "80px",
