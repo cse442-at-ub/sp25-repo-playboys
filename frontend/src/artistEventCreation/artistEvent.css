@@ -1,0 +1,119 @@
+/* Wrapper for the entire event details page */
+.event-details-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    padding: 0 20px;
+  }
+  
+  /* Main container for the event details */
+  .event-container {
+    width: 100%;
+    max-width: 900px;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .event-container:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Event title styling */
+  .event-title {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  /* Event image container */
+  .event-image-container {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .event-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Styling for event details like location, creator, etc. */
+  .event-info {
+    margin-bottom: 30px;
+  }
+  
+  .event-info p {
+    font-size: 1.4rem;
+    margin: 15px 0;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  .event-info strong {
+    color: #333;
+    font-weight: 600;
+  }
+  
+  /* Styling for participants section */
+  .event-participants {
+    margin-top: 30px;
+  }
+  
+  .event-participants h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .event-participants ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .event-participants li {
+    font-size: 1.4rem;
+    color: #333;
+    margin: 8px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .event-participants li:last-child {
+    border-bottom: none;
+  }
+  
+  .event-participants p {
+    font-size: 1.4rem;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  /* Responsive styles for mobile */
+  @media (max-width: 768px) {
+    .event-container {
+      padding: 25px;
+    }
+  
+    .event-title {
+      font-size: 2.2rem;
+    }
+  
+    .event-info p,
+    .event-participants li,
+    .event-participants p {
+      font-size: 1.2rem;
+    }
+  }
+  

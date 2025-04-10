@@ -33,6 +33,7 @@ interface Artist {
 
 
 
+
 const SearchResultPage = () => {
     const navigate = useNavigate();
     const handleBackButton = () => {
