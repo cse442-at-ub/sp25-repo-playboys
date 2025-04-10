@@ -1,140 +1,75 @@
-import React, { useState, useRef, useEffect  } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useCSRFToken } from '../csrfContent';
 
-
 interface Community {
-    name: string,
+  id: number;
+  name: string;
 }
 
 const CommunityResultsProfile = () => {
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const { csrfToken } = useCSRFToken();
 
-    const [communities, setCommunities] = React.useState<Community[]>([]);
-
-    const {csrfToken} = useCSRFToken();
-
-    //onload 
-    useEffect(() => {
-        // Function to fetch communities
-        const fetchCommunities = async () => {
-            try {
-                var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
-                    method: 'GET', // Or 'GET' depending on your API
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'CSRF-Token': csrfToken
-                    },
-                });
-                var results = await response.json();
-                if (results["status"] === "success") {
-                    var user = results["loggedInUser"];
-                    console.log(`user: ${user}`);
-                } else {
-                    console.error("Error fetching profile:", results);
-                }
-                var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getcomms.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'CSRF-Token': csrfToken,
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        "user": user
-                    })
-                });
-                var result = await response.json();
-                console.log(result);
-                setCommunities(result.map((community: any) => ({
-                    name: community,
-                })));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        // Call the fetch function when the component mounts
-        fetchCommunities();
-    }, []); // The empty array ensures this effect only runs once when the component is first mounted.
-
-
-
-    const handleCommunityClick = async(community: Community) => {
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
-            method: 'GET', // Or 'GET' depending on your API
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        // Step 1: Get logged in user
+        const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken,
+          },
+          credentials: 'include',
         });
-        var results = await response.json();
-        if (results["status"] === "success") {
-            var user = results["loggedInUser"];
-            console.log(`user: ${user}`);
+
+        const profileData = await profileRes.json();
+        if (profileData.status !== "success") {
+          console.error("Could not fetch profile");
+          return;
+        }
+
+        const user = profileData.loggedInUser;
+
+        // Step 2: Fetch communities created by the user
+        const commsRes = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getCommunities.php`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ user }),
+        });
+
+        const commsData = await commsRes.json();
+
+        if (commsData.status === "success") {
+          setCommunities(commsData.communities); // ✅ Update state
         } else {
-            console.error("Error fetching profile:", results);
+          console.error("Unexpected response:", commsData);
         }
-        console.log("checking if user is part of the commuitty");
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/checkUser.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
-            body: JSON.stringify({
-                "name": community.name,
-                "user": user
-            })
-        }); 
-        var results = await response.json();
-        console.log(results)
-        // REMOVING
-        if (results === true) {
-            // remove user to community
-            console.log("removing user to community");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/leave_community.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-
-            // reove community from user profile
-            console.log("removing comm from pfp");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/removecomtopfp.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-        }
+      } catch (err) {
+        console.error("Error fetching communities", err);
+      }
     };
-    return (
-        <div>
-        <h1>My Comunities</h1>
-          {/* Map through the communities array and display the name */}
-          {communities.map((community, index) => (
-            <div key={index}>
-              <p>{community.name}</p>
-            </div>
-          ))}
+
+    fetchCommunities();
+  }, [csrfToken]);
+
+  return (
+    <div>
+      <h1>My Communities</h1>
+      {communities.map((community) => (
+        <div key={community.id}>
+          <Link to={`/community/${community.id}`}>
+            <p className="community-link">{community.name}</p>
+          </Link>
         </div>
-      );
-    };
-
+      ))}
+    </div>
+  );
+};
 
 export default CommunityResultsProfile;

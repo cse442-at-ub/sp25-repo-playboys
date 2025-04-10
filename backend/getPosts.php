@@ -22,7 +22,7 @@ try {
             "media_path" => $row['media_path'],
             "media_type" => $row['media_type'], // Added media_type
             "created_at" => $row['created_at'],
-            "community" => $row['community'] // Added community 
+            "community" => $row['community'], // Added community
         );
     }
     
