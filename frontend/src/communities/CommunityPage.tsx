@@ -261,28 +261,23 @@ const CommunityPage: React.FC = () => {
       )}
 
       <div className="posts-container">
-        {posts.length === 0 ? (
-          <p>No posts yet. Be the first to post!</p>
-        ) : (
-          posts.map((post) => (
-            <div key={post.post_id} className="post">
-              <div className="post-header">
-                <img
-                  src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"}
-                  className="profile-pic"
-                  alt="Profile"
-                />
-                <span className="username">{post.username}</span>
-              </div>
-              <div className="caption">{post.caption}</div>
-              {post.image && (
-                <img src={post.image} className="post-image" alt="Post" />
-              )}
+        {posts.map((post) => (
+          <div key={post.post_id} className="post">
+            <div className="post-header">
+              <img
+                src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"}
+                className="profile-pic"
+                alt="Profile"
+              />
+              <span className="username">{post.username}</span>
             </div>
-          ))
-        )}
+            <div className="caption">{post.caption}</div>
+            {post.image && (
+              <img src={post.image} className="post-image" alt="Post" />
+            )}
+          </div>
+        ))}
       </div>
-
 
       <div className="side-column">
         <Sidebar />

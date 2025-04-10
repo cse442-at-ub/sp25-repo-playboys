@@ -1,9 +1,14 @@
 <?php
+ini_set('upload_max_filesize', '20M');
+ini_set('post_max_size', '22M');
+ini_set('memory_limit', '256M');
+ini_set('max_execution_time', '60');
+
 require __DIR__ . "/../headers.php";
 require __DIR__ . "/../cookieAuthHeader.php";
 require __DIR__ . "/../data_base.php";
 
-// Debugging line (remove after testing)
+header('Content-Type: application/json');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -24,41 +29,45 @@ if (
 
 $communityName = trim($data['community_name']);
 $backgroundImage = isset($data['background_image']) ? $data['background_image'] : null;
-$username = trim($data['user_id']); // Still a username
+$username = trim($data['user_id']);
 
 // Lookup user ID from username
-$stmt = $conn->prepare("SELECT id FROM user_login_data WHERE username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
+$userStmt = $conn->prepare("SELECT id FROM user_login_data WHERE username = ?");
+$userStmt->bind_param("s", $username);
+$userStmt->execute();
+$result = $userStmt->get_result();
 
 if ($result->num_rows === 0) {
     echo json_encode(["success" => false, "message" => "User not found"]);
     exit();
 }
-
-$row = $result->fetch_assoc();
-$creatorId = $row['id'];
+$creatorId = $result->fetch_assoc()['id'];
+$userStmt->close();
 
 // Insert community
-$stmt = $conn->prepare("INSERT INTO pb_communities (name, background_image, creator_id) VALUES (?, ?, ?)");
-$stmt->bind_param("ssi", $communityName, $backgroundImage, $creatorId);
-if (!$stmt->execute()) {
-    echo json_encode(["success" => false, "message" => "Failed to create community"]);
+$insertStmt = $conn->prepare("INSERT INTO pb_communities (name, background_image, creator_id) VALUES (?, ?, ?)");
+$insertStmt->bind_param("ssi", $communityName, $backgroundImage, $creatorId);
+if (!$insertStmt->execute()) {
+    echo json_encode(["success" => false, "message" => "Failed to create community: " . $insertStmt->error]);
     exit();
 }
 $communityId = $conn->insert_id;
+$insertStmt->close();
 
-// Auto-join creator as member
-$stmt = $conn->prepare("INSERT INTO pb_community_members (user_id, community_id) VALUES (?, ?)");
-$stmt->bind_param("ii", $creatorId, $communityId);
-if (!$stmt->execute()) {
-    echo json_encode(["success" => false, "message" => "Failed to auto-join user"]);
+// Auto-add creator as member
+$membershipStmt = $conn->prepare("INSERT INTO pb_community_members (user_id, community_id) VALUES (?, ?)");
+$membershipStmt->bind_param("ii", $creatorId, $communityId);
+if (!$membershipStmt->execute()) {
+    echo json_encode(["success" => false, "message" => "Failed to auto-join user: " . $membershipStmt->error]);
     exit();
 }
+$membershipStmt->close();
 
-echo json_encode(["success" => true, "message" => "Community created successfully", "community_id" => $communityId]);
+echo json_encode([
+    "success" => true,
+    "message" => "Community created successfully",
+    "community_id" => $communityId
+]);
 
-$stmt->close();
 $conn->close();
 ?>
