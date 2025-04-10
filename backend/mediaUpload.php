@@ -17,6 +17,7 @@
             $title = $_POST['title'] ?? '';
             $description = $_POST['description'] ?? '';
             $song_name = $_POST['song'] ?? '';
+            $community = $_POST['community'] ?? '';
 
             // Validate required fields
             if (empty($title) || empty($description) || empty($song_name) || !isset($_FILES['media'])) {
@@ -72,16 +73,17 @@
             if (move_uploaded_file($media['tmp_name'], $fullPath)) {
                 // Insert into database
                 $stmt = $conn->prepare("INSERT INTO posts
-                    (username, title, description, song_name, media_path, media_type)
-                    VALUES (?, ?, ?, ?, ?, ?)");
+                    (username, title, description, song_name, media_path, media_type, community)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-                $stmt->bind_param("ssssss",
+                $stmt->bind_param("sssssss",
                     $username,
                     $title,
                     $description,
                     $song_name,
                     $relativePath,
-                    $media_type);
+                    $media_type,
+                    $community);
 
                 if ($stmt->execute()) {
                     $response['status'] = 'success';

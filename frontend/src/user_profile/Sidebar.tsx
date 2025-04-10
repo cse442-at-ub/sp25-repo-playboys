@@ -131,8 +131,19 @@ function Sidebar() {
       className={`sidebar ${isOpen || !isMobile ? "open" : ""}`}
       style={{ position: "fixed", top: 0, right: 0, width: isOpen || !isMobile ? "250px" : "0", height: "100vh", overflowY: "auto", borderLeft: "2px solid gray", backgroundColor: "#ffffff", flexDirection: "column", opacity: isOpen || !isMobile ? 1 : 0, transition: "width 0.3s ease-in-out, opacity 0.3s ease-in-out", zIndex: 1049 }}
     >
-      <div className="bg-secondary text-white p-3 mb-4 text-center">
-        <h3>Logo</h3>
+      <div
+        className="text-center mb-4"
+        style={{ backgroundColor: "#04dd4b", height: "100px", padding: "10px" }}
+      >
+        <img
+          src={process.env.PUBLIC_URL + "/static/logo.jpg"}
+          alt="Logo"
+          style={{
+            height: "100%",
+            width: "auto",
+            objectFit: "contain"
+          }}
+        />
       </div>
       <SidebarSection title="Friends" friends={friends} user={user || ''}/>
       {sections.map((section, index) => (

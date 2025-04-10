@@ -12,6 +12,7 @@ interface Post {
   media_path: string;
   media_type: "image" | "video";
   created_at: string;
+  community: string;
 }
 
 const Feed = () => {
@@ -132,6 +133,7 @@ const Feed = () => {
           <p>{current.description}</p>
           <p className="song-name">🎵 {current.song_name}</p>
           <p className="username">@{current.username}</p>
+          <p>{current.community}</p>
         </div>
 
         {/* Post Button (Bottom Right) */}
