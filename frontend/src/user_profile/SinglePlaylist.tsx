@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Sidebar from '../user_profile/Sidebar';
 import SpotifyPlayer from '../spotify_player/SpotifyPlayer';
-import './Playlist.css'; 
+import './Playlist.css';
 
 const PlaylistPage: React.FC = () => {
   const { playlistName } = useParams<{ playlistName: string }>();
@@ -18,7 +18,7 @@ const PlaylistPage: React.FC = () => {
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') {
-            setSongs(data.songs);
+            setSongs(data.songs || []);
           } else {
             console.error("Error fetching playlist songs:", data.message);
           }
@@ -87,7 +87,7 @@ const PlaylistPage: React.FC = () => {
         <h2 className="sp-top-songs-title">Songs</h2>
         {loading ? (
           <p>Loading...</p>
-        ) : (
+        ) : songs.length > 0 ? (
           <ul className="sp-songs-list">
             {songs.map((song, index) => (
               <li key={index} className="sp-song-item" onClick={() => handleSongClick(song.name, song.artist)}>
@@ -96,6 +96,8 @@ const PlaylistPage: React.FC = () => {
               </li>
             ))}
           </ul>
+        ) : (
+          <p>No songs found in this playlist. Add some music to get started 🎵</p>
         )}
       </div>
       {activeTrack && (

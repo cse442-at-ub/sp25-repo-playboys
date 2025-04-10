@@ -5,8 +5,8 @@ header("Access-Control-Allow-Credentials: true");
 // Database config
 $host = 'https://se-dev.cse.buffalo.edu/';
 $dbname = 'cse442_2025_spring_team_ah_db';
-$db_user = 'ronaldzh'; 
-$db_pass = '50308136'; 
+$db_user = 'ronaldzh';
+$db_pass = 'your_db_password';
 
 // Input validation
 if (!isset($_GET['user']) || !isset($_GET['playlist'])) {
@@ -24,7 +24,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Get Spotify access token using the username
+// Get access token
 $stmt = $conn->prepare("SELECT access_token FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $user);
 $stmt->execute();
@@ -38,67 +38,38 @@ if ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Use Spotify API to get user's playlists
+// Get user's playlists from Spotify
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me/playlists");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Authorization: Bearer $access_token"
 ]);
-
 $response = curl_exec($ch);
 curl_close($ch);
-$data = json_decode($response, true);
 
+$data = json_decode($response, true);
 if (!isset($data['items'])) {
     echo json_encode(["status" => "error", "message" => "Failed to retrieve playlists from Spotify."]);
     exit;
 }
 
-// Find playlist ID by name
-$playlist_id = null;
+// Find the matching playlist by name
+$playlistImage = null;
 foreach ($data['items'] as $item) {
     if (strtolower($item['name']) === strtolower($playlistName)) {
-        $playlist_id = $item['id'];
+        if (!empty($item['images'])) {
+            $playlistImage = $item['images'][0]['url'];
+        }
         break;
     }
 }
 
-if (!$playlist_id) {
-    echo json_encode(["status" => "error", "message" => "Playlist not found."]);
-    exit;
+if ($playlistImage) {
+    echo json_encode(["status" => "success", "imageUrl" => $playlistImage]);
+} else {
+    echo json_encode(["status" => "error", "message" => "Playlist image not found."]);
 }
 
-// Get playlist tracks using Spotify API
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/playlists/$playlist_id/tracks");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer $access_token"
-]);
-
-$response = curl_exec($ch);
-curl_close($ch);
-$tracksData = json_decode($response, true);
-
-if (!isset($tracksData['items'])) {
-    echo json_encode(["status" => "error", "message" => "Failed to fetch songs in playlist."]);
-    exit;
-}
-
-// Build song list in expected format
-$songs = [];
-foreach ($tracksData['items'] as $item) {
-    if (!isset($item['track'])) continue;
-    $track = $item['track'];
-    $songs[] = [
-        "name" => $track['name'],
-        "artist" => $track['artists'][0]['name'],
-        "duration" => $track['duration_ms'],
-    ];
-}
-
-// Return JSON response
-echo json_encode(["status" => "success", "songs" => $songs]);
 $conn->close();
 ?>

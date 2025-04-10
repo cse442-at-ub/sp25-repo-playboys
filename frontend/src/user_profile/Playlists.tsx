@@ -82,7 +82,15 @@ function Playlists() {
         {playlists.length > 0 ? (
           playlists.map((playlist, index) => (
             <div key={index} className="col-6 col-md-4">
-              <PlaylistItem playlist={playlist} onClick={() => {console.log(`/playlists/`+playlist.name+`?user=`+user)}} />
+              <PlaylistItem
+  playlist={playlist}
+  onClick={() => {
+    const targetUser = (user && user !== "null") ? user : username;
+    console.log(`Navigating to /playlists/${playlist.name}?user=${targetUser}`);
+    navigate(`/playlists/${encodeURIComponent(playlist.name)}?user=${encodeURIComponent(targetUser)}`);
+  }}
+/>
+
             </div>
           ))
         ) : (
