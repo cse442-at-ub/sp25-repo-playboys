@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCSRFToken } from '../csrfContent';
+import { useSidebar } from "../SidebarContext";
 
 interface Friend {
   name: string;
@@ -11,7 +12,7 @@ function Sidebar() {
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user");
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
+  const { isOpen, toggleSidebar  } = useSidebar();
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("Explore");
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -113,7 +114,7 @@ function Sidebar() {
           height: "80px",
           cursor: "pointer",
         }}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleSidebar}
       >
         <img
           src="/static/logo.jpg"
