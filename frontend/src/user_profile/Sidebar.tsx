@@ -114,7 +114,7 @@ function Sidebar() {
         onClick={toggleSidebar}
       >
         <img
-          src="/static/logo.jpg"
+          src={process.env.PUBLIC_URL + "/static/logo.jpg"}
           alt="Logo"
           style={{
             height: "60px",

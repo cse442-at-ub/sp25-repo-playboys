@@ -32,14 +32,21 @@ const CreateCommunityPage: React.FC = () => {
   }, []);
 
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setBackgroundImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(e.target.files[0]);
+  const handleBackgroundImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const maxSizeInMB = 20;
+    if (file.size > maxSizeInMB * 1024 * 1024) {
+      alert(`Image is too large. Max size is ${maxSizeInMB}MB.`);
+      return;
     }
+  
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setBackgroundImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleCreate = async () => {
@@ -61,9 +68,8 @@ const CreateCommunityPage: React.FC = () => {
       });
   
       const result = await response.json();
-      if (result.status === "success") {
-        alert("Community created!");
-        navigate("/userprofile");
+      if (result.success) {
+        navigate(`/community/${result.community_id}`);
       } else {
         alert(result.message || "Failed to create community.");
       }
@@ -95,7 +101,7 @@ const CreateCommunityPage: React.FC = () => {
           style={{ display: "none" }}
           accept="image/*"
           placeholder="Click to add Background Image"
-          onChange={handleImageUpload}
+          onChange={handleBackgroundImage}
         />
       </div>
 

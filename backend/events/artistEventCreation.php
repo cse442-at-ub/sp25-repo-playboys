@@ -1,0 +1,25 @@
+<?php 
+    require __DIR__ . "/../headers.php";
+    require __DIR__ . "/../cookieAuthHeader.php";
+    $user = $result->fetch_assoc();
+    $login_username = $user["username"];
+    $rawData = file_get_contents("php://input");
+    $data = json_decode($rawData, true);
+    if ($data === null) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Invalid JSON data received'
+        ]);
+        exit();
+    }
+$title = $data['title'] ?? ''; // Get title, or empty string if not set
+$location = $data['location'] ?? '';
+$date = $data['date'] ?? '';
+$description = $data['description'] ?? '';
+$image = $data['image'] ?? ''; // This will contain the uploaded image filename or empty
+$insert_new_event = $conn->prepare("INSERT INTO artist_events (title, location, date, description, image_url, creator) VALUES (?, ?, ?, ?, ?, ?)");
+$insert_new_event->bind_param("ssssss", $title, $location, $date, $description, $image, $login_username);
+$insert_new_event->execute();
+echo json_encode(["status" => "success", "message" => "Event created successfully"]);
+exit();
+?> 

@@ -262,4 +262,28 @@
   color: black;
 }
 
-  
+.join-btn {
+  background-color: white;
+  color: black;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid gray;
+  cursor: pointer;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.joined-btn {
+  background-color: #1DB954;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}

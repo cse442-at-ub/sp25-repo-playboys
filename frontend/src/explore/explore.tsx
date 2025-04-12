@@ -21,6 +21,10 @@ const Explore: React.FC = () => {
   const [topTracks, setTopTracks] = useState<any[]>([]);
   const [topGenres, setTopGenres] = useState<any[]>([]);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
+  const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
+
+  const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
+
 
   // Fetch top artists.
   useEffect(() => {
@@ -51,6 +55,25 @@ const Explore: React.FC = () => {
       })
       .catch((error) => console.error("Error fetching top Genres:", error));
   }, []);
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getAllCommunities.php`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    })
+    
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          const shuffled = data.communities.sort(() => 0.5 - Math.random());
+          setRandomCommunities(shuffled.slice(0, 8));
+        }
+      })
+      .catch(err => console.error("Error loading communities:", err));
+  }, []);  
 
   const handleGenreClick = (genre: string) => {
     navigate(`/explore/genre/${genre.toLowerCase()}`);
@@ -159,6 +182,23 @@ const Explore: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Communities Row */}
+        <h2 className="ep-section-title">Communities</h2>
+        <div className="ep-community-circle-row">
+          {randomCommunities.map((comm) => (
+            <div key={comm.community_id} className="ep-community-wrapper" onClick={() => navigate(`/community/${comm.community_id}`)}>
+              <div
+                className="ep-community-circle"
+                style={{
+                  backgroundImage: `url("${comm.background_image?.startsWith("data:image") ? comm.background_image : defaultImage}")`
+                }}
+              />
+              <p className="ep-community-name">{comm.name}</p>
+            </div>
+          ))}
+        </div>
+
 
         {/* Genre Section */}
         <h2 className="ep-section-title">Browse All</h2>
