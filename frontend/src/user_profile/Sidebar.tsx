@@ -61,6 +61,7 @@ function Sidebar() {
     { icon: "./static/ExploreIcon.png", text: "Explore", handleClick: () => navigate('/explore') },
     { icon: "./static/StatisticIcon.png", text: "My Stat", handleClick: () => navigate('/statistics') },
     { icon: "./static/ProfileIcon.png", text: "My Profile", handleClick: () => window.location.href = "#/userprofile" },
+    { icon: "./static/SearchIcon.png", text: "Search", handleClick: () => window.location.href = "#/search_results" },
     { icon: "./static/SettingIcon.png", text: "Setting", handleClick: () => window.location.href = "#/settings" },
   ];
 
@@ -77,10 +78,6 @@ function Sidebar() {
             <span className="d-block" style={{ fontSize: "12px" }}>{item.text}</span>
           </button>
         ))}
-        <button className={`btn ${activeTab === "Search" ? "text-primary" : "text-secondary"}`} onClick={() => setActiveTab("Search")}>
-          <img src="./static/SearchIcon.png" className="d-block mx-auto" style={{ width: "30px", height: "30px" }} alt="Search" />
-          <span className="d-block" style={{ fontSize: "12px" }}>Search</span>
-        </button>
         {menuItems.slice(2).map((item, index) => (
           <button key={index} className={`btn ${activeTab === item.text ? "text-primary" : "text-secondary"}`} onClick={item.handleClick}>
             <img src={item.icon} className="d-block mx-auto" style={{ width: "30px", height: "30px" }} alt={item.text} />

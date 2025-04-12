@@ -104,8 +104,8 @@ const SearchResultPage = () => {
                 </div>
             </div>
             
+            <Sidebar/>
         </div>
-        <Sidebar />
         </MainContent>
     );
 };
