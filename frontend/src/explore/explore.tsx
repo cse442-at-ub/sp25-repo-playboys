@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../user_profile/Sidebar";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer"; // Adjust path if needed
+import MainContent from "../MainContent"; // Adjust path if needed
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -107,11 +107,8 @@ const Explore: React.FC = () => {
   };
 
   return (
+    <MainContent>
     <div className="ep-explore-page">
-      <div className="ep-sidebar">
-        <Sidebar />
-      </div>
-
       <div className="ep-explore-content">
         {/* Search Bar */}
         <div className="ep-search-bar-container">
@@ -259,6 +256,7 @@ const Explore: React.FC = () => {
         />
       )}
     </div>
+    </MainContent>
   );
 };
 

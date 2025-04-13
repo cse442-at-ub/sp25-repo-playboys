@@ -8,6 +8,8 @@ import CommunityResults from './communityResults';
 import './SearchResultPage.css'; // Import the CSS file for styling
 import { useNavigate } from 'react-router-dom';
 import { useCSRFToken } from '../csrfContent';
+import MainContent from "../MainContent"; // Adjust path if needed
+
 
 
 interface Song {
@@ -77,6 +79,7 @@ const SearchResultPage = () => {
 
 
     return (
+        <MainContent>
         <div className="search-result-container">
             <div className="main-content">
                 <div className="search-bar-row">
@@ -101,10 +104,10 @@ const SearchResultPage = () => {
                     <EventResults />
                 </div>
             </div>
-            <div className="sidebar-container">
-                <Sidebar />
-            </div>
+            
+            <Sidebar/>
         </div>
+        </MainContent>
     );
 };
 

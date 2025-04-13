@@ -1,6 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
+import { SidebarProvider } from "./SidebarContext";
+
 
 //landing pages
 import LandingPage from "./landing_page/landingPage";
@@ -76,6 +78,7 @@ function App() {
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
 
   return (
+    <SidebarProvider>
     <CSRFProvider>
     <Router>
       <Routes>
@@ -124,6 +127,7 @@ function App() {
       </Routes>
     </Router>
     </CSRFProvider>
+    </SidebarProvider>
   );
 }
 
