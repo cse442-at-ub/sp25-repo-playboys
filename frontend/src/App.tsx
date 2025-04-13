@@ -83,7 +83,7 @@ function App() {
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
-        <Route path="/" element={ <LandingPage />} />
+        <Route path="/" element={ <UserProfile />} />
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
@@ -109,7 +109,7 @@ function App() {
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
         <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
-        <Route path="/community/:id" element={<CommunityPage />} />
+        <Route path="/community/:name" element={<CommunityPage />} />
         <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
