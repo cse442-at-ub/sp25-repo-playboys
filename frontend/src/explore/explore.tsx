@@ -22,9 +22,14 @@ const Explore: React.FC = () => {
   const [topGenres, setTopGenres] = useState<any[]>([]);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
-
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim() !== '') {
+      navigate(`/search_results?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   // Fetch top artists.
   useEffect(() => {
@@ -112,11 +117,14 @@ const Explore: React.FC = () => {
       <div className="ep-explore-content">
         {/* Search Bar */}
         <div className="ep-search-bar-container">
-          <input
-            type="text"
-            className="ep-search-bar"
-            placeholder="Search for a genre, artist, songs... 🔍"
-          />
+        <input
+              type="text"
+              className="ep-search-bar"
+              placeholder="Search for a genre, artist, songs... 🔍"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+        />
         </div>
 
         {/* What Are People Listening To */}

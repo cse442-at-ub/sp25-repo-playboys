@@ -1,14 +1,17 @@
 import React from 'react';
 import './searchResultPage'; // Import the CSS file for styling
+import { useNavigate } from 'react-router-dom';
 
 
 const SearchBar = ({ onFormSubmit }: {onFormSubmit : (query:string) => void}) => {
 
     const [query, setQuery] = React.useState("");
-
+    const navigate = useNavigate();
     const search = (e:React.FormEvent) => {
         e.preventDefault();
-        onFormSubmit(query);
+        if (query.trim()) {
+            navigate(`/search_results?q=${encodeURIComponent(query.trim())}`);
+        }
     }
     
 
