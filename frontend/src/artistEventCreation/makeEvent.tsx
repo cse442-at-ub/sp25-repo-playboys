@@ -7,6 +7,7 @@ interface EventForm {
   title: string;
   location: string;
   date: string;
+  time: string; // Exact time selection
   description: string;
 }
 
@@ -16,6 +17,7 @@ const CreateEvent: React.FC = () => {
     title: "",
     location: "",
     date: "",
+    time: "00:00", // Default time
     description: "",
   });
 
@@ -55,7 +57,7 @@ const CreateEvent: React.FC = () => {
           {
             method: "POST",
             body: imageFormData,
-            credentials: "include"
+            credentials: "include",
           }
         );
 
@@ -80,6 +82,7 @@ const CreateEvent: React.FC = () => {
       title: formData.title,
       location: formData.location,
       date: formData.date,
+      time: formData.time, // Include the time in the payload
       description: formData.description,
       image: uploadedImageName, // optional: send image filename reference
     };
@@ -103,7 +106,6 @@ const CreateEvent: React.FC = () => {
         console.error("Event creation failed:", result.message);
         setError("Event creation failed.");
       }
-      
     } catch (error) {
       console.error("Event submission error:", error);
       setError("Failed to create event.");
@@ -186,6 +188,21 @@ const CreateEvent: React.FC = () => {
           </div>
 
           <div>
+            <label className="event-creation-label" htmlFor="time">
+              Time
+            </label>
+            <input
+              type="time"
+              id="time"
+              name="time"
+              className="event-creation-input"
+              value={formData.time}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div>
             <label className="event-creation-label" htmlFor="description">
               Description
             </label>
@@ -211,7 +228,3 @@ const CreateEvent: React.FC = () => {
 };
 
 export default CreateEvent;
-
-
-
-

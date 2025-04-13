@@ -15,16 +15,8 @@
     if(checkUserinEvents($conn, $login_username, $id)){
         echo json_encode(["status" => "joined", "message" => "Already joined the event"]);
         exit();
+    }else{
+        echo json_encode(["status"=> "join", "message" => "Join"]);
     }
 
-    $stmt = $conn->prepare("INSERT INTO event_participants (username, id) VALUES (?, ?)");
-    $stmt->bind_param("ss", $login_username, $id);
-    $stmt->execute();
-    $stmt->close();
-    echo json_encode(["status" => "success", "message" => "Joined the event successfully", "newParticipant" => [
-        "eventId" => $id,
-        "username" => $login_username
-    ]]);
-    exit(); 
-
-?>
+    ?>
