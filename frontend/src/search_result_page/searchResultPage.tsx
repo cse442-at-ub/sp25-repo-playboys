@@ -31,7 +31,14 @@ interface Artist {
     popularity: number, 
 }
 
-
+interface Event {
+    date: string;
+    time: string;
+    location: string;
+    name: string;
+    artist: string;
+    image: string;
+}
 
 
 
@@ -47,6 +54,7 @@ const SearchResultPage = () => {
     const {csrfToken} = useCSRFToken();
     const [songs, setSongs] = React.useState<Song[]>([]);
     const [artists, setArtists] = React.useState<Artist[]>([]);
+    const [events, setEvents] = React.useState<Event[]>([]);
     React.useEffect(() => {
         if(search_query) {
             handleSearch(search_query);
@@ -81,6 +89,14 @@ const SearchResultPage = () => {
             name: artist.name,
             popularity: artist.popularity, 
         })));
+        setEvents(result["events"].map((event: any) =>({
+            date : event.date,
+            time: event.time,
+            location: event.location,
+            name: event.name,
+            artist: event.artist,
+            image: event.image,
+        })));
     }
 
 
@@ -107,7 +123,7 @@ const SearchResultPage = () => {
                     <CommunityResults data={artists}/>
                 </div>
                 <div className="event-results">
-                    <EventResults />
+                    <EventResults data={events} />
                 </div>
             </div>
             
@@ -118,4 +134,3 @@ const SearchResultPage = () => {
 };
 
 export default SearchResultPage;
-

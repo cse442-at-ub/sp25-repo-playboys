@@ -48,7 +48,7 @@ const EventResults = ({ data }: { data : Event[] }) => {
                                     <div className="event-artist">{event.artist}</div>
                                 </div>
                                 <div className="event-image">
-                                    <img src={event.image} alt={event.name} />
+                                    <img src={event.image || "./static/ProfilePlaceholder.png"} alt={event.name} />
                                 </div>
                             </div>
                         ))}
