@@ -38,6 +38,7 @@ interface Event {
     name: string;
     artist: string;
     image: string;
+    id: string;
 }
 
 
@@ -96,6 +97,7 @@ const SearchResultPage = () => {
             name: event.name,
             artist: event.artist,
             image: event.image,
+            id: event.id,
         })));
     }
 

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import './SearchResultPage.css';
-
+import { useNavigate } from 'react-router-dom';
 interface Event {
     date: string;
     time: string;
@@ -8,20 +8,24 @@ interface Event {
     name: string;
     artist: string;
     image: string;
+    id: string;
 }
 
 const EventResults = ({ data }: { data : Event[] }) => {
     const events: Event[] = data;
     const eventsContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-
+    const navigate = useNavigate();
     const handleScrollRight = () => {
         if (eventsContainerRef.current) {
             const itemWidth = 350;
             eventsContainerRef.current.scrollBy({ left: itemWidth, behavior: 'smooth' });
         }
     };
-
+    const goToEvent = (id: string) => {
+        // Redirect to the friend's profile page
+        navigate(`/event?id=${id || ""}`); 
+      };
     const handleScrollLeft = () => {
         if (eventsContainerRef.current) {
             const itemWidth = 350;
@@ -40,7 +44,7 @@ const EventResults = ({ data }: { data : Event[] }) => {
                 <>
                     <div className="event-results-container" ref={eventsContainerRef}>
                         {events.map((event, index) => (
-                            <div key={index} className="event-item">
+                            <div key={index} className="event-item" onClick={() => goToEvent(event.id)} style={{cursor: "pointer"}}>
                                 <div className="event-details">
                                     <div className="event-date">{event.date}</div>
                                     <div className="event-time">{event.time}</div>

@@ -118,6 +118,7 @@ if (isset($_GET['q'])) {
                     "name" => $row["title"],
                     "artist" => $row["creator"],
                     "image" => $row["image_url"],
+                    "id" => $row["id"],
                 ];
             }
         }
