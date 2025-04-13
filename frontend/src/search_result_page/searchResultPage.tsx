@@ -6,7 +6,7 @@ import ArtistResults from './artistResults';
 import EventResults from './eventResults';
 import CommunityResults from './communityResults';
 import './SearchResultPage.css'; // Import the CSS file for styling
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCSRFToken } from '../csrfContent';
 import MainContent from "../MainContent"; // Adjust path if needed
 
@@ -38,6 +38,8 @@ interface Artist {
 
 const SearchResultPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const search_query = searchParams.get('q');
     const handleBackButton = () => {
         navigate("/explore");
         // Your navigation code here
@@ -45,7 +47,11 @@ const SearchResultPage = () => {
     const {csrfToken} = useCSRFToken();
     const [songs, setSongs] = React.useState<Song[]>([]);
     const [artists, setArtists] = React.useState<Artist[]>([]);
-    
+    React.useEffect(() => {
+        if(search_query) {
+            handleSearch(search_query);
+        }
+    }, [search_query]);
     
     const handleSearch = async (query: string) => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/search_artist.php?q=${query}`, {
