@@ -4,6 +4,7 @@ require __DIR__ . "/cookieAuthHeader.php";
 require __DIR__ . "/config.php"; // assumes $config['frontend_url'] is defined
 
 $uploadDirectory = __DIR__ . "/uploads/";
+$config = include("config.php");
 $response = ['status' => 'error', 'message' => ''];
 $frontend_url  = $config['frontend_url'];
 

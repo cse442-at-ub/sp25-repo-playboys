@@ -101,7 +101,7 @@ const CommunityResultsProfile = () => {
       <div className="ep-community-circle-row ">
           {communities.map((community) => (
             console.log(community),
-            <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.id}`)}>
+            <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.name}`)}>
               {/* <div
                 className="ep-community-circle"
                 style={{
