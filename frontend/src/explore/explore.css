@@ -97,19 +97,42 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  cursor: pointer; /* Makes it clickable */
+}
+
+.ep-event-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 1; /* Ensure overlay is above the background image */
+  border-radius: 50%; /* Ensure overlay fits inside the circle */
+}
+
+.ep-event-date,
+.ep-event-location {
+  color: white; /* Text color */
+  z-index: 2; /* Ensure text appears above the overlay */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Text shadow for better readability */
 }
 
 .ep-event-date {
   font-size: 14px;
-  text-align: center;
   margin-bottom: 5px;
 }
 
 .ep-event-location {
   font-size: 14px;
-  text-align: center;
   font-weight: bold;
 }
+
 
 .explore-content {
   margin-right: 10%;

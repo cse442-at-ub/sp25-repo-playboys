@@ -133,6 +133,16 @@ function grabAllEventParticipants($conn, $id){
     }
     return $participants;
 }
+
+function convertTo12Hour($time24) {
+    $timestamp = strtotime($time24);
+    return date("g:i A", $timestamp);
+}
+
+function convertToShortDate($date) {
+    $timestamp = strtotime($date);
+    return date("M j", $timestamp);
+}
 ?>
 
 
