@@ -218,5 +218,24 @@ function getAllCommunities($conn) {
     return $communities;
 }
 
+function getCommInfo($conn, $community) {
+    // Prepare the SQL query to get the community data
+    $stmt = $conn->prepare("SELECT id, community_name, picture, members FROM communities WHERE community_name = ? LIMIT 1");
+    $stmt->bind_param("s", $community);
+    $stmt->execute();
+    $stmt->store_result();
+
+    // Bind the result to variables
+    $stmt->bind_result($id, $community_name, $picture, $members);
+    $stmt->fetch(); // Fetch the result
+
+    return [
+        "id" => $id,
+        "community_name" => $community_name,
+        "picture" => $picture,
+        "members" => json_decode($members) // Decoding the members if it's a JSON array
+    ];
+}
+
 
 ?>
