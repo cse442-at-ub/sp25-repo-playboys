@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../user_profile/Sidebar";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer"; // Adjust path if needed
+import MainContent from "../MainContent"; // Adjust path if needed
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -22,9 +22,14 @@ const Explore: React.FC = () => {
   const [topGenres, setTopGenres] = useState<any[]>([]);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
-
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim() !== '') {
+      navigate(`/search_results?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   // Fetch top artists.
   useEffect(() => {
@@ -107,19 +112,19 @@ const Explore: React.FC = () => {
   };
 
   return (
+    <MainContent>
     <div className="ep-explore-page">
-      <div className="ep-sidebar">
-        <Sidebar />
-      </div>
-
       <div className="ep-explore-content">
         {/* Search Bar */}
         <div className="ep-search-bar-container">
-          <input
-            type="text"
-            className="ep-search-bar"
-            placeholder="Search for a genre, artist, songs... 🔍"
-          />
+        <input
+              type="text"
+              className="ep-search-bar"
+              placeholder="Search for a genre, artist, songs... 🔍"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+        />
         </div>
 
         {/* What Are People Listening To */}
@@ -259,6 +264,7 @@ const Explore: React.FC = () => {
         />
       )}
     </div>
+    </MainContent>
   );
 };
 

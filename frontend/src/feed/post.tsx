@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCSRFToken } from "../csrfContent"; // CSRF Protection Hook
 import "./post.css";
-import { useCSRFToken } from '../csrfContent';
 
 const PostPage = () => {
     const [title, setTitle] = useState<string>("");
@@ -39,7 +39,7 @@ const PostPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
@@ -48,18 +48,20 @@ const PostPage = () => {
         formData.append('community', community);
     
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/mediaUpload.php`, {
-                method: 'POST',
-                body: formData,
-                credentials: 'include',
-                headers: { 'CSRF-Token': csrfToken }
-            });
-            
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL}/backend/mediaUpload.php`,
+                {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include",
+                }
+            );
+
             const result = await response.json();
-            if (result.status === 'success') {
-                window.location.href = `${process.env.REACT_APP_API_URL}/#/feed`;
+            if (result.status === "success") {
+                navigate("/feed");
             } else {
-                setError(result["message"]);
+                setError(result.message);
             }
         } catch (error) {
             console.log(error);
@@ -69,14 +71,20 @@ const PostPage = () => {
 
     return (
         <div className="post-page-container">
-            <h1 className="post-h1">Create a New Post</h1>
-            <form onSubmit={handleSubmit} className="post-form" encType="multipart/form-data">
+            <h1 className="post-page-header">Create a New Post</h1>
+            <form
+                onSubmit={handleSubmit}
+                className="post-page-form"
+                encType="multipart/form-data"
+            >
                 <div className="post-form-group">
-                    <label className="post-label" htmlFor="title">Post Title</label>
+                    <label htmlFor="title" className="post-form-label">
+                        Post Title
+                    </label>
                     <input
-                        className="post-input"
                         type="text"
                         id="title"
+                        className="post-input"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
@@ -84,10 +92,12 @@ const PostPage = () => {
                 </div>
 
                 <div className="post-form-group">
-                    <label className="post-label" htmlFor="description">Post Description</label>
+                    <label htmlFor="description" className="post-form-label">
+                        Post Description
+                    </label>
                     <textarea
-                        className="post-textarea"
                         id="description"
+                        className="post-textarea"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         required
@@ -95,23 +105,26 @@ const PostPage = () => {
                 </div>
 
                 <div className="post-form-group">
-                    <label className="post-label" htmlFor="media">Upload Media (Image/Video)</label>
+                    <label htmlFor="media" className="post-form-label">
+                        Upload Media (Image/Video)
+                    </label>
                     <input
-                        className="post-input"
                         type="file"
                         id="media"
+                        className="post-input"
                         accept="image/*, video/*"
-                        onChange={(e) => setMedia(e.target.files?.[0] ?? null)}
-                        required
+                        onChange={(e) => setMedia(e.target.files?.[0] || null)}
                     />
                 </div>
 
                 <div className="post-form-group">
-                    <label className="post-label" htmlFor="song">Song Name</label>
+                    <label htmlFor="song" className="post-form-label">
+                        Song Name
+                    </label>
                     <input
-                        className="post-input"
                         type="text"
                         id="song"
+                        className="post-input"
                         value={song}
                         onChange={(e) => setSong(e.target.value)}
                         required
@@ -134,15 +147,15 @@ const PostPage = () => {
                     </select>
                 </div>
 
-                <button 
-                    className="post-button"
-                    type="submit" 
+                <button
+                    type="submit"
+                    className="post-submit-button"
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? "Submitting..." : "Submit Post"}
                 </button>
             </form>
-            {error && <p className="post-error-message">{error}</p>}
+            {error && <p className="error-message">{error}</p>}
         </div>
     );
 };

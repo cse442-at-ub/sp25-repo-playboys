@@ -6,10 +6,13 @@ import Playlists from './Playlists';
 import Sidebar from './Sidebar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CommunityResultsProfile from './comunity_profile';
+import MainContent from "../MainContent"; // Adjust path if needed
+
 
 
 const UserProfile: React.FC = () => {
   return (
+    <MainContent>
     <div className="container-fluid bg-white py-3 px-3">
       <div className="row">
         <div className="col-12 col-lg-9" style={{ paddingRight: '0' }}>
@@ -32,6 +35,7 @@ const UserProfile: React.FC = () => {
       </div>
         <div className = "d-lg-none" style = {{height: "60px"}}/>
     </div>
+    </MainContent>
   );
 };
 
