@@ -4,102 +4,136 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #eaeaea;
-}
-
-/* Main container */
-.event-creation-container {
+    background-color: #f0f8ff; /* Light blue background for a soothing feel */
+    padding: 20px; /* Extra padding for improved spacing */
+  }
+  
+  /* Main container */
+  .event-creation-container {
     width: 90%;
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
     padding-top: 30px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Title */
-.event-creation-title {
+    background-color: #ffffff; /* Pure white background for contrast */
+    border-radius: 12px; /* Increase border radius for smoother edges */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Stronger shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effect */
+  }
+  
+  .event-creation-container:hover {
+    transform: scale(1.02); /* Slight zoom-in effect */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Dynamic shadow */
+  }
+  
+  /* Title */
+  .event-creation-title {
     text-align: center;
-    font-size: 22px;
+    font-size: 24px;
     margin-bottom: 20px;
-}
-
-/* Form */
-.event-creation-form {
+    font-weight: bold;
+    color: #007bff; /* Bold blue for emphasis */
+  }
+  
+  /* Form */
+  .event-creation-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-}
-
-/* Labels */
-.event-creation-label {
-    font-size: 14px;
+    gap: 20px; /* Increased gap for better spacing */
+  }
+  
+  /* Labels */
+  .event-creation-label {
+    font-size: 16px; /* Slightly larger font for readability */
     font-weight: bold;
-}
-
-/* Inputs and textarea */
-.event-creation-input,
-.event-creation-textarea {
+    color: #333; /* Dark gray for subtle contrast */
+  }
+  
+  /* Inputs and textarea */
+  .event-creation-input,
+  .event-creation-textarea {
     width: 100%;
-    padding: 12px;
+    padding: 14px; /* Extra padding for comfort */
     margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    border: 1px solid #aaa; /* Softer border color */
+    border-radius: 8px; /* Smooth corners */
     font-size: 16px;
     box-sizing: border-box;
-}
-
-/* Textarea */
-.event-creation-textarea {
-    height: 120px;
+    background-color: #f8f8f8; /* Light gray background for differentiation */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Interactive effect */
+  }
+  
+  .event-creation-input:focus,
+  .event-creation-textarea:focus {
+    border-color: #007bff; /* Blue highlight on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle glow on focus */
+  }
+  
+  /* Textarea */
+  .event-creation-textarea {
+    height: 150px; /* Increased height for more room */
     resize: vertical;
-}
-
-/* Button */
-.event-creation-button {
-    padding: 12px 20px;
-    background-color: #007bff;
+  }
+  
+  /* Button */
+  .event-creation-button {
+    padding: 14px 24px; /* Larger padding for a bold look */
+    background-color: #28a745; /* Green for positive action */
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 18px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-.event-creation-button:disabled {
-    background-color: #888;
-}
-
-.event-creation-button:hover {
-    background-color: #0056b3;
-}
-
-.event-creation-button:active {
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth interaction */
+  }
+  
+  .event-creation-button:disabled {
+    background-color: #6c757d; /* Neutral gray when disabled */
+    cursor: not-allowed;
+  }
+  
+  .event-creation-button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  .event-creation-button:active {
     transform: scale(0.98);
-}
-
-/* Responsive */
-@media (max-width: 600px) {
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
     .event-creation-container {
-        width: 95%;
-        padding: 15px;
+      width: 95%;
+      padding: 15px;
     }
-
+  
     .event-creation-title {
-        font-size: 20px;
+      font-size: 20px;
     }
-
+  
     .event-creation-input,
     .event-creation-textarea {
-        font-size: 14px;
-        padding: 10px;
+      font-size: 14px;
+      padding: 12px;
+    }
+  
+    .event-creation-button {
+      font-size: 16px;
+      padding: 12px;
+    }
+  }
+  
+  /* Additional responsiveness for smaller screens */
+  @media (max-width: 400px) {
+    .event-creation-title {
+      font-size: 18px;
+    }
+  
+    .event-creation-button {
+      font-size: 14px;
+      padding: 10px;
     }
 
-    .event-creation-button {
-        font-size: 16px;
-        padding: 10px;
-    }
-}
+    
+  }
+  

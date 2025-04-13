@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
 import { useParams } from 'react-router-dom';
-
 import Sidebar from '../user_profile/Sidebar';
-
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer";
-
 import './artistPage.css';
 
 
