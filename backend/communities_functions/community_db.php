@@ -196,5 +196,27 @@ function getCommunties($conn, $user){
     return $Communities;
 }
 
+function getAllCommunities($conn) {
+    $stmt = $conn->prepare("SELECT community_name, picture, members FROM communities");
+    $stmt->execute();
+    $stmt->store_result();
+
+    // Bind the result to variables
+    $stmt->bind_result($community_name, $picture, $members);
+    
+    $communities = [];
+
+    while ($stmt->fetch()) { // Fetch all results
+        $members = json_decode($members, true); // Decode the members if it's a JSON array
+        $communities[] = [
+            "community_name" => $community_name,
+            "picture" => $picture,
+            "members" => $members
+        ];
+    }
+
+    return $communities;
+}
+
 
 ?>

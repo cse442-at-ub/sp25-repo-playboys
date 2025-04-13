@@ -1,0 +1,105 @@
+/* Wrapper to center the event form */
+.event-creation-page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eaeaea;
+}
+
+/* Main container */
+.event-creation-container {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: 30px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.event-creation-title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* Form */
+.event-creation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Labels */
+.event-creation-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Inputs and textarea */
+.event-creation-input,
+.event-creation-textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Textarea */
+.event-creation-textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+/* Button */
+.event-creation-button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.event-creation-button:disabled {
+    background-color: #888;
+}
+
+.event-creation-button:hover {
+    background-color: #0056b3;
+}
+
+.event-creation-button:active {
+    transform: scale(0.98);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .event-creation-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .event-creation-title {
+        font-size: 20px;
+    }
+
+    .event-creation-input,
+    .event-creation-textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .event-creation-button {
+        font-size: 16px;
+        padding: 10px;
+    }
+}

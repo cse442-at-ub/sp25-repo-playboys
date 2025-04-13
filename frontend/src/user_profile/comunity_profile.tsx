@@ -1,140 +1,80 @@
-import React, { useState, useRef, useEffect  } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useCSRFToken } from '../csrfContent';
-
+import "./community_profile.css"
+import { useNavigate } from "react-router-dom";
 
 interface Community {
-    name: string,
+  id: number;
+  name: string;
+  background_image: string;
 }
 
 const CommunityResultsProfile = () => {
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const { csrfToken } = useCSRFToken();
+  const navigate = useNavigate();
 
-    const [communities, setCommunities] = React.useState<Community[]>([]);
+  const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
 
-    const {csrfToken} = useCSRFToken();
-
-    //onload 
-    useEffect(() => {
-        // Function to fetch communities
-        const fetchCommunities = async () => {
-            try {
-                var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
-                    method: 'GET', // Or 'GET' depending on your API
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'CSRF-Token': csrfToken
-                    },
-                });
-                var results = await response.json();
-                if (results["status"] === "success") {
-                    var user = results["loggedInUser"];
-                    console.log(`user: ${user}`);
-                } else {
-                    console.error("Error fetching profile:", results);
-                }
-                var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getcomms.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'CSRF-Token': csrfToken,
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        "user": user
-                    })
-                });
-                var result = await response.json();
-                console.log(result);
-                setCommunities(result.map((community: any) => ({
-                    name: community,
-                })));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        // Call the fetch function when the component mounts
-        fetchCommunities();
-    }, []); // The empty array ensures this effect only runs once when the component is first mounted.
-
-
-
-    const handleCommunityClick = async(community: Community) => {
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
-            method: 'GET', // Or 'GET' depending on your API
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
+  useEffect(() => {
+    const fetchJoinedCommunities = async () => {
+      try {
+        const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken
+          },
+          credentials: 'include'
         });
-        var results = await response.json();
-        if (results["status"] === "success") {
-            var user = results["loggedInUser"];
-            console.log(`user: ${user}`);
-        } else {
-            console.error("Error fetching profile:", results);
+        const profileData = await profileRes.json();
+        const username = profileData.loggedInUser;
+    
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getJoinedCommunities.php`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken
+          },
+          credentials: 'include',
+          body: JSON.stringify({ user: username })
+        });
+    
+        const data = await res.json();
+        if (data.status === "success") {
+          setCommunities(data.communities);
         }
-        console.log("checking if user is part of the commuitty");
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/checkUser.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
-            body: JSON.stringify({
-                "name": community.name,
-                "user": user
-            })
-        }); 
-        var results = await response.json();
-        console.log(results)
-        // REMOVING
-        if (results === true) {
-            // remove user to community
-            console.log("removing user to community");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/leave_community.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-
-            // reove community from user profile
-            console.log("removing comm from pfp");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/removecomtopfp.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-        }
+      } catch (error) {
+        console.error("Error loading joined communities", error);
+      }
     };
-    return (
-        <div>
-        <h1>My Communities</h1>
-          {/* Map through the communities array and display the name */}
-          {communities.map((community, index) => (
-            <div key={index}>
-              <p>{community.name}</p>
+    
+
+    fetchJoinedCommunities();
+  }, [csrfToken]);
+
+  return (
+    <div>
+      <h1>My Communities</h1>
+      <div className="ep-community-circle-row ">
+
+
+          {communities.map((community) => (
+            <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.id}`)}>
+              <div
+                className="ep-community-circle"
+                style={{
+                  backgroundImage: `url("${community.background_image?.startsWith("data:image") ? community.background_image : defaultImage}")`
+                }}
+              />
+              <p className="ep-community-name">{community.name}</p>
             </div>
           ))}
-        </div>
-      );
-    };
-
+        
+    </div>
+  </div>
+  );
+};
 
 export default CommunityResultsProfile;

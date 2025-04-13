@@ -65,6 +65,12 @@ import useMediaQuery from './useMediaQuery';
 // csrf wrap protection
 import { CSRFProvider } from "./csrfContent";
 
+//event creation page
+import EventCreationPage from "./artistEventCreation/makeEvent";
+
+//event page
+import EventPage from "./artistEventCreation/artistEvent";
+
 function App() {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
@@ -100,9 +106,12 @@ function App() {
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
         <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
+        <Route path="/community/:id" element={<CommunityPage />} />
         <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/event-creation" element={<ProtectedRoute element={<EventCreationPage />} />} />
+        <Route path="/event" element={<ProtectedRoute element={<EventPage />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
         
       
