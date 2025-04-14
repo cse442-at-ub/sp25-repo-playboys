@@ -1,42 +1,36 @@
 <?php
-/* Going to call Spotify API for user top playlists, if the user isn't logged in with Spotify, call Deezer API for a random playlist for now */
 
 require __DIR__ . "/headers.php";
 require __DIR__ . "/cookieAuthHeader.php";
 require __DIR__ . "/userDatabaseGrabber.php";
 
-
 $spotifyId = "";
 
-//$result is from cookieAuth.php and is the username of the user
+// $result is from cookieAuth.php and is the username of the user
 $user = $result->fetch_assoc();
 $login_username = $user["username"];
 
-
-if(isset($_GET['user'])) {
-    if($_GET['user'] != $login_username){
-        if($_GET['user'] != ''){
+if (isset($_GET['user'])) {
+    if ($_GET['user'] != $login_username) {
+        if ($_GET['user'] != '') {
             $stmt = $conn->prepare("SELECT spotify_id FROM user_login_data WHERE username = ?");
             $stmt->bind_param("s", $_GET['user']);
             $stmt->execute();
             $result = $stmt->get_result()->fetch_assoc();
-            if($result == NULL){
+            if ($result == NULL) {
                 echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
                 exit();
             }
-            if($result['spotify_id'] == "" || $result['spotify_id'] == NULL){
+            if ($result['spotify_id'] == "" || $result['spotify_id'] == NULL) {
                 echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
                 exit();
             }
             $login_username = $_GET['user'];
         }
-
-        
     }
-   
 }
 
-// Grab token from database
+// Grab token and spotify id from database
 $stmt = $conn->prepare("SELECT access_token, spotify_id FROM user_login_data WHERE username = ?");
 $stmt->bind_param("s", $login_username);
 $stmt->execute();
@@ -47,8 +41,8 @@ if ($spotifyId == "" || $spotifyId == NULL) {
     echo json_encode(["error" => "Please login with Spotify"]);
     exit();
 }
+
 $top_playlists_url = "https://api.spotify.com/v1/me/playlists?limit=10"; // Fetches top 10 playlists
-$access_token = $result['access_token'];
 
 $ch = curl_init();
 curl_setopt_array($ch, [
@@ -61,19 +55,98 @@ curl_close($ch);
 
 $top_playlists = json_decode($response, true);
 
-// Check if there's an error from Spotify API
+// Check if there's an error from the Spotify API
 if (isset($top_playlists['error'])) {
     echo json_encode(["error" => $response]);
     exit();
 }
 
-$data = [];
+// Prepare two arrays:
+// 1. $playlistData: extended info for the database storage (includes 'songs')
+// 2. $outputData: simplified output for the client (only 'name' and 'image')
+$playlistData = [];
+$outputData = [];
+
+// Loop through each fetched playlist
 foreach ($top_playlists['items'] as $playlist) {
-    $data[] = [
-        'name' => $playlist['name'],
-        'image' => $playlist['images'][0]['url'] // Fallback image URL
+    $name = $playlist['name'];
+    $image = isset($playlist['images'][0]['url']) ? $playlist['images'][0]['url'] : '';
+    $playlistId = $playlist['id'];
+    
+    // Create an empty array to hold songs
+    $songs = [];
+    
+    // Build the URL to fetch the tracks for the given playlist (limiting to 5 songs; adjust limit as needed)
+    $tracks_url = "https://api.spotify.com/v1/playlists/{$playlistId}/tracks?limit=5";
+    
+    // Initialize a new cURL session for fetching tracks
+    $ch_tracks = curl_init();
+    curl_setopt_array($ch_tracks, [
+        CURLOPT_URL            => $tracks_url,
+        CURLOPT_HTTPHEADER     => ["Authorization: Bearer $access_token"],
+        CURLOPT_RETURNTRANSFER => true
+    ]);
+    $tracks_response = curl_exec($ch_tracks);
+    curl_close($ch_tracks);
+    
+    $tracks_data = json_decode($tracks_response, true);
+    
+    // Check if there's an error fetching tracks; if so, leave songs empty.
+    if (!isset($tracks_data['error']) && isset($tracks_data['items'])) {
+        // Process each track item
+        foreach ($tracks_data['items'] as $item) {
+            if (isset($item['track']) && $item['track'] !== null) {
+                $track = $item['track'];
+                $songName = $track['name'];
+                
+                // Extract artist names (join multiple artists with a comma)
+                $artistNames = [];
+                if (isset($track['artists'])) {
+                    foreach ($track['artists'] as $artist) {
+                        $artistNames[] = $artist['name'];
+                    }
+                }
+                $artistStr = implode(', ', $artistNames);
+                
+                // Add the song to the songs array
+                $songs[] = [
+                    "song"   => $songName,
+                    "artist" => $artistStr
+                ];
+            }
+        }
+    }
+    
+    // Build extended playlist info for database (with the songs array)
+    $playlistData[] = [
+        'name'  => $name,
+        'image' => $image,
+        'songs' => $songs
+    ];
+    
+    // Build simplified output format for the client (only name and image)
+    $outputData[] = [
+        'name'  => $name,
+        'image' => $image
     ];
 }
 
-echo json_encode($data);
+// Convert extended playlist data to JSON string for database storage
+$playlistsJson = json_encode($playlistData);
+
+// Insert (or update) the playlists in the "user_playlists" table
+$stmt = $conn->prepare("INSERT INTO user_playlists (username, playlists) VALUES (?, ?)
+                        ON DUPLICATE KEY UPDATE playlists = VALUES(playlists)");
+if (!$stmt) {
+    echo json_encode(["error" => "Database prepare error: " . $conn->error]);
+    exit();
+}
+$stmt->bind_param("ss", $login_username, $playlistsJson);
+if (!$stmt->execute()) {
+    echo json_encode(["error" => "Database execute error: " . $stmt->error]);
+    exit();
+}
+
+// Output the playlists in the original simplified format (only name and image)
+echo json_encode($outputData);
 ?>

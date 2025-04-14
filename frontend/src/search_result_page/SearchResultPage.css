@@ -10,11 +10,11 @@
 
 /* Main content takes up most of the space */
 .main-content {
-    flex: 1;
+    flex: 1; /* Allow it to take up remaining space */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%; /* Ensure the content takes full available width */
+    align-items: flex-start; /* Align items to the start, not center */
+    width: 100%; /* Ensure the content takes full available width within its flex container */
 }
 
 /* Row containing both the back button and search bar */
@@ -23,6 +23,7 @@
     width: 100%;
     align-items: center;
     position: relative;
+    margin-bottom: 20px; /* Add some space below the search bar row */
 }
 
 /* Back button styling */
@@ -32,47 +33,46 @@
     color: black; /* Back arrow is black */
     font-size: 36px; /* Bigger back arrow */
     padding: 10px;
-    position: absolute; /* Position absolutely */
+    position: absolute; /* Position absolutely within the search-bar-row */
     left: 0; /* All the way to the left */
     cursor: pointer;
     transition: all 0.3s ease;
+    z-index: 10; /* Ensure it's above other elements if needed */
 }
 
 /* Adjust the song results container */
 .song-results {
-    width: 85%;
-    margin-top: 20px;
+    width: 100%; /* Take up the full width of the main content */
+    margin-top: 10px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
 .artist-results {
-    width: 85%;
+    width: 100%; /* Take up the full width of the main content */
     margin-top: 20px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
 .community-results {
-    width: 85%;
+    width: 100%; /* Take up the full width of the main content */
     margin-top: 20px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
 .event-results {
-    width: 85%;
+    width: 100%; /* Take up the full width of the main content */
     margin-top: 20px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
+
 /* Centered search bar container */
 .search-bar-container {
     flex-grow: 1; /* Allow the search bar to grow and center itself */
     display: flex;
     justify-content: center;
     margin-left: 60px; /* Adjust the left margin so it isn't hidden by the back arrow */
+    width: 100%; /* Ensure it takes full width within its parent */
 }
 
 /* Sidebar styling */
@@ -80,49 +80,48 @@
     width: 300px; /* Adjust width as needed */
 }
 
-/* Responsive Design: Stack elements on small screens */
+/* In your @media (max-width: 768px) block */
 @media (max-width: 768px) {
-    .search-result-container {
-        flex-direction: column;
-        align-items: center;
+    /* ... other mobile styles ... */
+
+    .main-content {
+        width: 100%;
+        overflow-x: hidden; /* Prevent horizontal scroll on the main content itself */
+        align-items: stretch; /* Make children stretch to the full width */
     }
 
-    .sidebar-container {
+    .song-results,
+    .artist-results,
+    .community-results,
+    .event-results {
         width: 100%;
+        margin-right: 0;
+        overflow-x: hidden; /* Also prevent horizontal scroll on these sections */
     }
 
     .search-bar-row {
-        position: relative;
-    }
-
-    .back-button {
-        position: static; /* Reset to default positioning */
+        width: 100%;
+        /* Ensure it doesn't cause overflow */
+        display: flex;
+        flex-wrap: nowrap; /* Prevent wrapping which could lead to wider content */
+        align-items: center;
     }
 
     .search-bar-container {
-        margin-left: 0; /* Reset margin to align properly on small screens */
+        flex-grow: 1;
+        margin-left: 10px; /* Adjust if needed */
+        width: auto; /* Allow it to take available width */
     }
 
-    .song-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
+    .back-button {
+        position: static;
+        margin-right: 10px; /* Add some space between button and search bar */
     }
-    .artist-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
-    }
-    .community-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
-    }
-    .event-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
-    }
-    .main-content {
-        width: 100%; /* Reset width for small screens */
-        margin-left: 0; /* Reset margin for small screens */
-    }
+}
+
+/* General rule to prevent body overflow */
+body {
+    overflow-x: hidden;
 }
 
 
@@ -130,30 +129,18 @@
 
 /* css for search bar */
 .search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 600px; /* Increased width */
-    border: 2px solid black; /* Added black outline */
-}
-
-.search-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    width: 75%;
 }
 
 .search-input {
-    border: none;
-    outline: none;
-    background: transparent;
-    flex: 1;
+    width: 100%; /* Changed from 75% to 100% */
+    padding: 5px;
     font-size: 16px;
+    border-radius: 6px;
+    border: 1px dashed #000000;
 }
-
 
 
 
@@ -459,89 +446,134 @@ eventResults css
 ******
 ********/
 
-.event-search-results {
-    padding: 20px;
+.event-search-results-compact {
+    padding: 15px;
     position: relative;
-  }
-  
-  .event-search-results-title {
-    font-size: 2rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.event-search-results-title-compact {
+    font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .event-results-container {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.event-results-container-compact {
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    scrollbar-width: none; /* Hide scrollbar in Firefox */
-    -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
-  }
-  
-  .event-results-container::-webkit-scrollbar {
-    display: none; /* Hide scrollbar in Chrome, Safari, and Opera */
-  }
-  
-  .event-item {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 10px; /* Add some padding for the scrollbar space */
+}
+
+.event-results-container-compact::-webkit-scrollbar {
+    display: none;
+}
+
+.event-item-compact {
     display: flex;
-    background-color: #e0e0e0;
-    padding: 20px;
-    margin-right: 15px;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 15px;
+    margin-right: 10px;
     border-radius: 8px;
-    min-width: 300px;
-    align-items: center;
-  }
-  
-  .event-details {
-    flex-grow: 1;
-  }
-  
-  .event-date,
-  .event-time,
-  .event-location,
-  .event-artist {
-    margin-bottom: 5px;
-  }
-  
-  .event-image {
-    width: 60px;
-    height: 60px;
+    min-width: 200px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+}
+
+.event-item-compact:hover {
+    transform: translateY(-3px);
+}
+
+.event-image-compact {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background-color: #6750A4;
-    color: white;
+    overflow: hidden;
+    margin-bottom: 10px;
+    background-color: #ddd; /* Placeholder background */
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
-    margin-left: 20px;
-  }
+}
 
-  .event-image img {
+.event-image-compact img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-  .scroll-arrow {
+.event-info-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.event-name-compact {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-details-compact {
+    display: flex;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.event-date-compact,
+.event-time-compact {
+    white-space: nowrap;
+}
+
+.event-location-compact {
+    font-size: 0.85rem;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scroll-arrow-compact {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 2rem;
+    font-size: 1.5rem;
     cursor: pointer;
-    color: #000;
+    color: #aaa;
     transition: color 0.3s ease;
-  }
-  
-  .scroll-arrow.left {
-    left: 10px;
-  }
-  
-  .scroll-arrow.right {
-    right: 10px;
-  }
-  
-  .scroll-arrow:hover {
-    color: #555;
-  }
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-arrow-compact:hover {
+    color: #777;
+}
+
+.left-compact {
+    left: 5px;
+}
+
+.right-compact {
+    right: 5px;
+}
+
+.no-events-compact {
+    color: #777;
+    font-style: italic;
+}
