@@ -70,7 +70,7 @@ $imageUrl = isset($foundPlaylist['image']) ? $foundPlaylist['image'] : "https://
 
 echo json_encode([
     "status" => "success",
-    "tracks" => $imageUrl
+    "imageUrl" => $imageUrl
 ]);
 exit();
 ?>
