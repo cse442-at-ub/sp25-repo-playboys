@@ -21,15 +21,15 @@ try{
         exit();
     }
     $result = $result->fetch_assoc();
-    if(!isset($headers['CSRF-Token'])){
-        echo json_encode(["status" => "error", "message" => "CSRF doesn't exist"]);
+    // if(!isset($headers['CSRF-Token'])){
+    //     echo json_encode(["status" => "error", "message" => "CSRF doesn't exist"]);
 
-    }
-    if(!isset($headers['CSRF-Token']) && $result["csrf_token"] != $headers["CSRF-Token"]){
-        echo json_encode(["status" => "error", "message" => "Invalid CSRF Token ". $headers["CSRF-Token"]]);
-        //return to the homepage if cookies are invalid/not found in our database 
-        exit();
-    }
+    // }
+    // if(!isset($headers['CSRF-Token']) && $result["csrf_token"] != $headers["CSRF-Token"]){
+    //     echo json_encode(["status" => "error", "message" => "Invalid CSRF Token ". $headers["CSRF-Token"]]);
+    //     //return to the homepage if cookies are invalid/not found in our database 
+    //     exit();
+    // }
 }catch(Exception $e){
     echo json_encode(["status" => "error", "message" => "Please Login"]);
     //return to the homepage if cookies are invalid/not found in our database 

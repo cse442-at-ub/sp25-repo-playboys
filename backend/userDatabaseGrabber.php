@@ -101,6 +101,48 @@ function grabAllFriends($conn, $username) {
     }
     return $friends;
 }
+
+
+function checkUserinEvents($conn, $userame, $id){
+    $stmt = $conn->prepare("SELECT * FROM event_participants WHERE username = ? AND id = ?");
+    $stmt->bind_param("ss", $userame, $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        return true; // User is in the event
+    } else {
+        return false; // User is not in the event
+    }
+
+}
+
+function grabAllEventParticipants($conn, $id){
+    $stmt = $conn->prepare("SELECT * FROM event_participants WHERE id = ?");
+    $stmt->bind_param("s", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $participants = [];
+    while ($row = $result ->fetch_assoc()){
+        $profile_stmt = $conn-> prepare("SELECT profile_pic FROM user_profiles WHERE username = ?");
+        $profile_stmt->bind_param("s", $row["username"]);
+        $profile_stmt->execute();
+        $image_result = $profile_stmt->get_result();
+        $image_result = $image_result->fetch_assoc();
+        $parpticipant = ["image" => $image_result["profile_pic"] ?? "", "username" => $row["username"]];
+        $participants[] = $parpticipant;
+    }
+    return $participants;
+}
+
+function convertTo12Hour($time24) {
+    $timestamp = strtotime($time24);
+    return date("g:i A", $timestamp);
+}
+
+function convertToShortDate($date) {
+    $timestamp = strtotime($date);
+    return date("M j", $timestamp);
+}
 ?>
 
 

@@ -10,25 +10,40 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onLogin, onSignUp }) => {
   return (
-    <Row className="align-items-center">
-      <Col md={6}>
-        <div className="bg-primary text-white text-center py-3 rounded-pill">
-          <h2 className="mb-0">Playboys</h2>
-        </div>
-      </Col>
-      <Col md={3} className="mt-3 mt-md-0">
-        <Button variant="success" className="w-100 py-2 rounded-pill" onClick={onLogin}>
+    <div className="d-flex justify-content-between align-items-center py-3 px-3">
+      <img
+        src={process.env.PUBLIC_URL + "/static/logo.jpg"}
+        alt="Logo"
+        style={{
+          height: "80px",
+          width: "80px",
+          objectFit: "cover",
+          borderRadius: "75%",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      />
+      <div className="d-flex gap-3">
+        <Button
+          variant="success"
+          className="rounded-pill px-4 py-2"
+          onClick={onLogin}
+          style={{ transition: "all 0.3s ease" }}
+        >
           Login
         </Button>
-      </Col>
-      <Col md={3} className="mt-3 mt-md-0">
-        <Button variant="warning" className="w-100 py-2 rounded-pill" onClick={onSignUp}>
+        <Button
+          variant="warning"
+          className="rounded-pill px-4 py-2"
+          onClick={onSignUp}
+          style={{ transition: "all 0.3s ease" }}
+        >
           Sign Up
         </Button>
-      </Col>
-    </Row>
+      </div>
+    </div>
   );
 };
+
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
