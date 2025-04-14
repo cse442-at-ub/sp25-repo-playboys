@@ -1,16 +1,30 @@
 <?php
-// create community
-// file will create a community in the database if it does not exist
-// if it does it will return a message
 require __DIR__ . "/../headers.php";
 require __DIR__ . "/../cookieAuthHeader.php";
-require __DIR__ . "/community_db.php";
+require __DIR__ . "/../data_base.php";
 
-// get the data from the request
-$data = json_decode(file_get_contents("php://input"), true); // decode JSON body
-$community = $data["name"] ?? null;
-$picture = $data["image"] ?? null;
+header("Content-Type: application/json");
+
+$data = json_decode(file_get_contents("php://input"), true);
 $user = $data["user"] ?? null;
 
-echo json_encode(getCommunties($conn, $user));
-?>
+if (!$user) {
+  echo json_encode(["status" => "error", "message" => "Missing user"]);
+  exit;
+}
+
+$stmt = $conn->prepare("SELECT community_name, members FROM communities");
+$stmt->execute();
+$result = $stmt->get_result();
+
+$matched = [];
+
+while ($row = $result->fetch_assoc()) {
+    $members = json_decode($row["members"], true);
+    if (is_array($members) && in_array($user, $members)) {
+        $matched[] = $row["community_name"];
+    }
+}
+
+echo json_encode($matched);
+exit;

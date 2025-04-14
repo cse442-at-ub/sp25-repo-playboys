@@ -48,6 +48,7 @@ const CommunityResultsProfile = () => {
         body: JSON.stringify({ "user": username })
       });
       const data = await res.json();
+      console.log("Fetching communities from:", res);
       return data
     }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
+import SongRecommendationNonSpotify from "../song_recommendation/SongRecommendationNonSpotify";
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer"; // Adjust path if needed
 import MainContent from "../MainContent"; // Adjust path if needed
 
@@ -34,6 +35,7 @@ const Explore: React.FC = () => {
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userType, setUserType] = useState<"spotify" | "nonspotify" | null>(null);
 
   const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -99,7 +101,7 @@ const Explore: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getAllCommunities.php`, {
+    fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getAllCommunities.php`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -143,6 +145,29 @@ const Explore: React.FC = () => {
       console.error("Error playing song:", error);
     }
   };
+
+//Fectch NonSpotify User
+  useEffect(() => {
+    const checkUserType = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/independentCookieAuth.php`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+          setUserType(data.spotify_id ? "spotify" : "nonspotify");
+        } else {
+          setUserType("nonspotify");
+        }
+      } catch (error) {
+        console.error("Error checking user type:", error);
+        setUserType("nonspotify");
+      }
+    };
+    checkUserType();
+  }, []);
+
+
   
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -299,7 +324,13 @@ const Explore: React.FC = () => {
         </div>
       </div>
       <div className="ep-songrecommend">
-        <SongRecommendation />
+          {userType === "spotify" ? (
+            <SongRecommendation />
+          ) : userType === "nonspotify" ? (
+            <SongRecommendationNonSpotify />
+          ) : (
+            <p>Loading recommendation...</p>
+          )}
       </div>
       {activeTrack && (
         <SpotifyPlayer
