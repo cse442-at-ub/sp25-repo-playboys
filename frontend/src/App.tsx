@@ -1,6 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
+import { SidebarProvider } from "./SidebarContext";
+
 
 //landing pages
 import LandingPage from "./landing_page/landingPage";
@@ -41,7 +43,9 @@ import SearchPage from "./search_result_page/searchResultPage";
 import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
 
 
-//import all mobile views for setting
+//import Community Page
+import CommunityPage from "./communities/CommunityPage";
+import CreateCommunityPage from "./communities/CreateCommunityPage";
 
 //Import SongRecommendation
 import SongRecommendation from "./song_recommendation/SongRecommendationFE";
@@ -63,16 +67,23 @@ import useMediaQuery from './useMediaQuery';
 // csrf wrap protection
 import { CSRFProvider } from "./csrfContent";
 
+//event creation page
+import EventCreationPage from "./artistEventCreation/makeEvent";
+
+//event page
+import EventPage from "./artistEventCreation/artistEvent";
+
 function App() {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
 
   return (
+    <SidebarProvider>
     <CSRFProvider>
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
-        <Route path="/" element={ <LandingPage />} />
+        <Route path="/" element={ <Explore />} />
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
@@ -97,9 +108,13 @@ function App() {
         <Route path="/settings/account/delete_account" element={<ProtectedRoute element={ <DeleteAccount />} />} />
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
+        <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
+        <Route path="/community/:name" element={<CommunityPage />} />
         <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/event-creation" element={<ProtectedRoute element={<EventCreationPage />} />} />
+        <Route path="/event" element={<ProtectedRoute element={<EventPage />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
         
       
@@ -112,6 +127,7 @@ function App() {
       </Routes>
     </Router>
     </CSRFProvider>
+    </SidebarProvider>
   );
 }
 

@@ -196,5 +196,69 @@ function getCommunties($conn, $user){
     return $Communities;
 }
 
+function getAllCommunities($conn) {
+    $stmt = $conn->prepare("SELECT community_name, picture, members FROM communities");
+    $stmt->execute();
+    $stmt->store_result();
+
+    // Bind the result to variables
+    $stmt->bind_result($community_name, $picture, $members);
+    
+    $communities = [];
+
+    while ($stmt->fetch()) { // Fetch all results
+        $members = json_decode($members, true); // Decode the members if it's a JSON array
+        $communities[] = [
+            "community_name" => $community_name,
+            "picture" => $picture,
+            "members" => $members
+        ];
+    }
+
+    return $communities;
+}
+
+function getCommInfo($conn, $community) {
+    // Prepare the SQL query to get the community data
+    $stmt = $conn->prepare("SELECT id, community_name, picture, members FROM communities WHERE community_name = ? LIMIT 1");
+    $stmt->bind_param("s", $community);
+    $stmt->execute();
+    $stmt->store_result();
+
+    // Bind the result to variables
+    $stmt->bind_result($id, $community_name, $picture, $members);
+    $stmt->fetch(); // Fetch the result
+    
+    $posts = getPostsInCommunity($conn, $community_name); // Fetch posts for the community
+    return [
+        "id" => $id,
+        "community_name" => $community_name,
+        "picture" => $picture,
+        "members" => json_decode($members), // Decoding the members if it's a JSON array
+        "posts" => $posts
+    ];
+}
+
+function getPostsInCommunity($conn, $community) {
+    // Prepare the SQL query to fetch all posts for the given community
+    $stmt = $conn->prepare("SELECT post_id, username, title, description, song_name, media_path, media_type, created_at FROM posts WHERE community = ? ORDER BY created_at DESC");
+    $stmt->bind_param("s", $community);
+    $stmt->execute();
+
+    // Get the result set
+    $result = $stmt->get_result();
+
+    // Fetch all posts into an array
+    $posts = [];
+    while ($row = $result->fetch_assoc()) {
+        $posts[] = $row;
+    }
+
+    return $posts;
+}
+    
+    
+
+
 
 ?>
