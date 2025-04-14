@@ -56,6 +56,10 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     };
   }, []);
 
+  const handleLike = () => {
+    alert("song liked!");
+  };
+
   return (
     <div
       className="spotify-player-wrapper"
@@ -69,14 +73,13 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       >
         <button onClick={increaseSize}>➕</button>
         <button onClick={decreaseSize}>➖</button>
+        <button onClick={handleLike}>❤️</button>
         <button onClick={onClose}>❌</button>
       </div>
       <div className="audio-player-info" style={{ padding: "8px", textAlign: "center" }}>
         <strong>{title}</strong> - <em>{artist}</em>
       </div>
-      <audio controls
-        style={{ width: width, height: height }}
-      >
+      <audio controls style={{ width: width, height: height }}>
         <source src={trackUrl} />
       </audio>
     </div>

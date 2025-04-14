@@ -12,6 +12,8 @@ import UserProfile from "./user_profile/userProfile";
 import TopArtistsView from "./user_profile/TopArtistsView";
 import EditProfile from "./user_profile/EditProfile";
 import PlaylistsView from "./user_profile/PlaylistsView";
+import PlaylistPage from "./user_profile/PlaylistPage";
+
 // Import mobile Profile
 
 // Import mobile Login and Sign Up
@@ -116,6 +118,7 @@ function App() {
         <Route path="/event-creation" element={<ProtectedRoute element={<EventCreationPage />} />} />
         <Route path="/event" element={<ProtectedRoute element={<EventPage />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/playlist/:playlistName" element={<ProtectedRoute element={<PlaylistPage />} />} />
         
       
         <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
