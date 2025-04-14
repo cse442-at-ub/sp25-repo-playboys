@@ -6,8 +6,10 @@ import ArtistResults from './artistResults';
 import EventResults from './eventResults';
 import CommunityResults from './communityResults';
 import './SearchResultPage.css'; // Import the CSS file for styling
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCSRFToken } from '../csrfContent';
+import MainContent from "../MainContent"; // Adjust path if needed
+
 
 
 interface Song {
@@ -29,13 +31,23 @@ interface Artist {
     popularity: number, 
 }
 
-
+interface Event {
+    date: string;
+    time: string;
+    location: string;
+    name: string;
+    artist: string;
+    image: string;
+    id: string;
+}
 
 
 
 
 const SearchResultPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const search_query = searchParams.get('q');
     const handleBackButton = () => {
         navigate("/explore");
         // Your navigation code here
@@ -43,7 +55,12 @@ const SearchResultPage = () => {
     const {csrfToken} = useCSRFToken();
     const [songs, setSongs] = React.useState<Song[]>([]);
     const [artists, setArtists] = React.useState<Artist[]>([]);
-    
+    const [events, setEvents] = React.useState<Event[]>([]);
+    React.useEffect(() => {
+        if(search_query) {
+            handleSearch(search_query);
+        }
+    }, [search_query]);
     
     const handleSearch = async (query: string) => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/search_artist.php?q=${query}`, {
@@ -73,10 +90,20 @@ const SearchResultPage = () => {
             name: artist.name,
             popularity: artist.popularity, 
         })));
+        setEvents(result["events"].map((event: any) =>({
+            date : event.date,
+            time: event.time,
+            location: event.location,
+            name: event.name,
+            artist: event.artist,
+            image: event.image,
+            id: event.id,
+        })));
     }
 
 
     return (
+        <MainContent>
         <div className="search-result-container">
             <div className="main-content">
                 <div className="search-bar-row">
@@ -98,15 +125,14 @@ const SearchResultPage = () => {
                     <CommunityResults data={artists}/>
                 </div>
                 <div className="event-results">
-                    <EventResults />
+                    <EventResults data={events} />
                 </div>
             </div>
-            <div className="sidebar-container">
-                <Sidebar />
-            </div>
+            
+            <Sidebar/>
         </div>
+        </MainContent>
     );
 };
 
 export default SearchResultPage;
-

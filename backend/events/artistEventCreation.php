@@ -15,11 +15,18 @@
 $title = $data['title'] ?? ''; // Get title, or empty string if not set
 $location = $data['location'] ?? '';
 $date = $data['date'] ?? '';
+$time = $data['time'] ?? '';
 $description = $data['description'] ?? '';
 $image = $data['image'] ?? ''; // This will contain the uploaded image filename or empty
-$insert_new_event = $conn->prepare("INSERT INTO artist_events (title, location, date, description, image_url, creator) VALUES (?, ?, ?, ?, ?, ?)");
-$insert_new_event->bind_param("ssssss", $title, $location, $date, $description, $image, $login_username);
+$insert_new_event = $conn->prepare("INSERT INTO artist_events (title, location, date, time, description, image_url, creator) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$insert_new_event->bind_param("sssssss", $title, $location, $date, $time, $description, $image, $login_username);
 $insert_new_event->execute();
+$id = $conn->insert_id;
+//join own event as default
+$stmt = $conn->prepare("INSERT INTO event_participants (username, id) VALUES (?, ?)");
+$stmt->bind_param("ss", $login_username, $id);
+$stmt->execute();
+$stmt->close();
 echo json_encode(["status" => "success", "message" => "Event created successfully"]);
 exit();
 ?> 

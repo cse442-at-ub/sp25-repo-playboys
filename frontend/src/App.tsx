@@ -1,6 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
+import { SidebarProvider } from "./SidebarContext";
+
 
 //landing pages
 import LandingPage from "./landing_page/landingPage";
@@ -76,11 +78,12 @@ function App() {
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
 
   return (
+    <SidebarProvider>
     <CSRFProvider>
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
-        <Route path="/" element={ <LandingPage />} />
+        <Route path="/" element={ <UserProfile />} />
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
@@ -106,7 +109,7 @@ function App() {
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
         <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
-        <Route path="/community/:id" element={<CommunityPage />} />
+        <Route path="/community/:name" element={<CommunityPage />} />
         <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
@@ -124,6 +127,7 @@ function App() {
       </Routes>
     </Router>
     </CSRFProvider>
+    </SidebarProvider>
   );
 }
 
