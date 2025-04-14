@@ -5,7 +5,7 @@
     
     $user = $result->fetch_assoc();
     $login_username = $user["username"];
-
+    $headers = getallheaders();
     //fetch all event id related to login user
     $stmt = $conn->prepare("SELECT id FROM event_participants WHERE username = ?");
     $stmt->bind_param("s", $login_username);
@@ -35,8 +35,23 @@
         return strtotime($date1["date"]) <=> strtotime($date2["date"]);
 
     });
-    $total_events = array_slice($total_events, 0, 3);
 
+    //if data is being request from sidebar
+    $data = [];
+    if(isset($headers["page-source"]) && $headers["page-source"] === "sidebar"){
+        foreach($total_events as $e){
+            $e_object = ["title" => $e["title"], 
+                         "image" => $e["image_url"],
+                         "id" => $e["id"]];
+            $data[] = $e_object;
+        }
+        echo json_encode(["status" => "success", "data" => $data]);
+        exit();
+    }
+
+
+    //data for explore page
+    $total_events = array_slice($total_events, 0, 3);
     //convert time to more readable versions
     foreach($total_events as &$e){
         $e["date"] = convertToShortDate($e["date"]);
@@ -44,5 +59,6 @@
     }
   
     echo json_encode(["status" => "success", "data" => $total_events]);
+    exit();
 
 ?>
