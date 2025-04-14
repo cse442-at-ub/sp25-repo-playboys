@@ -99,7 +99,7 @@ const Explore: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getAllCommunities.php`, {
+    fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getAllCommunities.php`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
