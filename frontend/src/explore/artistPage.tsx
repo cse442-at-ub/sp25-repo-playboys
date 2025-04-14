@@ -79,9 +79,9 @@ const ArtistPage: React.FC = () => {
 
 
   return (
-    <div className="ap-ap-artist-page"> <Sidebar />
-      <div className="ap-ap-artist-content">
-        <div className="ap-ap-artist-header">
+    <div className="ap-artist-page"> <Sidebar />
+      <div className="ap-artist-content">
+        <div className="ap-artist-header">
           {artistImage && (<img src={artistImage}
             alt={`${artist} image`} className="ap-artist-picture" />)}
           <h1 className="ap-artist-title">
