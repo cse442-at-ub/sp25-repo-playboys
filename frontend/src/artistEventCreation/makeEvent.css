@@ -1,177 +1,180 @@
 /* Wrapper to center the event form */
 .event-creation-page-wrapper {
-  min-height: 100vh;
+  min-height: 100vh; /* Ensure it's at least the height of the viewport */
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #f0f8ff; /* Light blue background for a soothing feel */
-  padding: 20px; /* Extra padding for improved spacing */
+  align-items: flex-start; /* Align items to the top */
+  background-color: #f0f8ff; /* Light blue background */
+  padding: 20px; /* Maintain some padding */
+  box-sizing: border-box; /* Include padding in height calculation */
 }
 
 /* Main container */
 .event-creation-container {
-  width: 90%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-top: 20px; /* Adjust top padding to accommodate header */
-  background-color: #ffffff; /* Pure white background for contrast */
-  border-radius: 12px; /* Increase border radius for smoother edges */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Stronger shadow for depth */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effect */
+  width: 80%; /* Slightly increase width */
+  max-width: 650px; /* Increase max width */
+  margin: 30px auto; /* Add more top/bottom margin for visual spacing */
+  padding: 25px; /* Increase padding */
+  padding-top: 25px;
+  background-color: #ffffff;
+  border-radius: 14px; /* Slightly larger border radius */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
+
 .event-creation-container:hover {
-  transform: scale(1.02); /* Slight zoom-in effect */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Dynamic shadow */
+  transform: scale(1.01); /* Subtle zoom */
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
 }
 
-/* Header to contain back button and title */
+/* Header */
 .event-creation-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  position: relative; /* Needed for absolute positioning of back button */
-  justify-content: center; /* Initially center the title */
+  margin-bottom: 25px; /* Increase margin */
+  position: relative;
+  justify-content: center;
 }
 
 /* Back Button */
 .event-creation-back-button {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 26px; /* Slightly larger font */
   cursor: pointer;
-  color: #007bff; /* Match title color */
-  margin-right: 15px;
+  color: #007bff;
+  margin-right: 18px; /* Increase margin */
   padding: 0;
   line-height: 1;
-  transition: opacity 0.2s ease, background-color 0.2s ease; /* Added background transition */
-  border-radius: 4px; /* Add some border-radius for the overlay effect */
-  position: absolute; /* Position to the left */
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+  border-radius: 4px;
+  position: absolute;
   left: 0;
 }
 
 .event-creation-back-button:hover {
   opacity: 0.8;
-  background-color: rgba(0, 0, 0, 0.05); /* Light gray overlay on hover */
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Title */
 .event-creation-title {
-  text-align: center; /* Center the title */
-  font-size: 24px;
+  text-align: center;
+  font-size: 26px; /* Slightly larger font */
   font-weight: bold;
-  color: #007bff; /* Bold blue for emphasis */
-  margin: 0; /* Remove default margins to control spacing */
-  flex-grow: 1; /* Allow title to take up remaining space */
+  color: #007bff;
+  margin: 0;
+  flex-grow: 1;
 }
 
 /* Form */
 .event-creation-form {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Increased gap for better spacing */
+  gap: 18px; /* Slightly larger gap */
 }
 
 /* Image Upload Section */
 .event-image-upload-section {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center image and label */
-  margin-bottom: 20px; /* Space before the next input */
-  position: relative; /* Needed for absolute positioning of the file input */
+  align-items: center;
+  margin-bottom: 25px; /* Increase margin */
+  position: relative;
 }
 
 .event-creation-preview-image {
-  width: 150px;
-  height: 150px;
+  width: 130px; /* Slightly larger image */
+  height: 130px; /* Slightly larger image */
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-  z-index: 1; /* Ensure image is above the hidden input */
+  margin-bottom: 12px; /* Increase margin */
+  z-index: 1;
 }
 
 .event-creation-file-input {
-  opacity: 0; /* Hide the default file input */
+  opacity: 0;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   cursor: pointer;
-  z-index: 2; /* Ensure hidden input is above the label */
+  z-index: 2;
 }
 
 .event-creation-label[for="image"] {
   display: inline-block;
-  padding: 10px 15px;
-  background-color: #007bff; /* Blue button style */
+  padding: 10px 15px; /* Maintain padding */
+  background-color: #007bff;
   color: white;
-  border-radius: 6px;
+  border-radius: 6px; /* Maintain border radius */
   cursor: pointer;
-  font-size: 16px;
+  font-size: 16px; /* Maintain font size */
   transition: background-color 0.3s ease;
-  z-index: 3; /* Ensure label is above the hidden input */
+  z-index: 3;
 }
 
 .event-creation-label[for="image"]:hover {
   background-color: #0056b3;
 }
+
 /* Labels */
 .event-creation-label {
-  font-size: 16px; /* Slightly larger font for readability */
+  font-size: 16px; /* Maintain font size */
   font-weight: bold;
-  color: #333; /* Dark gray for subtle contrast */
+  color: #333;
 }
 
 /* Inputs and textarea */
 .event-creation-input,
 .event-creation-textarea {
   width: 100%;
-  padding: 14px; /* Extra padding for comfort */
+  padding: 12px; /* Slightly reduce from previous larger size */
   margin-top: 5px;
-  border: 1px solid #aaa; /* Softer border color */
-  border-radius: 8px; /* Smooth corners */
-  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 8px; /* Maintain border radius */
+  font-size: 16px; /* Maintain font size */
   box-sizing: border-box;
-  background-color: #f8f8f8; /* Light gray background for differentiation */
-  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Interactive effect */
+  background-color: #f8f8f8;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .event-creation-input:focus,
 .event-creation-textarea:focus {
-  border-color: #007bff; /* Blue highlight on focus */
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle glow on focus */
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* Textarea */
 .event-creation-textarea {
-  height: 150px; /* Increased height for more room */
+  height: 130px; /* Slightly increase height */
   resize: vertical;
 }
 
 /* Button */
 .event-creation-button {
-  padding: 14px 24px; /* Larger padding for a bold look */
-  background-color: #28a745; /* Green for positive action */
+  padding: 14px 24px; /* Maintain padding */
+  background-color: #28a745;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 18px;
+  border-radius: 8px; /* Maintain border radius */
+  font-size: 18px; /* Maintain font size */
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth interaction */
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .event-creation-button:disabled {
-  background-color: #6c757d; /* Neutral gray when disabled */
+  background-color: #6c757d;
   cursor: not-allowed;
 }
 
 .event-creation-button:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838;
 }
 
 .event-creation-button:active {
@@ -180,8 +183,8 @@
 
 /* Error message */
 .error-message {
-  color: #dc3545; /* Red color for error */
-  font-size: 14px;
+  color: #dc3545;
+  font-size: 14px; /* Maintain font size */
   margin-top: 10px;
   text-align: center;
 }
@@ -191,26 +194,20 @@
   .event-creation-container {
     width: 95%;
     padding: 15px;
-    padding-top: 15px; /* Adjust top padding for smaller screens */
+    padding-top: 15px;
   }
 
   .event-creation-header {
     margin-bottom: 15px;
-    display: flex; /* Ensure it's a flex container */
-    align-items: center; /* Vertically align items */
-    justify-content: center; /* Center the title */
   }
 
   .event-creation-title {
     font-size: 20px;
-    text-align: center; /* Center title on smaller screens */
-    flex-grow: 1; /* Allow title to take up space */
   }
 
   .event-creation-back-button {
     font-size: 20px;
     margin-right: 10px;
-    position: absolute; /* Keep it absolute */
     left: 15px;
   }
 
@@ -230,8 +227,8 @@
   }
 
   .event-creation-preview-image {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
   }
 
   .event-creation-label[for="image"] {
@@ -249,7 +246,7 @@
   .event-creation-back-button {
     font-size: 18px;
     margin-right: 8px;
-    left: 10px; /* Adjust position for very small screens */
+    left: 10px;
   }
 
   .event-creation-button {

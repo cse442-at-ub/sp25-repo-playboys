@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./makeEvent.css";
 
@@ -24,7 +24,10 @@ const CreateEvent: React.FC = () => {
   const [preview, setPreview] = useState<string>("./static/LandingPageWallpaper.png"); // Default image path
   const [error, setError] = useState<string>("");
   const navigate = useNavigate(); // useNavigate hook for redirection
-
+  // Scroll to the top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
