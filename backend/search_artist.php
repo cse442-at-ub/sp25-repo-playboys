@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . "/headers.php";
+require __DIR__ ."/userDatabaseGrabber.php";
 header('Content-Type: application/json');
 
 $config = include __DIR__ . '/config.php';
@@ -112,8 +113,8 @@ if (isset($_GET['q'])) {
             $event_results = $event_result->fetch_all(MYSQLI_ASSOC);
             foreach(array_reverse($event_results) as $row){
                 $results["events"][] = [
-                    "date" => $row["date"],
-                    "time" => $row["time"],
+                    "date" => formatDateToMDY($row["date"]),
+                    "time" => convertTo12Hour($row["time"]),
                     "location" => $row["location"],
                     "name" => $row["title"],
                     "artist" => $row["creator"],
