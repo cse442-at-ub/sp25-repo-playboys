@@ -261,7 +261,15 @@ const Explore: React.FC = () => {
         </div>
 
         {/* Upcoming Events */}
-        <h2 className="ep-section-title">Upcoming Events</h2>
+        <h2 className="ep-event-section-title">
+          <span>Upcoming Events</span>
+          <button
+            className="ep-create-event-button"
+            onClick={() => navigate("/event-creation")} // Adjust the navigation to your desired page
+          >
+            Create Event
+          </button>
+        </h2>
         <div className="ep-events-container">
           {myEvents.length > 0 ? (
             myEvents.map((event) => (
@@ -289,7 +297,6 @@ const Explore: React.FC = () => {
             <p>No upcoming events</p>
           )}
         </div>
-
       </div>
       <div className="ep-songrecommend">
         <SongRecommendation />
