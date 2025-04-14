@@ -12,6 +12,8 @@ $port = 3306; //port number for sql database
 // Create connection
 $conn = new mysqli($host, $username, $password, $database, $port);
 
+
+
 // Check connection
 if ( $conn->connect_error ) 
 {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../user_profile/Sidebar";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer"; // Adjust path if needed
+import MainContent from "../MainContent"; // Adjust path if needed
 
 const genres = [
   { name: "Rock", color: "#A44036" },
@@ -15,16 +15,32 @@ const genres = [
   { name: "Electronic", color: "#00BCD4" },
 ];
 
+interface Event {
+  id: string;
+  title: string;
+  location: string;
+  date: string;
+  time: string;
+  image_url: string;
+  creator: string;
+}
+
 const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
   const [topGenres, setTopGenres] = useState<any[]>([]);
+  const [myEvents, setMyEvents] =  useState<Event[]>([]);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
-
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim() !== '') {
+      navigate(`/search_results?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   // Fetch top artists.
   useEffect(() => {
@@ -46,6 +62,32 @@ const Explore: React.FC = () => {
       .catch((error) => console.error("Error fetching top songs:", error));
   }, []);
 
+
+  {/* fetch my events*/}
+  useEffect(() => {
+    const myEvent = async () => {
+      try{
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/joinedEvents.php`,{
+          method: "GET", 
+          headers: 
+          {
+            "Content-Type": "application/json" 
+          },
+          credentials: "include"
+        });
+        const result = await response.json();
+        if(result.status === "success"){
+          setMyEvents(result.data);
+        }else{
+          console.log("no results found");
+        }
+      }catch (error){
+        console.error("Error fetching My Events:", error);
+      }
+    }; 
+    myEvent();
+}, []);
+
   // Fetch top genres.
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}backend/topGenres.php`)
@@ -57,7 +99,7 @@ const Explore: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}backend/custom_communities/getAllCommunities.php`, {
+    fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getAllCommunities.php`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -107,19 +149,19 @@ const Explore: React.FC = () => {
   };
 
   return (
+    <MainContent>
     <div className="ep-explore-page">
-      <div className="ep-sidebar">
-        <Sidebar />
-      </div>
-
       <div className="ep-explore-content">
         {/* Search Bar */}
         <div className="ep-search-bar-container">
-          <input
-            type="text"
-            className="ep-search-bar"
-            placeholder="Search for a genre, artist, songs... 🔍"
-          />
+        <input
+              type="text"
+              className="ep-search-bar"
+              placeholder="Search for a genre, artist, songs... 🔍"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+        />
         </div>
 
         {/* What Are People Listening To */}
@@ -219,32 +261,41 @@ const Explore: React.FC = () => {
         </div>
 
         {/* Upcoming Events */}
-        <h2 className="ep-section-title">Upcoming Events</h2>
+        <h2 className="ep-event-section-title">
+          <span>Upcoming Events</span>
+          <button
+            className="ep-create-event-button"
+            onClick={() => navigate("/event-creation")} // Adjust the navigation to your desired page
+          >
+            Create Event
+          </button>
+        </h2>
         <div className="ep-events-container">
-          <div className="ep-event-circle">
-            <div className="ep-event-date">
-              Feb 31
-              <br />
-              13:61 PM
-            </div>
-            <div className="ep-event-location">Metlife</div>
-          </div>
-          <div className="ep-event-circle">
-            <div className="ep-event-date">
-              Jan 1
-              <br />
-              1:11 AM
-            </div>
-            <div className="ep-event-location">Metlife</div>
-          </div>
-          <div className="ep-event-circle">
-            <div className="ep-event-date">
-              Aug 2
-              <br />
-              2:22 PM
-            </div>
-            <div className="ep-event-location">Orchard Park</div>
-          </div>
+          {myEvents.length > 0 ? (
+            myEvents.map((event) => (
+              <div
+                key={event.id}
+                className="ep-event-circle"
+                onClick={() => navigate(`/event?id=${event.id}`)}
+                style={{
+                  backgroundImage: `url(${event.image_url})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                <div className="ep-event-overlay">
+                  <div className="ep-event-date">
+                    {event.date}
+                    <br />
+                    {event.time}
+                  </div>
+                  <div className="ep-event-location">{event.location}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming events</p>
+          )}
         </div>
       </div>
       <div className="ep-songrecommend">
@@ -259,6 +310,7 @@ const Explore: React.FC = () => {
         />
       )}
     </div>
+    </MainContent>
   );
 };
 
