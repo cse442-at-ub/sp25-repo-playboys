@@ -61,19 +61,80 @@ if (isset($top_playlists['error'])) {
     exit();
 }
 
-// Create an array to store simplified playlist information as before
-$data = [];
+// Prepare two arrays:
+// 1. $playlistData: extended info for the database storage (includes 'songs')
+// 2. $outputData: simplified output for the client (only 'name' and 'image')
+$playlistData = [];
+$outputData = [];
+
+// Loop through each fetched playlist
 foreach ($top_playlists['items'] as $playlist) {
-    $data[] = [
-        'name'  => $playlist['name'],
-        'image' => isset($playlist['images'][0]['url']) ? $playlist['images'][0]['url'] : ''
+    $name = $playlist['name'];
+    $image = isset($playlist['images'][0]['url']) ? $playlist['images'][0]['url'] : '';
+    $playlistId = $playlist['id'];
+    
+    // Create an empty array to hold songs
+    $songs = [];
+    
+    // Build the URL to fetch the tracks for the given playlist (limiting to 5 songs; adjust limit as needed)
+    $tracks_url = "https://api.spotify.com/v1/playlists/{$playlistId}/tracks?limit=5";
+    
+    // Initialize a new cURL session for fetching tracks
+    $ch_tracks = curl_init();
+    curl_setopt_array($ch_tracks, [
+        CURLOPT_URL            => $tracks_url,
+        CURLOPT_HTTPHEADER     => ["Authorization: Bearer $access_token"],
+        CURLOPT_RETURNTRANSFER => true
+    ]);
+    $tracks_response = curl_exec($ch_tracks);
+    curl_close($ch_tracks);
+    
+    $tracks_data = json_decode($tracks_response, true);
+    
+    // Check if there's an error fetching tracks; if so, leave songs empty.
+    if (!isset($tracks_data['error']) && isset($tracks_data['items'])) {
+        // Process each track item
+        foreach ($tracks_data['items'] as $item) {
+            if (isset($item['track']) && $item['track'] !== null) {
+                $track = $item['track'];
+                $songName = $track['name'];
+                
+                // Extract artist names (join multiple artists with a comma)
+                $artistNames = [];
+                if (isset($track['artists'])) {
+                    foreach ($track['artists'] as $artist) {
+                        $artistNames[] = $artist['name'];
+                    }
+                }
+                $artistStr = implode(', ', $artistNames);
+                
+                // Add the song to the songs array
+                $songs[] = [
+                    "song"   => $songName,
+                    "artist" => $artistStr
+                ];
+            }
+        }
+    }
+    
+    // Build extended playlist info for database (with the songs array)
+    $playlistData[] = [
+        'name'  => $name,
+        'image' => $image,
+        'songs' => $songs
+    ];
+    
+    // Build simplified output format for the client (only name and image)
+    $outputData[] = [
+        'name'  => $name,
+        'image' => $image
     ];
 }
 
-// Convert the array to a JSON string for database storage
-$playlistsJson = json_encode($data);
+// Convert extended playlist data to JSON string for database storage
+$playlistsJson = json_encode($playlistData);
 
-// Insert (or update) the playlists into the "user_playlists" table
+// Insert (or update) the playlists in the "user_playlists" table
 $stmt = $conn->prepare("INSERT INTO user_playlists (username, playlists) VALUES (?, ?)
                         ON DUPLICATE KEY UPDATE playlists = VALUES(playlists)");
 if (!$stmt) {
@@ -86,6 +147,6 @@ if (!$stmt->execute()) {
     exit();
 }
 
-// Output the playlists in the original format
-echo json_encode($data);
+// Output the playlists in the original simplified format (only name and image)
+echo json_encode($outputData);
 ?>
