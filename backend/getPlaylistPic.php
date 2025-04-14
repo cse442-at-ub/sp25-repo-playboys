@@ -1,6 +1,4 @@
 <?php
-// playlistTracks.php
-
 require_once __DIR__ . "/cookieAuthHeader.php";
 
 // Verify that both the 'user' and 'playlist' parameters are provided
@@ -68,12 +66,11 @@ if (!$foundPlaylist) {
     exit();
 }
 
-// Retrieve the songs from the found playlist. If no songs key exists, return an empty array.
-$songs = isset($foundPlaylist['songs']) ? $foundPlaylist['songs'] : [];
+$imageUrl = isset($foundPlaylist['image']) ? $foundPlaylist['image'] : "https://media.istockphoto.com/id/1134035116/vector/online-media-cloud-audio-streaming-online-music-concept-vector-illustration-eps-10.jpg?s=612x612&w=0&k=20&c=iX5IJ0cODOSK6i3HttYRjm8dedKYiEpw5OCJGs5Xkig=";
 
 echo json_encode([
     "status" => "success",
-    "tracks" => $songs
+    "tracks" => $imageUrl
 ]);
 exit();
 ?>
