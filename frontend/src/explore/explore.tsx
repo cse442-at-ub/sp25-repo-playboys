@@ -67,7 +67,7 @@ const Explore: React.FC = () => {
   useEffect(() => {
     const myEvent = async () => {
       try{
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/joinedEvents.php`,{
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/exploreEvents.php`,{
           method: "GET", 
           headers: 
           {

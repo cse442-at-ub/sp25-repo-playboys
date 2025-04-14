@@ -143,6 +143,10 @@ function convertToShortDate($date) {
     $timestamp = strtotime($date);
     return date("M j", $timestamp);
 }
+
+function formatDateToMDY($dateString) {
+    return date("m/d/Y", strtotime($dateString));
+}
 ?>
 
 
