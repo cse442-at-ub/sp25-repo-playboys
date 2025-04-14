@@ -79,6 +79,32 @@
 }
 
 /* Upcoming Events */
+.ep-event-section-title {
+  display: flex;
+  justify-content: space-between; /* Ensures space between title and button */
+  align-items: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bolder;
+}
+.ep-event-section-title span {
+  text-decoration: underline; /* Apply underline only to the title text */
+}
+
+.ep-create-event-button {
+  background-color: #4CAF50; /* Green color for the button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.ep-create-event-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
 .ep-events-container {
   display: flex;
   justify-content: space-around;
@@ -97,19 +123,42 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  cursor: pointer; /* Makes it clickable */
+}
+
+.ep-event-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 1; /* Ensure overlay is above the background image */
+  border-radius: 50%; /* Ensure overlay fits inside the circle */
+}
+
+.ep-event-date,
+.ep-event-location {
+  color: white; /* Text color */
+  z-index: 2; /* Ensure text appears above the overlay */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Text shadow for better readability */
 }
 
 .ep-event-date {
   font-size: 14px;
-  text-align: center;
   margin-bottom: 5px;
 }
 
 .ep-event-location {
   font-size: 14px;
-  text-align: center;
   font-weight: bold;
 }
+
 
 .explore-content {
   margin-right: 10%;

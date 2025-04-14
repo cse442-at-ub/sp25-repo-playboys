@@ -8,6 +8,12 @@ interface Friend {
   image: string;
 }
 
+interface Event {
+  title: string;
+  image: string;
+  id: string;
+}
+
 function Sidebar() {
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user");
@@ -16,6 +22,7 @@ function Sidebar() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("Explore");
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const { csrfToken } = useCSRFToken();
 
   useEffect(() => {
@@ -26,7 +33,28 @@ function Sidebar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+  useEffect(() => { 
+ 
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/joinedEvents.php`, {
+          method: "GET",
+          credentials: "include",
+          headers: {"page-source": "sidebar", 'CSRF-Token': csrfToken },
+  
+        });
+        const result = await response.json();
+        if(result.status === "success"){
+          setEvents(result.data);
+        } else {
+          console.log("no events found for you");
+        }
+      } catch (error){
+        console.error("Error fetching events");
+      }
+    }
+    fetchEvents();
+  }, []);
   useEffect(() => {
     const fetchFriends = async () => {
       try {
@@ -54,7 +82,6 @@ function Sidebar() {
 
   const sections = [
     { title: "Community", count: 8 },
-    { title: "My Artist", count: 8 },
   ];
 
   const menuItems = [
@@ -131,6 +158,7 @@ function Sidebar() {
           {sections.map((section, index) => (
             <SidebarSection key={index} title={section.title} count={section.count} />
           ))}
+          <SidebarSection title="Events" events={events} />
           <hr className="my-4 border-3" style={{ width: "100%", margin: "auto" }} />
         </>
       )}
@@ -142,10 +170,13 @@ function Sidebar() {
   );
 }
 
-function SidebarSection({ title, count, friends, user }: { title: string; count?: number; friends?: Friend[]; user?: string }) {
+function SidebarSection({ title, count, friends, events, user }: { title: string; count?: number; friends?: Friend[]; events?: Event[]; user?: string }) {
   const navigate = useNavigate();
   const handleFriendClick = (friendName: string) => {
     navigate(`/userprofile?user=${friendName || ""}`);
+  };
+  const handleEventClick = (id: string) =>{
+    navigate(`/event?id=${id}`);
   };
 
   return (
@@ -172,6 +203,23 @@ function SidebarSection({ title, count, friends, user }: { title: string; count?
               />
               <div style={{ fontSize: "12px", cursor: "pointer" }} onClick={() => handleFriendClick(friend.name)}>
                 {friend.name}
+              </div>
+            </div>
+          ))
+        ) : title === "Events" && events && events.length > 0 ? (
+          /* Events Section */
+          events.map((event, i) => (
+            <div key={i} className="text-center">
+              <img
+                src={event.image || "./static/EventPlaceholder.png"}
+                alt={event.title}
+                className="rounded-circle"
+                style={{ width: "50px", height: "50px", cursor: "pointer" }}
+                onClick={() => handleEventClick(event.id)}
+                onError={(e) => (e.currentTarget.src = "./static/EventPlaceholder.png")}
+              />
+              <div style={{ fontSize: "12px", cursor: "pointer" }} onClick={() => handleEventClick(event.id)}>
+                {event.title}
               </div>
             </div>
           ))

@@ -15,11 +15,22 @@ const genres = [
   { name: "Electronic", color: "#00BCD4" },
 ];
 
+interface Event {
+  id: string;
+  title: string;
+  location: string;
+  date: string;
+  time: string;
+  image_url: string;
+  creator: string;
+}
+
 const Explore: React.FC = () => {
   const navigate = useNavigate();
   const [topArtists, setTopArtists] = useState<any[]>([]);
   const [topTracks, setTopTracks] = useState<any[]>([]);
   const [topGenres, setTopGenres] = useState<any[]>([]);
+  const [myEvents, setMyEvents] =  useState<Event[]>([]);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,6 +61,32 @@ const Explore: React.FC = () => {
       })
       .catch((error) => console.error("Error fetching top songs:", error));
   }, []);
+
+
+  {/* fetch my events*/}
+  useEffect(() => {
+    const myEvent = async () => {
+      try{
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/joinedEvents.php`,{
+          method: "GET", 
+          headers: 
+          {
+            "Content-Type": "application/json" 
+          },
+          credentials: "include"
+        });
+        const result = await response.json();
+        if(result.status === "success"){
+          setMyEvents(result.data);
+        }else{
+          console.log("no results found");
+        }
+      }catch (error){
+        console.error("Error fetching My Events:", error);
+      }
+    }; 
+    myEvent();
+}, []);
 
   // Fetch top genres.
   useEffect(() => {
@@ -224,32 +261,41 @@ const Explore: React.FC = () => {
         </div>
 
         {/* Upcoming Events */}
-        <h2 className="ep-section-title">Upcoming Events</h2>
+        <h2 className="ep-event-section-title">
+          <span>Upcoming Events</span>
+          <button
+            className="ep-create-event-button"
+            onClick={() => navigate("/event-creation")} // Adjust the navigation to your desired page
+          >
+            Create Event
+          </button>
+        </h2>
         <div className="ep-events-container">
-          <div className="ep-event-circle">
-            <div className="ep-event-date">
-              Feb 31
-              <br />
-              13:61 PM
-            </div>
-            <div className="ep-event-location">Metlife</div>
-          </div>
-          <div className="ep-event-circle">
-            <div className="ep-event-date">
-              Jan 1
-              <br />
-              1:11 AM
-            </div>
-            <div className="ep-event-location">Metlife</div>
-          </div>
-          <div className="ep-event-circle">
-            <div className="ep-event-date">
-              Aug 2
-              <br />
-              2:22 PM
-            </div>
-            <div className="ep-event-location">Orchard Park</div>
-          </div>
+          {myEvents.length > 0 ? (
+            myEvents.map((event) => (
+              <div
+                key={event.id}
+                className="ep-event-circle"
+                onClick={() => navigate(`/event?id=${event.id}`)}
+                style={{
+                  backgroundImage: `url(${event.image_url})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                <div className="ep-event-overlay">
+                  <div className="ep-event-date">
+                    {event.date}
+                    <br />
+                    {event.time}
+                  </div>
+                  <div className="ep-event-location">{event.location}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming events</p>
+          )}
         </div>
       </div>
       <div className="ep-songrecommend">

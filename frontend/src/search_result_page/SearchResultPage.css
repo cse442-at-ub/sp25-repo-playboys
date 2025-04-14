@@ -10,11 +10,11 @@
 
 /* Main content takes up most of the space */
 .main-content {
-    flex: 1;
+    flex: 1; /* Allow it to take up remaining space */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%; /* Ensure the content takes full available width */
+    align-items: flex-start; /* Align items to the start, not center */
+    width: 100%; /* Ensure the content takes full available width within its flex container */
 }
 
 /* Row containing both the back button and search bar */
@@ -23,6 +23,7 @@
     width: 100%;
     align-items: center;
     position: relative;
+    margin-bottom: 20px; /* Add some space below the search bar row */
 }
 
 /* Back button styling */
@@ -32,47 +33,46 @@
     color: black; /* Back arrow is black */
     font-size: 36px; /* Bigger back arrow */
     padding: 10px;
-    position: absolute; /* Position absolutely */
+    position: absolute; /* Position absolutely within the search-bar-row */
     left: 0; /* All the way to the left */
     cursor: pointer;
     transition: all 0.3s ease;
+    z-index: 10; /* Ensure it's above other elements if needed */
 }
 
 /* Adjust the song results container */
 .song-results {
-    width: 85%;
-    margin-top: 20px;
+    width: 100%; /* Take up the full width of the main content */
+    margin-top: 10px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
 .artist-results {
-    width: 85%;
+    width: 100%; /* Take up the full width of the main content */
     margin-top: 20px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
 .community-results {
-    width: 85%;
+    width: 100%; /* Take up the full width of the main content */
     margin-top: 20px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
 .event-results {
-    width: 85%;
+    width: 100%; /* Take up the full width of the main content */
     margin-top: 20px;
     padding: 10px;
     position: relative;
-    margin-right: 300px; /* Shift to the left */
 }
+
 /* Centered search bar container */
 .search-bar-container {
     flex-grow: 1; /* Allow the search bar to grow and center itself */
     display: flex;
     justify-content: center;
     margin-left: 60px; /* Adjust the left margin so it isn't hidden by the back arrow */
+    width: 100%; /* Ensure it takes full width within its parent */
 }
 
 /* Sidebar styling */
@@ -80,49 +80,48 @@
     width: 300px; /* Adjust width as needed */
 }
 
-/* Responsive Design: Stack elements on small screens */
+/* In your @media (max-width: 768px) block */
 @media (max-width: 768px) {
-    .search-result-container {
-        flex-direction: column;
-        align-items: center;
+    /* ... other mobile styles ... */
+
+    .main-content {
+        width: 100%;
+        overflow-x: hidden; /* Prevent horizontal scroll on the main content itself */
+        align-items: stretch; /* Make children stretch to the full width */
     }
 
-    .sidebar-container {
+    .song-results,
+    .artist-results,
+    .community-results,
+    .event-results {
         width: 100%;
+        margin-right: 0;
+        overflow-x: hidden; /* Also prevent horizontal scroll on these sections */
     }
 
     .search-bar-row {
-        position: relative;
-    }
-
-    .back-button {
-        position: static; /* Reset to default positioning */
+        width: 100%;
+        /* Ensure it doesn't cause overflow */
+        display: flex;
+        flex-wrap: nowrap; /* Prevent wrapping which could lead to wider content */
+        align-items: center;
     }
 
     .search-bar-container {
-        margin-left: 0; /* Reset margin to align properly on small screens */
+        flex-grow: 1;
+        margin-left: 10px; /* Adjust if needed */
+        width: auto; /* Allow it to take available width */
     }
 
-    .song-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
+    .back-button {
+        position: static;
+        margin-right: 10px; /* Add some space between button and search bar */
     }
-    .artist-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
-    }
-    .community-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
-    }
-    .event-results {
-        width: 100%; /* Ensure search results take full width on small screens */
-        margin-right: 0; /* Reset margin for small screens */
-    }
-    .main-content {
-        width: 100%; /* Reset width for small screens */
-        margin-left: 0; /* Reset margin for small screens */
-    }
+}
+
+/* General rule to prevent body overflow */
+body {
+    overflow-x: hidden;
 }
 
 
@@ -130,30 +129,18 @@
 
 /* css for search bar */
 .search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 600px; /* Increased width */
-    border: 2px solid black; /* Added black outline */
-}
-
-.search-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    width: 75%;
 }
 
 .search-input {
-    border: none;
-    outline: none;
-    background: transparent;
-    flex: 1;
+    width: 100%; /* Changed from 75% to 100% */
+    padding: 5px;
     font-size: 16px;
+    border-radius: 6px;
+    border: 1px dashed #000000;
 }
-
 
 
 
