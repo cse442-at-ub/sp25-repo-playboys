@@ -21,7 +21,7 @@ const CreateEvent: React.FC = () => {
     description: "",
   });
 
-  const [preview, setPreview] = useState<string>("");
+  const [preview, setPreview] = useState<string>("./static/LandingPageWallpaper.png"); // Default image path
   const [error, setError] = useState<string>("");
   const navigate = useNavigate(); // useNavigate hook for redirection
 
@@ -37,6 +37,10 @@ const CreateEvent: React.FC = () => {
     if (file) {
       setFormData((prev) => ({ ...prev, image: file }));
       setPreview(URL.createObjectURL(file));
+    } else {
+      // If no file is selected, revert to the default placeholder
+      setPreview("./static/eventPlaceholder.png");
+      setFormData((prev) => ({ ...prev, image: null }));
     }
   };
 
@@ -44,7 +48,7 @@ const CreateEvent: React.FC = () => {
     e.preventDefault();
     setError(""); // Reset error state before submission
 
-    // Step 1: Upload image if it exists
+    // Step 1: Upload image if a new one is selected
     let uploadedImageName = "";
 
     if (formData.image) {
@@ -75,6 +79,9 @@ const CreateEvent: React.FC = () => {
         setError("Image upload error.");
         return;
       }
+    } else {
+      // If no new image is uploaded, we'll use a default name on the backend
+      uploadedImageName = "./backend/eventImages/default_event.png"; 
     }
 
     // Step 2: Send event data to backend
@@ -84,7 +91,7 @@ const CreateEvent: React.FC = () => {
       date: formData.date,
       time: formData.time, // Include the time in the payload
       description: formData.description,
-      image: uploadedImageName, // optional: send image filename reference
+      image: uploadedImageName, // Send the determined image name
     };
 
     try {
@@ -112,34 +119,41 @@ const CreateEvent: React.FC = () => {
     }
   };
 
+  const handleBackButton = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
   return (
     <div className="event-creation-page-wrapper">
       <div className="event-creation-container">
-        <h1 className="event-creation-title">Create Event</h1>
+        <div className="event-creation-header">
+          <button
+            className="event-creation-back-button"
+            aria-label="Go back"
+            onClick={handleBackButton}
+          >
+            ←
+          </button>
+          <h1 className="event-creation-title">Create Event</h1>
+        </div>
         <form className="event-creation-form" onSubmit={handleSubmit}>
-          <div>
+          <div className="event-image-upload-section">
+            <img
+              src={preview}
+              alt="Event Preview"
+              className="event-creation-preview-image"
+              onError={(e) => (e.currentTarget.src = "./static/LandingPageWallpaper.png")}
+            />
             <label className="event-creation-label" htmlFor="image">
-              Upload Event Image
+              Browse Image
             </label>
             <input
               type="file"
               id="image"
               accept="image/*"
               onChange={handleImageChange}
-              className="event-creation-input"
-              required
+              className="event-creation-input event-creation-file-input"
             />
-            {preview && (
-              <img
-                src={preview}
-                alt="Event Preview"
-                style={{
-                  marginTop: "10px",
-                  width: "100%",
-                  borderRadius: "6px",
-                }}
-              />
-            )}
           </div>
 
           <div>
