@@ -73,7 +73,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       })
       .then(response => response.text())
       .then(result => {
-        alert(`Song liked! Response: ${result}`);
+        alert("Song added to Liked Songs Playlist")
       })
       .catch(error => {
         console.error("Error liking song:", error);
