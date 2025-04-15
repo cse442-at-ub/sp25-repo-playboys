@@ -4,8 +4,6 @@ import "./CommunityPage.css";
 import Sidebar from "../user_profile/Sidebar";
 import MainContent from "../MainContent";
 import { useCSRFToken } from '../csrfContent';
-import { get } from "jquery";
-import { Verify } from "crypto";
 
 interface Community {
   community_name: string;
@@ -13,7 +11,7 @@ interface Community {
   members: string[];
   id: number;
   member_count: number;
-  posts: Post[]
+  posts: Post[];
 }
 
 interface Post {
@@ -21,7 +19,7 @@ interface Post {
   title: string;
   song_name: string;
   post_id: number;
-  media_path: string; // posts use old/bad way of storing imge paths prepend the .env url to this path
+  media_path: string;
   description: string;
 }
 
@@ -29,20 +27,16 @@ const CommunityPage: React.FC = () => {
   const location = useLocation();
   const { csrfToken } = useCSRFToken();
   const [communityData, setCommunityData] = useState<Community>();
-  const [joined, setJoined] = useState<Boolean>(false)
-  
+  const [joined, setJoined] = useState<boolean>(false);
 
   const getCommunityName = () => {
-    // getting the name of the community from the URL
     const path = location.pathname;
     const segments = path.split("/");
     const encodedName = segments[segments.length - 1];
-    const communityName = decodeURIComponent(encodedName);
-    return communityName;
+    return decodeURIComponent(encodedName);
   };
 
   const getCommunityData = async (communityName: string) => {
-    console.log("Fetching data for", communityName);
     const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getCommInfo.php`, {
       method: 'POST',
       headers: {
@@ -54,47 +48,29 @@ const CommunityPage: React.FC = () => {
     });
 
     const data = await res.json();
-    console.log("Raw response from getCommInfo:", data);
-    return data
-  };
-  
-  const create_comunity = (community_name: string, picture: string, members: string[], id: number, member_count: number, posts: Post[]): void => {
-    setCommunityData({
-      community_name: community_name,
-      picture: picture,
-      members: members,
-      id: id,
-      member_count: member_count,
-      posts: posts
-    });
+    return data;
   };
 
   const createPosts = (posts: Post[]) => {
-      const postsList: Post[] = [];
-      for (const post of posts) {
-        console.log(post);
-        const newPost: Post = {
-          username: post.username,
-          title: post.title,
-          song_name: post.song_name,
-          post_id: post.post_id,
-          media_path: `${process.env.REACT_APP_API_URL}/${post.media_path}`, // posts use old/bad way of storing image paths prepend the .env url to this path
-          description: post.description,
-        };
-        postsList.push(newPost);
-      }
-      return postsList
-    };
-  
-
+    return posts.map((post) => ({
+      ...post,
+      media_path: `${process.env.REACT_APP_API_URL}${post.media_path.startsWith("/") ? "" : "/"}${post.media_path}`,
+    }));
+  };
 
   useEffect(() => {
     const communityName = getCommunityName();
     const fetchData = async () => {
-      // code for creating the community
       const data = await getCommunityData(communityName);
-      const posts = await createPosts(data.posts)
-      await create_comunity(data.community_name, data.picture, data.members, data.id, data.members.length, posts);
+      const posts = createPosts(data.posts);
+      setCommunityData({
+        community_name: data.community_name,
+        picture: data.picture,
+        members: data.members,
+        id: data.id,
+        member_count: data.members.length,
+        posts: posts,
+      });
     };
     fetchData();
   }, [location]);
@@ -104,10 +80,9 @@ const CommunityPage: React.FC = () => {
       updateUserStatus();
     }
   }, [communityData]);
-  
 
   const verifyUserSession = async () => {
-    const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -115,12 +90,9 @@ const CommunityPage: React.FC = () => {
       },
       credentials: 'include',
     });
-    const profileData = await profileRes.json();
-    if (profileData.status !== 'success') {
-      return "error";
-    }
-    return profileData.loggedInUser;
-  }
+    const data = await res.json();
+    return data.loggedInUser;
+  };
 
   const getUserCommunities = async (username: string) => {
     const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getcomms.php`, {
@@ -130,131 +102,129 @@ const CommunityPage: React.FC = () => {
         'CSRF-Token': csrfToken,
       },
       credentials: 'include',
-      body: JSON.stringify({ "user": username })
+      body: JSON.stringify({ user: username }),
     });
-    const data = await res.json();
-    return data
-  }
+    return await res.json();
+  };
 
   const updateUserStatus = async () => {
-    // get the profile
     const profile = await verifyUserSession();
-    console.log(profile);
-    // get the communties they are in
-    const communities = await getUserCommunities(profile)
-    // check to see if this community is in that list
-    if (communities.includes(communityData?.community_name)) {
-      setJoined(true);
-      return;
-    }
-    setJoined(false);
-    return;
-  }
+    const communities = await getUserCommunities(profile);
+    setJoined(communities.includes(communityData?.community_name));
+  };
 
-  const removeCommunityFromUserProfile = async () => {
-    console.log("removing comm from pfp");
-      var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/removecomtopfp.php`, {
-          method: 'POST', // Or 'GET' depending on your API
-          headers: {
-              'Content-Type': 'application/json',
-              'CSRF-Token': csrfToken
-          },
-          body: JSON.stringify({
-              "name": communityData?.community_name,
-              "image": communityData?.picture,
-              "user": await verifyUserSession()
-          })
-      });
-      var results = await response.json();
-      console.log(results)
-  }
+  const toggleMembership = async () => {
+    const user = await verifyUserSession();
+    const route = joined ? "leave_community.php" : "join_community.php";
+    const profileRoute = joined ? "removecomtopfp.php" : "addcomtopfp.php";
 
-  const removeUserFromCommunityMemberList = async () => {
-    var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/leave_community.php`, {
-    method: 'POST', // Or 'GET' depending on your API
-    headers: {
+    await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/${route}`, {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json',
-        'CSRF-Token': csrfToken
-    },
-    body: JSON.stringify({
-        "name": communityData?.community_name,
-        "image": communityData?.picture,
-        "user": await verifyUserSession()
-    })
-  });
-  var results = await response.json();
-  console.log(results)
-  }
-
-  const addCommunityToUserProfile = async () => {
-    console.log("adding community to profile");
-    var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/addcomtopfp.php`, {
-        method: 'POST', // Or 'GET' depending on your API
-        headers: {
-            'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken
-        },
-        body: JSON.stringify({
-          "name": communityData?.community_name,
-          "image": communityData?.picture,
-          "user": await verifyUserSession()
-        })
+        'CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify({
+        name: communityData?.community_name,
+        image: communityData?.picture,
+        user,
+      }),
     });
-    var results = await response.json();
-    console.log(results)
-  }
 
-  const addUserToCommunityMemberList = async () => {
-    console.log("adding user to  community");
-    var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/join_community.php`, {
-        method: 'POST', // Or 'GET' depending on your API
-        headers: {
-            'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken
-        },
-        body: JSON.stringify({
-          "name": communityData?.community_name,
-          "image": communityData?.picture,
-          "user": await verifyUserSession()
-        })
+    await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/${profileRoute}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify({
+        name: communityData?.community_name,
+        image: communityData?.picture,
+        user,
+      }),
     });
-    var results = await response.json();
-    console.log(results)
 
-  }
-
-
-  const handleJoinLeave = async () => {
-    if (joined){
-      await removeCommunityFromUserProfile();
-      await removeUserFromCommunityMemberList();
-    }
-    if (!joined){
-      await addUserToCommunityMemberList();
-      await addCommunityToUserProfile();
-    }
-    await updateUserStatus();
-  }
+    updateUserStatus();
+  };
 
   return (
     <MainContent>
-      <div>
-        <h1>Community: {communityData?.community_name} </h1>
-        <img src={communityData?.picture}></img>
-        <h3>Members: {communityData?.members}</h3>
-        <h3>member count: {communityData?.member_count}</h3>
-        <h3>Posts:</h3>
-        <ul>
-          {communityData?.posts?.map((post) => (
-            <li key={post.post_id}>
-              <strong>{post.title}</strong> by {post.username}
-            </li>
-          ))}
-        </ul>
-        <button onClick={handleJoinLeave}>{joined ? "Leave Community" : "Join Community"}</button>
+      <div className="community-page">
+        {/* Header */}
+        <div className="community-header">
+          <img
+            className="background-image"
+            src={communityData?.picture || process.env.PUBLIC_URL + "/static/placeholder.jpg"}
+            alt="Community Background"
+          />
+          <h1 className="community-name">{communityData?.community_name}</h1>
+          <button
+            className={`join-btn ${joined ? "leave" : ""}`}
+            onClick={toggleMembership}
+          >
+            {joined ? "Joined" : "Join"}
+          </button>
+        </div>
 
+        {/* Member Info */}
+        <div className="community-details">
+          <p><strong>Member count:</strong> {communityData?.member_count}</p>
+          <p><strong>Members:</strong> {communityData?.members.join(", ")}</p>
+        </div>
+
+        {/* Posts */}
+        {communityData?.posts?.map((post) => (
+          <div className="post" key={post.post_id}>
+            <div className="post-header">
+              <img
+                src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"}
+                alt="Profile"
+                className="profile-pic"
+              />
+              <span className="username">{post.username}</span>
+            </div>
+            <div className="caption">{post.title}</div>
+            {post.media_path && (
+              <img src={post.media_path} alt="Post" className="post-image" />
+            )}
+            <div className="controls">
+              <button className="heart-btn">
+                <img
+                  src={process.env.PUBLIC_URL + "/static/HeartIconUnlike.png"}
+                  alt="Like"
+                />
+              </button>
+              <button className="comment-btn">
+                <img
+                  src={process.env.PUBLIC_URL + "/static/CommentIcon.png"}
+                  alt="Comment"
+                />
+              </button>
+            </div>
+            <div className="comments-section">
+              <div className="comment">
+                <img
+                  src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"}
+                  alt="Commenter"
+                  className="comment-profile-pic"
+                />
+                <div className="comment-content">
+                  <span className="comment-username">User1</span>
+                  <p className="comment-text">This is a short comment, up to 100 characters max!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Floating Add Button */}
+        <button className="floating-add-btn">+</button>
+
+        {/* Sidebar */}
+        <div className="side-column">
+          <Sidebar />
+        </div>
       </div>
-      <Sidebar />
     </MainContent>
   );
 };
