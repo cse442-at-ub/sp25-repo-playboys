@@ -47,12 +47,7 @@ function Playlists() {
           const data = await response.json();
           if (data.login_user) {
             setUsername(data.login_user);
-            console.log("Logged in user:", data.login_user);
-          } else {
-            console.log("Username not found in response");
-          }
-        } else {
-          console.error("Failed to fetch username:", response.statusText);
+          } 
         }
       } catch (error) {
         console.error("Error fetching username:", error);
@@ -65,7 +60,6 @@ function Playlists() {
   }, [user]); // Dependency array ensures the fetch runs once when the component mounts
 
   const handleShowAllClick = () => {
-    console.log("Show all clicked");
     navigate('/playlist-view?user=' + (user && user !== "null" ? user : "")); // Navigate to the playlist view page
   };
 
@@ -86,7 +80,7 @@ function Playlists() {
           ))
         ) : (
           username === (user) || ((user || "") === "") ? (
-            <p>Please Login in with Spotify</p>
+            <p>Please login in with Spotify or like songs</p>
           ) : (
             <p>{user} has no Playlist</p>
           )
