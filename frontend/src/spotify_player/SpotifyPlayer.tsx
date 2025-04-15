@@ -63,15 +63,14 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       title: title,
       artist: formattedArtist,
     };
-
-    // Send a POST request to "addToLikePlaylist.php"
-    fetch("https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams(args).toString()
-    })
+  
+    // Create a query string from the parameters
+    const queryString = new URLSearchParams(args).toString();
+  
+    // Send a GET request with the query parameters appended to the URL
+    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php?${queryString}`, {
+        method: "GET",
+      })
       .then(response => response.text())
       .then(result => {
         alert(`Song liked! Response: ${result}`);
@@ -80,6 +79,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         console.error("Error liking song:", error);
       });
   };
+  
 
   return (
     <div
