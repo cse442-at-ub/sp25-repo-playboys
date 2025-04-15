@@ -3,7 +3,8 @@
 
 require __DIR__ . "/cookieAuthHeader.php";
 
-if (!isset($_POST['title']) || !isset($_POST['artist'])) {
+// Check that GET parameters exist
+if (!isset($_GET['title']) || !isset($_GET['artist'])) {
     echo json_encode([
         "status" => "error",
         "message" => "Missing title or artist"
@@ -11,8 +12,8 @@ if (!isset($_POST['title']) || !isset($_POST['artist'])) {
     exit();
 }
 
-$title  = trim($_POST['title']);
-$artist = trim($_POST['artist']);
+$title  = trim($_GET['title']);
+$artist = trim($_GET['artist']);
 
 $username = "";
 if (isset($result['username'])) {
