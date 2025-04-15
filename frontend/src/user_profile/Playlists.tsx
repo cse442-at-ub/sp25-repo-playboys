@@ -14,7 +14,6 @@ function Playlists() {
   const navigate = useNavigate();
   const { csrfToken } = useCSRFToken();
   useEffect(() => {
-    // Fetch the playlists from the backend when the component mounts
     const fetchPlaylists = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/userTopPlaylist.php?user=${(user && user !== "null") ? user : ""}`, {
