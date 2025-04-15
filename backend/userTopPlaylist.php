@@ -37,9 +37,21 @@ $stmt->execute();
 $result = $stmt->get_result()->fetch_assoc();
 $access_token = $result['access_token'];
 $spotifyId = $result['spotify_id'];
+
+// If the user is not logged in with Spotify, fetch playlists from local database
 if ($spotifyId == "" || $spotifyId == NULL) {
-    echo json_encode(["error" => "Please login with Spotify"]);
-    exit();
+    $stmt = $conn->prepare("SELECT playlists FROM user_playlists WHERE username = ?");
+    $stmt->bind_param("s", $login_username);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    if ($result && $result['playlists']) {
+        // If playlists are stored in the database, output them directly.
+        echo $result['playlists'];
+        exit();
+    } else {
+        echo json_encode(["error" => "No playlists found for user"]);
+        exit();
+    }
 }
 
 $top_playlists_url = "https://api.spotify.com/v1/me/playlists?limit=10"; // Fetches top 10 playlists
