@@ -1,18 +1,25 @@
 <?php
 session_start();
 header("Content-Type: application/json");
-require_once 'config.php'; 
+require_once 'config.php';
 
-// Get the access token from the session
-if (isset($_COOKIE['spotify_access_token'])) {
-    $accessToken = $_COOKIE['spotify_access_token'];
-} else {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Access token not available. Please log in again."
-    ]);
-    exit;
+// Check if the access token cookie exists
+if (!isset($_COOKIE['spotify_access_token'])) {
+    // Include the access_token.php file which sets the cookie
+    require_once 'access_token.php';
+    
+    // Re-check if the cookie is now set
+    if (!isset($_COOKIE['spotify_access_token'])) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Access token not available. Please try again."
+        ]);
+        exit;
+    }
 }
+
+// Get the access token from the cookie
+$accessToken = $_COOKIE['spotify_access_token'];
 
 // Get the artist parameter from the URL query string
 $artistName = isset($_GET['artist']) ? $_GET['artist'] : '';
