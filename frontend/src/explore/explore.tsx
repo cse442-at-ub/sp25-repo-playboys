@@ -37,7 +37,6 @@ const Explore: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [userType, setUserType] = useState<"spotify" | "nonspotify" | null>(null);
 
-  const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim() !== '') {
       navigate(`/search_results?q=${encodeURIComponent(searchQuery.trim())}`);
@@ -147,26 +146,27 @@ const Explore: React.FC = () => {
     }
   };
 
-//Fectch NonSpotify User
   useEffect(() => {
     const checkUserType = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/independentCookieAuth.php`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/getLoginType.php`, {
           credentials: "include",
         });
         const data = await res.json();
         if (data.status === "success") {
-          setUserType(data.spotify_id ? "spotify" : "nonspotify");
+          setUserType(data.is_spotify_user ? "spotify" : "nonspotify");
         } else {
           setUserType("nonspotify");
         }
       } catch (error) {
-        console.error("Error checking user type:", error);
+        console.error("Error checking login type:", error);
         setUserType("nonspotify");
       }
     };
+  
     checkUserType();
   }, []);
+  
 
 
   
@@ -323,15 +323,18 @@ const Explore: React.FC = () => {
             <p>No upcoming events</p>
           )}
         </div>
-      </div>
-      <div className="ep-songrecommend">
+
+        {/* Song Recommendation (after events) */}
+        <div className="ep-songrecommend" style={{ marginTop: "40px" }}>
           {userType === "spotify" ? (
             <SongRecommendation />
           ) : userType === "nonspotify" ? (
             <SongRecommendationNonSpotify />
           ) : (
-            <p>Loading recommendation...</p>
+            <p>Loading recommendations...</p>
           )}
+        </div>
+
       </div>
       {activeTrack && (
         <SpotifyPlayer
