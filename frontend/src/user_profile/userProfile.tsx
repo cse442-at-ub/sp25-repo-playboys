@@ -20,12 +20,23 @@ const UserProfile: React.FC = () => {
           <div className="mb-4"><TopArtists /></div>
           <div className="mb-4"><Playlists /></div>
           <div className="mb-4">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-          <CommunityResultsProfile />
-          <a href="#/create-community" className="btn btn-success rounded-circle d-flex justify-content-center align-items-center" style={{ width: "40px", height: "40px", fontSize: "24px", lineHeight: "0" }}>
-              +
-            </a>
+          <div className="mb-4">
+            {/* Header Row */}
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h2 className="mb-0">My Communities</h2>
+              <a
+                href="#/create-community"
+                className="btn btn-success rounded-circle d-flex justify-content-center align-items-center"
+                style={{ width: "40px", height: "40px", fontSize: "24px", lineHeight: "0" }}
+              >
+                +
+              </a>
+            </div>
+
+            {/* Community Grid */}
+            <CommunityResultsProfile />
           </div>
+
         </div>
 
         </div>
