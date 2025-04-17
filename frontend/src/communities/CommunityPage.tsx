@@ -4,6 +4,9 @@ import "./CommunityPage.css";
 import Sidebar from "../user_profile/Sidebar";
 import MainContent from "../MainContent";
 import { useCSRFToken } from '../csrfContent';
+import { useSidebar } from "../SidebarContext";
+import { useNavigate } from "react-router-dom";
+
 
 interface Community {
   community_name: string;
@@ -26,7 +29,9 @@ interface Post {
 
 const CommunityPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { csrfToken } = useCSRFToken();
+  const { isOpen } = useSidebar();
   const [communityData, setCommunityData] = useState<Community>();
   const [joined, setJoined] = useState<boolean>(false);
 
@@ -37,6 +42,15 @@ const CommunityPage: React.FC = () => {
   const [song, setSong] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const [currentUser, setCurrentUser] = useState<string>("");
+  const [commentsVisible, setCommentsVisible] = useState<{ [key: number]: boolean }>({});
+  const [expanded, setExpanded] = useState<{ [key: number]: boolean }>({});
+  const [newComments, setNewComments] = useState<{ [key: number]: string }>({});
+  const [comments, setComments] = useState<{ [key: number]: any[] }>({});
+  const [likedPosts, setLikedPosts] = useState<{ [key: number]: boolean }>({});
+  const [totalComments, setTotalComments] = useState<{ [key: number]: number }>({});
+
 
   const getCommunityName = () => {
     const path = location.pathname;
@@ -69,6 +83,7 @@ const CommunityPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const communityName = getCommunityName();
+      const user = await verifyUserSession();
       const data = await getCommunityData(communityName);
       const posts = createPosts(data.posts);
       setCommunityData({
@@ -79,6 +94,23 @@ const CommunityPage: React.FC = () => {
         member_count: data.members.length,
         posts,
       });
+
+      posts.forEach((post) => {
+        fetchComments(post.post_id, 3);
+      });
+
+      const fetchLikedPosts = async () => {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getLikedPosts.php?username=${user}`);
+        const data = await res.json();
+        const map: { [key: number]: boolean } = {};
+        data.liked.forEach((postId: number) => {
+          map[postId] = true;
+        });
+        setLikedPosts(map);
+      };
+  
+      await fetchLikedPosts();
+
     };
     fetchData();
   }, [location]);
@@ -99,6 +131,7 @@ const CommunityPage: React.FC = () => {
       credentials: 'include',
     });
     const data = await res.json();
+    setCurrentUser(data.loggedInUser);
     return data.loggedInUser;
   };
 
@@ -224,10 +257,60 @@ const CommunityPage: React.FC = () => {
     }
   };
 
+  const fetchComments = async (postId: number, limit: number = 3) => {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getComments.php?post_id=${postId}&limit=${limit}`);
+    const data = await res.json();
+    setComments((prev) => ({ ...prev, [postId]: data.comments }));
+    setTotalComments((prev) => ({ ...prev, [postId]: data.total }));
+  };
+
+  const handleLike = async (postId: number) => {
+    const liked = likedPosts[postId];
+  
+    const endpoint = liked ? "unlikePost.php" : "likePost.php";
+  
+    await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+      credentials: "include",
+      body: JSON.stringify({ post_id: postId, username: currentUser }),
+    });
+  
+    setLikedPosts((prev) => ({ ...prev, [postId]: !liked }));
+  };
+  
+  const toggleComments = (postId: number) => {
+    const isExpanded = expanded[postId];
+    const newLimit = isExpanded ? 3 : 10;
+    fetchComments(postId, newLimit);
+    setExpanded((prev) => ({ ...prev, [postId]: !isExpanded }));
+  };
+
+  const handleCommentSubmit = async (postId: number) => {
+    const text = newComments[postId];
+    if (!text) return;
+    await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/addComment.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+      credentials: "include",
+      body: JSON.stringify({ post_id: postId, username: currentUser, comment: text }),
+    });
+    setNewComments((prev) => ({ ...prev, [postId]: "" }));
+    fetchComments(postId, expanded[postId] ? 10 : 3);
+  };
+
+
   return (
     <MainContent>
       <div className="community-page">
         <div className="community-header">
+          <button
+            onClick={() => navigate(-1)}
+            className="community-back-btn"
+          >
+            ←
+          </button>
+
           <img className="background-image" src={communityData?.picture || process.env.PUBLIC_URL + "/static/placeholder.jpg"} alt="Community Background" />
           <h1 className="community-name">{communityData?.community_name}</h1>
           <button className={`join-btn ${joined ? "leave" : ""}`} onClick={toggleMembership}>
@@ -237,7 +320,7 @@ const CommunityPage: React.FC = () => {
 
         <div className="community-details">
           <p><strong>Member count:</strong> {communityData?.member_count}</p>
-          <p><strong>Members:</strong> {communityData?.members.join(", ")}</p>
+          {/*<p><strong>Members:</strong> {communityData?.members.join(", ")}</p>*/}
         </div>
 
         {communityData?.posts?.map((post) => (
@@ -253,23 +336,81 @@ const CommunityPage: React.FC = () => {
               <img src={post.media_path} alt="Post" className="post-image" />
             )}
             <div className="controls">
-              <button className="heart-btn">
-                <img src={process.env.PUBLIC_URL + "/static/HeartIconUnlike.png"} alt="Like" />
+              <button className="heart-btn" onClick={() => handleLike(post.post_id)}>
+              <img
+                src={
+                  likedPosts[post.post_id]
+                    ? process.env.PUBLIC_URL + "/static/HeartIconLike.png"
+                    : process.env.PUBLIC_URL + "/static/HeartIconUnlike.png"
+                }
+                alt="Like"
+              />
+
               </button>
-              <button className="comment-btn">
+              <button className="comment-btn" onClick={() => {
+                fetchComments(post.post_id);
+                setCommentsVisible(prev => ({ ...prev, [post.post_id]: !prev[post.post_id] }));
+              }}>
                 <img src={process.env.PUBLIC_URL + "/static/CommentIcon.png"} alt="Comment" />
               </button>
             </div>
+            
+            <div className="comments-section">
+            {comments[post.post_id]?.map((comment, index) => (
+              <div className="comment" key={index}>
+                <img src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"} className="comment-profile-pic" />
+                <div className="comment-content">
+                  <span className="comment-username">{comment.username}</span>
+                  <p className="comment-text">{comment.comment_text}</p>
+                </div>
+              </div>
+            ))}
+
+            {/* Show More / Show Less */}
+            {totalComments[post.post_id] > 3 && (
+              <div className="show-more-wrapper">
+                <button onClick={() => toggleComments(post.post_id)}>
+                  {expanded[post.post_id] ? "Show Less" : "Show More"}
+                </button>
+              </div>
+            )}
+
+
+            {/* Add comment form (only if visible) */}
+            {commentsVisible[post.post_id] && (
+              <>
+                <input
+                  value={newComments[post.post_id] || ""}
+                  onChange={(e) =>
+                    setNewComments((prev) => ({ ...prev, [post.post_id]: e.target.value }))
+                  }
+                  placeholder="Add a comment..."
+                />
+                <button onClick={() => handleCommentSubmit(post.post_id)}>Post</button>
+              </>
+            )}
+          </div>
+
+
           </div>
         ))}
 
         <div className="side-column">
           <Sidebar />
-          <button className="sidebar-add-btn" onClick={() => setShowCreatePostModal(true)}>+</button>
         </div>
+
+        {joined && (
+          <button
+            className={`sidebar-add-btn ${isOpen ? "sidebar-open" : "sidebar-closed"}`}
+            onClick={() => setShowCreatePostModal(true)}
+          >
+            +
+          </button>
+        )}
+
       </div>
 
-      {showCreatePostModal && (
+      {joined && showCreatePostModal && (
         <div className="create-post-modal">
           <div className="create-post-box">
             <h2>Create a New Post</h2>

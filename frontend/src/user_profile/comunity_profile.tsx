@@ -98,18 +98,16 @@ const CommunityResultsProfile = () => {
 
   return (
     <div>
-      <h1>My Communities</h1>
       <div className="ep-community-circle-row ">
           {communities.map((community) => (
             console.log(community),
             <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.name}`)}>
-              {/* <div
-                className="ep-community-circle"
-                style={{
-                  backgroundImage: `url("${community.background_image?.startsWith("data:image") ? community.background_image : defaultImage}")`
-                }}
-              /> */}
-              <img src={community.background_image} style={{width:75}}></img>
+              <img
+                  src={community.background_image}
+                  className="community-circle-image"
+                  alt={community.name}
+                />
+
               <p className="ep-community-name">{community.name}</p>
             </div>
           ))}
