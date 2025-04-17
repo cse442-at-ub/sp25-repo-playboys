@@ -35,7 +35,6 @@ const SongRecommendation: React.FC = () => {
     });
     
     const data = await res.json();
-    console.log("Fetched token:", data);
     setToken(data.access_token);
   };
 
