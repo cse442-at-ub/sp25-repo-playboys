@@ -79,9 +79,9 @@ function PlaylistsView() {
           ))
         ) : (
           username === (user) || ((user || "") === "") ? (
-            <p>Please login in with Spotify or like songs</p>
+            <p className="text-muted fst-italic">No Playlist Found</p>
           ) : (
-            <p>{user} has no Playlist</p>
+            <p className="text-muted fst-italic">No Playlist Found</p>
           )
         )}
       </div>

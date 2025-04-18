@@ -81,10 +81,10 @@ function TopArtists() {
   };
 
   return (
-    <div className="mt-4 px-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="h4 font-weight-bold">Top Artists</h2>
-        <button className="btn btn-link text-dark p-0 h6" onClick={handleShowAllClick}>
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="h3 fw-bold">My Top Artists</h2>
+        <button className="btn btn-link text-dark fw-semibold" onClick={handleShowAllClick}>
           Show all
         </button>
       </div>
@@ -97,9 +97,9 @@ function TopArtists() {
           ))
         ) : (
           username === (user) || ((user || "") === "") ? (
-            <p>Please Login in with Spotify</p>
+            <p className="text-muted fst-italic">No Top Artist Found</p>
           ) : (
-            <p>{user} has no Top Artist</p>
+            <p className="text-muted fst-italic">No Top Artist Found</p>
           )
         )}
       </div>

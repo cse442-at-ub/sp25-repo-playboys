@@ -7,8 +7,16 @@
     $login_username = $user["username"];
     $headers = getallheaders();
     //fetch all event id related to login user
+    $user = $login_username;
+    if(isset($headers["page-source"]) && $headers["page-source"] === "profile"){
+        $user = $_GET["user"];
+        if($user == null || $user == "" || $user == $login_username || empty($user)){
+            $user = $login_username;
+        }
+    }
+
     $stmt = $conn->prepare("SELECT id FROM event_participants WHERE username = ?");
-    $stmt->bind_param("s", $login_username);
+    $stmt->bind_param("s", $user);
     $stmt->execute();
     $result = $stmt->get_result();
     if($result->num_rows <=0 ){
@@ -48,17 +56,31 @@
         echo json_encode(["status" => "success", "data" => $data]);
         exit();
     }
+    if(isset($headers["page-source"]) && $headers["page-source"] === "profile"){
+        foreach($total_events as $e){
+            if(fulldatatime_checker($e["date"], $e["time"]) == false){
+                deleteEvent($conn, $e["id"]);
+                
+            }else {
+                $e_object = ["date" => formatDateToMDY($e["date"]),
+                "time" => convertTo12Hour($e["time"]),
+                "location" => $e["location"],
+                "name" => $e["title"], 
+                "artist" => $e["creator"],
+                "image" => $e["image_url"],
+                "id" => $e["id"],
+                
+               ];
+                $data[] = $e_object;
+            }
 
-
-    //data for explore page
-    $total_events = array_slice($total_events, 0, 3);
-    //convert time to more readable versions
-    foreach($total_events as &$e){
-        $e["date"] = convertToShortDate($e["date"]);
-        $e["time"] = convertTo12Hour($e["time"]);
+        }
+        echo json_encode(["status" => "success", "data" => $data]);
+        exit();
     }
-  
-    echo json_encode(["status" => "success", "data" => $total_events]);
-    exit();
+
+
+
+
 
 ?>

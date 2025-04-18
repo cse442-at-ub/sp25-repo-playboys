@@ -15,7 +15,7 @@
         $title = $event["title"];
         $location = $event["location"];
         $date = $event["date"];
-        $time = $event["time"];
+        $time = convertTo12Hour($event["time"]);
         $description = $event["description"];
         $image = $event["image_url"];
         $creator = $event["creator"];

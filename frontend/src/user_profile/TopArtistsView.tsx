@@ -88,9 +88,9 @@ function TopArtistsView() {
           ))
         ) : (
           username === (user) || ((user || "") === "") ? (
-            <p>Please Login in with Spotify</p>
+            <p className="text-muted fst-italic">No Top Artist Found</p>
           ) : (
-            <p>{user} has no Top Artist</p>
+            <p className="text-muted fst-italic">No Top Artist Found</p>
           )
         )}
       </div>

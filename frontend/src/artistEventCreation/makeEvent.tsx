@@ -28,6 +28,7 @@ const CreateEvent: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -84,7 +85,7 @@ const CreateEvent: React.FC = () => {
       }
     } else {
       // If no new image is uploaded, we'll use a default name on the backend
-      uploadedImageName = "./backend/eventImages/default_event.png"; 
+      uploadedImageName = "./backend/eventImages/default_event.png";
     }
 
     // Step 2: Send event data to backend
@@ -114,7 +115,7 @@ const CreateEvent: React.FC = () => {
         navigate("/explore"); // Use navigate for redirection
       } else {
         console.error("Event creation failed:", result.message);
-        setError("Event creation failed.");
+        setError(result.message || "Event creation failed."); // Use the backend message if available
       }
     } catch (error) {
       console.error("Event submission error:", error);
