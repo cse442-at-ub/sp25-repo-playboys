@@ -244,6 +244,7 @@ const Explore: React.FC = () => {
                   className="ep-list-item"
                   key={genre.name + index}
                   style={{ cursor: "pointer" }}
+                  onClick={() =>handleGenreClick(genre.name)}
                 >
                   {capitalize(genre.name)}
                 </div>
@@ -267,22 +268,6 @@ const Explore: React.FC = () => {
 
               <p className="ep-community-name">{community.name}</p>
             </div>
-          ))}
-        </div>
-
-
-        {/* Genre Section */}
-        <h2 className="ep-section-title">Browse All</h2>
-        <div className="ep-genre-container">
-          {genres.map((genre) => (
-            <button
-              key={genre.name}
-              className="ep-genre-box"
-              style={{ backgroundColor: genre.color, cursor: "pointer" }}
-              onClick={() => handleGenreClick(genre.name)}
-            >
-              {genre.name}
-            </button>
           ))}
         </div>
 
