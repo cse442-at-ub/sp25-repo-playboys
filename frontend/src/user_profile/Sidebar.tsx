@@ -249,80 +249,74 @@ function Sidebar() {
   );
 }
 
-function SidebarSection({ title, count, friends, events, user, communities }: { title: string; count?: number; friends?: Friend[]; events?: Event[]; user?: string, communities?: Community[] }) {
+function SidebarSection({
+  title,
+  friends,
+  events,
+  user,
+  communities
+}: {
+  title: string;
+  friends?: Friend[];
+  events?: Event[];
+  user?: string;
+  communities?: Community[];
+}) {
   const navigate = useNavigate();
-  const handleFriendClick = (friendName: string) => {
-    navigate(`/userprofile?user=${friendName || ""}`);
-  };
-  const handleEventClick = (id: string) =>{
-    navigate(`/event?id=${id}`);
+
+  const renderItem = (imgSrc: string, label: string, onClick: () => void, isCircle = false) => (
+    <div className="text-center" style={{ width: "50px", cursor: "pointer" }} onClick={onClick}>
+      <img
+        src={imgSrc}
+        alt={label}
+        style={{
+          width: "50px",
+          height: "50px",
+          objectFit: "cover",
+          border: "2px solid transparent",
+          padding: "2px",
+          borderRadius: "50%",
+        }}
+      />
+      <div style={{ fontSize: "12px", marginTop: "4px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        {label.length > 8 ? label.slice(0, 8) + "…" : label}
+      </div>
+    </div>
+  );
+
+  const sectionItems = () => {
+    if (title === "Friends" && friends?.length) {
+      return friends.map((friend, i) =>
+        renderItem(friend.image || "./static/ProfilePlaceholder.png", friend.name, () =>
+          navigate(`/userprofile?user=${friend.name || ""}`), true
+        )
+      );
+    } else if (title === "Events" && events?.length) {
+      return events.map((event, i) =>
+        renderItem(event.image || "./static/eventPlaceholder.jpg", event.title, () =>
+          navigate(`/event?id=${event.id}`))
+      );
+    } else if (title === "Communities" && communities?.length) {
+      return communities.map((comm, i) =>
+        renderItem(comm.background_image || "./static/CommunityPlaceholder.jpg", comm.name, () =>
+          navigate(`/community/${comm.name}`))
+      );
+    }
+    return <div className="text-muted" style={{ fontSize: "12px" }}>No {title.toLowerCase()} found.</div>;
   };
 
   return (
     <div className="mb-4 px-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <h4 style={{ fontSize: "16px" }}>{title}</h4>
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <h5 className="mb-0" style={{ fontSize: "15px" }}>{title}</h5>
         {title === "Friends" && (
-          <button className="btn btn-link text-primary p-0" style={{ fontSize: "12px" }} onClick={() => window.location.href = "#/friendlist"}>
+          <button className="btn btn-link text-primary p-0" style={{ fontSize: "12px" }}
+            onClick={() => window.location.href = "#/friendlist"}>
             Show All
           </button>
         )}
       </div>
-      <div className="d-flex flex-wrap gap-2">
-        {title === "Friends" && friends && friends.length > 0 ? (
-          friends.map((friend, i) => (
-            <div key={i} className="text-center">
-              <img
-                src={friend.image || "./static/ProfilePlaceholder.png"}
-                alt={friend.name}
-                className="rounded-circle"
-                style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                onClick={() => handleFriendClick(friend.name)}
-                onError={(e) => (e.currentTarget.src = "./static/ProfilePlaceholder.png")}
-              />
-              <div style={{ fontSize: "12px", cursor: "pointer" }} onClick={() => handleFriendClick(friend.name)}>
-                {friend.name}
-              </div>
-            </div>
-          ))
-        ) : title === "Events" && events && events.length > 0 ? (
-          /* Events Section */
-          events.map((event, i) => (
-            <div key={i} className="text-center">
-              <img
-                src={event.image || "./static/EventPlaceholder.png"}
-                alt={event.title}
-                className="rounded-circle"
-                style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                onClick={() => handleEventClick(event.id)}
-                onError={(e) => (e.currentTarget.src = "./static/EventPlaceholder.png")}
-              />
-              <div style={{ fontSize: "12px", cursor: "pointer" }} onClick={() => handleEventClick(event.id)}>
-                {event.title}
-              </div>
-            </div>
-          ))
-        ) : title === "Communities" && communities && communities.length > 0 ? (
-          /* Communities Section */
-          communities.map((community, i) =>(
-            <div key={i} className="text-center">
-              <img
-                src={community.background_image || "./static/EventPlaceholder.png"}
-                alt={community.name}
-                className="rounded-circle"
-                style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                onClick={() => navigate(`/community/${community.name}`)}
-                onError={(e) => (e.currentTarget.src = "./static/EventPlaceholder.png")}
-              />
-              <div style={{ fontSize: "12px", cursor: "pointer" }}>
-                {community.name}
-              </div>
-            </div>
-          ))
-          ) : (
-            <div style={{ fontSize: "12px", color: "gray" }}>No items to display</div>
-          )}
-        </div>
+      <div className="d-flex flex-wrap gap-2">{sectionItems()}</div>
     </div>
   );
 }
