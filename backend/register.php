@@ -69,7 +69,7 @@
     if (!empty($missingFields)) {
         echo json_encode([
             "status" => "error",
-            "message" => "Password must contain: " . implode(", ", $missingFields)
+            "message" => "Password is missing: " . implode(", ", $missingFields)
         ]);
         exit();
     }
