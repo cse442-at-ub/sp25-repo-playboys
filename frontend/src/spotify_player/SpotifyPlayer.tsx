@@ -24,29 +24,53 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
 
   // Drag/resize state
   const [position, setPosition] = useState({ x: 20, y: 20 });
+  const [size, setSize] = useState({ width: 600, height: 200 });
   const dragRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
+  const isResizing = useRef(false);
+  const resizeStart = useRef({ x: 0, y: 0, width: 600, height: 200 });
 
   // Mouse handlers for dragging
   const handleMouseDown = (e: React.MouseEvent) => {
+    // Don't start drag when clicking the resize handle
+    if ((e.target as HTMLElement).getAttribute('data-resize-handle')) return;
     isDragging.current = true;
     offset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
   };
+
+  const handleResizeMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    isResizing.current = true;
+    resizeStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      width: size.width,
+      height: size.height,
+    };
+  };
+
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
       if (isDragging.current) {
         setPosition({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y });
+      } else if (isResizing.current) {
+        const newWidth = resizeStart.current.width + (e.clientX - resizeStart.current.x);
+        const newHeight = resizeStart.current.height + (e.clientY - resizeStart.current.y);
+        setSize({ width: Math.max(newWidth, 100), height: Math.max(newHeight, 100) });
       }
     };
-    const onMouseUp = () => (isDragging.current = false);
+    const onMouseUp = () => {
+      isDragging.current = false;
+      isResizing.current = false;
+    };
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
-  }, []);
+  }, [position, size]);
 
   // Audio event listeners
   useEffect(() => {
@@ -84,32 +108,39 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     const formattedArtist = artist.charAt(0).toUpperCase() + artist.slice(1);
     const args = { title, artist: formattedArtist };
     const queryString = new URLSearchParams(args).toString();
-    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php?${queryString}`)
-      .then(res => res.text())
+    fetch(
+      `https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php?${queryString}`
+    )
+      .then((res) => res.text())
       .then(() => alert('Song added to Liked Songs Playlist'))
-      .catch(err => console.error('Error liking song:', err));
+      .catch((err) => console.error('Error liking song:', err));
   };
 
   return (
     <div
       className="spotify-player-wrapper"
-      style={{ left: position.x, top: position.y }}
+      style={{
+        left: position.x,
+        top: position.y,
+        width: size.width,
+        height: size.height,
+      }}
       ref={dragRef}
+      onMouseDown={handleMouseDown}
     >
-      {/* Drag handle + utility buttons */}
-      <div className="player-header" onMouseDown={handleMouseDown}>
+      <div className="player-header">
         <div className="header-title"></div>
         <div className="header-buttons">
           <button className="icon-btn" onClick={handleLike}>❤️</button>
           <button className="icon-btn" onClick={onClose}>❌</button>
         </div>
       </div>
-      {/* Track info */}
+
       <div className="track-info">
         <h1 className="song-title">{title}</h1>
         <h2 className="song-artist">{artist}</h2>
       </div>
-      {/* Progress bar */}
+
       <div className="progress-container">
         <span className="time-label">{formatTime(currentTime)}</span>
         <div className="progress-bar" onClick={seek}>
@@ -120,14 +151,29 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         </div>
         <span className="time-label">{formatTime(duration)}</span>
       </div>
-      {/* Playback controls */}
+
       <div className="controls">
-        <button className="icon-btn shuffle">🔀</button>
-        <button className="icon-btn prev">⏮️</button>
-        <button className="icon-btn play" onClick={togglePlay}> {isPlaying ? '⏸️' : '▶️'} </button>
+        <button className="icon-btn play" onClick={togglePlay}>
+          {isPlaying ? '⏸️' : '▶️'}
+        </button>
         <button className="icon-btn next">⏭️</button>
-        <button className="icon-btn repeat">🔁</button>
       </div>
+
+      {/* Resize handle */}
+      <div
+        data-resize-handle
+        style={{
+          width: 16,
+          height: 16,
+          position: 'absolute',
+          right: 8,
+          bottom: 8,
+          cursor: 'se-resize',
+          zIndex: 10,
+        }}
+        onMouseDown={handleResizeMouseDown}
+      />
+
       <audio ref={audioRef} src={trackUrl} />
     </div>
   );
