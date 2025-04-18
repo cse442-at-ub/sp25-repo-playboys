@@ -64,6 +64,9 @@ const ResetPassword: React.FC = () =>
 					error && <p className="error-message">{ error }</p>
 				]}
             </form>
+            <div className="register-link">
+            <a href="#/login"><span>Return to login</span></a>
+            </div>
         </div>
     </div>
   );

@@ -16,8 +16,6 @@ interface Song {
 const SongResults = ({ data }: { data: Song[] }) => {
 
     const songs: Song[] = data;   
-    console.log(songs);
-
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
 
