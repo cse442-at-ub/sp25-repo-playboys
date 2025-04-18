@@ -1,24 +1,88 @@
 .spotify-player-wrapper {
-    position: fixed;
-    z-index: 1050;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  .spotify-player-controls {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-bottom: 5px;
-    cursor: move;
-  }
-  
-  .spotify-player-controls button {
-    border: none;
-    background: transparent;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
+  position: absolute;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 20px;
+  width: 600px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  margin-bottom: 12px;
+}
+
+.header-buttons .icon-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.track-info {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.song-title {
+  font-size: 20px;
+  margin: 0;
+}
+
+.song-artist {
+  font-size: 14px;
+  margin: 4px 0 0;
+  font-weight: 400;
+  color: #444;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.time-label {
+  font-size: 12px;
+  width: 40px;
+  text-align: center;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #ccc;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+.progress-filled {
+  height: 100%;
+  background: #000;
+  border-radius: 4px 0 0 4px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.icon-btn.play {
+  font-size: 32px;
+}
