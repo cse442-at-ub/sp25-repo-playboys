@@ -156,7 +156,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         <button className="icon-btn play" onClick={togglePlay}>
           {isPlaying ? '⏸️' : '▶️'}
         </button>
-        <button className="icon-btn next">⏭️</button>
       </div>
 
       {/* Resize handle */}
