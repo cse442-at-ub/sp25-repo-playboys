@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",
-    "react-router-dom": "^7.4.0"
+    "react-router-dom": "^7.4.0",
+    "string-similarity": "^4.0.4"
   }
 }
