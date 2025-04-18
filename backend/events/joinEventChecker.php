@@ -12,6 +12,10 @@
         exit;
     }
     //check if user already in event
+    if(eventCreatorFetch($conn, $id) == $login_username){
+        echo json_encode(["status" => "creator", "message" => "You are the creator of this event"]);
+        exit();
+    }
     if(checkUserinEvents($conn, $login_username, $id)){
         echo json_encode(["status" => "joined", "message" => "Already joined the event"]);
         exit();

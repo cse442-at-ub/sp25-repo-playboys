@@ -147,6 +147,23 @@ function convertToShortDate($date) {
 function formatDateToMDY($dateString) {
     return date("m/d/Y", strtotime($dateString));
 }
+
+
+//grab event creator by using event_id. return null if none found
+function eventCreatorFetch($conn, $id){
+    $name = "";
+    $event_stmt = $conn->prepare("SELECT creator FROM artist_events WHERE id = ?");
+    $event_stmt->bind_param("s", $id);
+    $event_stmt->execute();
+    $event = $event_stmt->get_result();
+    
+    if($event->num_rows <= 0){
+        return $name = null;
+    }
+    $event = $event->fetch_assoc();
+    $name = $event["creator"];
+    return $name;
+}
 ?>
 
 
