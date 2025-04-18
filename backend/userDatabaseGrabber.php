@@ -164,6 +164,62 @@ function eventCreatorFetch($conn, $id){
     $name = $event["creator"];
     return $name;
 }
+
+function date_checker($date){
+    date_default_timezone_set('America/New_York');
+    $now = new DateTime();
+    $currentDate = $now->format('Y-m-d');
+
+    if ($date < $currentDate ) {
+        return false; // Event date and time are in the past
+    }
+    return true; // Event date and time are valid
+
+}
+
+function fulldatatime_checker($date, $time){
+    date_default_timezone_set('America/New_York');
+    
+    // Combine date and time into a single string
+    $datetime = $date . " " . $time;
+    
+    // Create a DateTime object from the input datetime string
+    $eventDateTime = DateTime::createFromFormat('Y-m-d H:i', $datetime);
+    
+    if ($eventDateTime === false) {
+        // Invalid datetime format
+        return false;
+    }
+
+    // Get the current datetime in the same format
+    $now = new DateTime();
+    
+    // Compare the event datetime with the current datetime
+    if ($eventDateTime < $now) {
+        return false; // Event time is in the past
+    }
+    
+    return true; // Event time is valid
+}
+
+
+function deleteEvent($conn, $id){
+    $delete_stmt = $conn->prepare("
+    DELETE FROM artist_events 
+    WHERE id = ?
+    ");
+    $delete_stmt->bind_param("s", $id);
+    $delete_stmt->execute();
+
+    //delete all participants in events
+    $delete_participants = $conn->prepare ("
+    DELETE FROM event_participants WHERE id = ?
+    ");
+    $delete_participants->bind_param("s", $id);
+    $delete_participants->execute();
+}
 ?>
+
+
 
 

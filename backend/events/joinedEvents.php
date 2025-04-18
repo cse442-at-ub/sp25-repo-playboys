@@ -58,16 +58,22 @@
     }
     if(isset($headers["page-source"]) && $headers["page-source"] === "profile"){
         foreach($total_events as $e){
-            $e_object = ["date" => formatDateToMDY($e["date"]),
-                         "time" => convertTo12Hour($e["time"]),
-                         "location" => $e["location"],
-                         "name" => $e["title"], 
-                         "artist" => $e["creator"],
-                         "image" => $e["image_url"],
-                         "id" => $e["id"],
-                         
-                        ];
-            $data[] = $e_object;
+            if(fulldatatime_checker($e["date"], $e["time"]) == false){
+                deleteEvent($conn, $e["id"]);
+                
+            }else {
+                $e_object = ["date" => formatDateToMDY($e["date"]),
+                "time" => convertTo12Hour($e["time"]),
+                "location" => $e["location"],
+                "name" => $e["title"], 
+                "artist" => $e["creator"],
+                "image" => $e["image_url"],
+                "id" => $e["id"],
+                
+               ];
+                $data[] = $e_object;
+            }
+
         }
         echo json_encode(["status" => "success", "data" => $data]);
         exit();

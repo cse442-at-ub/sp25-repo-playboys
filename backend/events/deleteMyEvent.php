@@ -16,19 +16,8 @@
     }
 
     //delete event in artist_event database
-    $delete_stmt = $conn->prepare("
-    DELETE FROM artist_events 
-    WHERE id = ?
-    ");
-    $delete_stmt->bind_param("s", $id);
-    $delete_stmt->execute();
-
-    //delete all participants in events
-    $delete_participants = $conn->prepare ("
-    DELETE FROM event_participants WHERE id = ?
-    ");
-    $delete_participants->bind_param("s", $id);
-    $delete_participants->execute();
+    deleteEvent($conn, $id);
+   
 
     //return success to frontend
     echo json_encode(['status' => 'success', 'message' => 'Event deleted successfully']);
