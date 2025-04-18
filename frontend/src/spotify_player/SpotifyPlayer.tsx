@@ -57,8 +57,29 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   }, []);
 
   const handleLike = () => {
-    alert("song liked!");
+    // Capitalize first letter of artist name
+    const formattedArtist = artist.charAt(0).toUpperCase() + artist.slice(1);
+    const args = {
+      title: title,
+      artist: formattedArtist,
+    };
+  
+    // Create a query string from the parameters
+    const queryString = new URLSearchParams(args).toString();
+  
+    // Send a GET request with the query parameters appended to the URL
+    fetch(`https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php?${queryString}`, {
+        method: "GET",
+      })
+      .then(response => response.text())
+      .then(result => {
+        alert("Song added to Liked Songs Playlist")
+      })
+      .catch(error => {
+        console.error("Error liking song:", error);
+      });
   };
+  
 
   return (
     <div

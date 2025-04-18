@@ -37,7 +37,6 @@ const Explore: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [userType, setUserType] = useState<"spotify" | "nonspotify" | null>(null);
 
-  const defaultImage = process.env.PUBLIC_URL + "/static/PlayBoysBackgroundImage169.jpeg";
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim() !== '') {
       navigate(`/search_results?q=${encodeURIComponent(searchQuery.trim())}`);
@@ -112,8 +111,9 @@ const Explore: React.FC = () => {
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
+          
           const shuffled = data.communities.sort(() => 0.5 - Math.random());
-          setRandomCommunities(shuffled.slice(0, 8));
+          setRandomCommunities(shuffled.slice(0, 6));
         }
       })
       .catch(err => console.error("Error loading communities:", err));
@@ -146,26 +146,27 @@ const Explore: React.FC = () => {
     }
   };
 
-//Fectch NonSpotify User
   useEffect(() => {
     const checkUserType = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/independentCookieAuth.php`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/getLoginType.php`, {
           credentials: "include",
         });
         const data = await res.json();
         if (data.status === "success") {
-          setUserType(data.spotify_id ? "spotify" : "nonspotify");
+          setUserType(data.is_spotify_user ? "spotify" : "nonspotify");
         } else {
           setUserType("nonspotify");
         }
       } catch (error) {
-        console.error("Error checking user type:", error);
+        console.error("Error checking login type:", error);
         setUserType("nonspotify");
       }
     };
+  
     checkUserType();
   }, []);
+  
 
 
   
@@ -256,15 +257,15 @@ const Explore: React.FC = () => {
         {/* Communities Row */}
         <h2 className="ep-section-title">Communities</h2>
         <div className="ep-community-circle-row">
-          {randomCommunities.map((comm) => (
-            <div key={comm.community_id} className="ep-community-wrapper" onClick={() => navigate(`/community/${comm.community_id}`)}>
-              <div
-                className="ep-community-circle"
-                style={{
-                  backgroundImage: `url("${comm.background_image?.startsWith("data:image") ? comm.background_image : defaultImage}")`
-                }}
-              />
-              <p className="ep-community-name">{comm.name}</p>
+          {randomCommunities.map((community) => (
+            <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.name}`)}>
+              <img
+                  src={community.background_image}
+                  className="community-circle-image"
+                  alt={community.name}
+                />
+
+              <p className="ep-community-name">{community.name}</p>
             </div>
           ))}
         </div>
@@ -322,15 +323,18 @@ const Explore: React.FC = () => {
             <p>No upcoming events</p>
           )}
         </div>
-      </div>
-      <div className="ep-songrecommend">
+
+        {/* Song Recommendation (after events) */}
+        <div className="ep-songrecommend" style={{ marginTop: "40px" }}>
           {userType === "spotify" ? (
             <SongRecommendation />
           ) : userType === "nonspotify" ? (
             <SongRecommendationNonSpotify />
           ) : (
-            <p>Loading recommendation...</p>
+            <p>Loading recommendations...</p>
           )}
+        </div>
+
       </div>
       {activeTrack && (
         <SpotifyPlayer

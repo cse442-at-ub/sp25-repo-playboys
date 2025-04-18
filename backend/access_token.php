@@ -1,8 +1,8 @@
 <?php
 
 $config = include __DIR__ . '/config.php';
-$client_id = $config['spotify_client_id'];
-$client_secret = $config['spotify_client_secret'];
+$clientId = $config['spotify_client_id'];
+$clientSecret = $config['spotify_client_secret'];
 $url = 'https://accounts.spotify.com/api/token';
 $headers = [
     'Authorization: Basic ' . base64_encode($clientId . ':' . $clientSecret),

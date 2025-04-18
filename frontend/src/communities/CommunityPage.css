@@ -6,7 +6,7 @@
 .community-header {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 300px;
   overflow: hidden;
 }
 
@@ -22,7 +22,7 @@
   left: 50%;
   transform: translateX(-50%);
   color: #e74c3c;
-  font-size: 28px;
+  font-size: 48px;
   font-weight: bold;
   margin: 0;
 }
@@ -51,7 +51,7 @@
 
 .post {
   margin: 0 auto;
-  max-width: 500px;
+  max-width: 560px;
   border: 1px solid #ccc;
   border-radius: 12px;
   padding: 16px;
@@ -83,7 +83,7 @@
 
 .post-image {
   width: 100%;
-  max-height: 300px;
+  max-height: 400px;
   object-fit: cover;
   margin-top: 10px;
   border-radius: 10px;
@@ -101,6 +101,7 @@
   background: none;
   border: none;
   cursor: pointer;
+  transform: scale(0.5);
 }
 
 .comments-section {
@@ -137,33 +138,150 @@
   margin: 5px 0 0;
 }
 
-/* Floating Add Button */
-.floating-add-btn {
+/* Create Post Modal */
+.create-post-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.create-post-box {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.create-post-box input,
+.create-post-box textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.create-post-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cancel-btn,
+.create-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+}
+
+.create-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* Sidebar-Responsive Add Button */
+.sidebar-add-btn {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  transition: right 0.3s ease-in-out;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   background-color: black;
   color: white;
   font-size: 32px;
   border: none;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  z-index: 1000;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 600px) {
-  .post {
-    margin: 10px;
-  }
+.sidebar-add-btn.sidebar-open {
+  right: 270px; /* sidebar open width + spacing */
+}
 
-  .floating-add-btn {
+.sidebar-add-btn.sidebar-closed {
+  right: 80px; /* sidebar collapsed width + spacing */
+}
+
+.show-more-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.show-more-wrapper button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.show-more-wrapper button:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar-add-btn {
+    right: 20px !important;
     width: 48px;
     height: 48px;
     font-size: 28px;
   }
+
+  .post {
+    margin: 10px;
+  }
+
+  .community-header {
+    height: 200px;
+  }
+}
+
+
+.community-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 8px 12px;
+  font-size: 16px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.community-back-btn:hover {
+  background-color: #e0e0e0;
 }
