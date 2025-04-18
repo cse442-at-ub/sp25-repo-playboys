@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { useCSRFToken } from '../csrfContent';
 import "./community_profile.css"
 import { useNavigate } from "react-router-dom";
-import { get } from "jquery";
-import { px } from "framer-motion";
 
 interface Community {
   name: string;
@@ -52,13 +50,13 @@ const CommunityResultsProfile = () => {
       return data
     }
 
-    // gets the counities data from the backend and sets the state of the communities
+    // gets the communities data from the backend and sets the state of the communities
     const getCommunityData = async (communityNames: string[]) => {
       const communityDataList: Community[] = [];
-    
+
       for (const communityName of communityNames) {
         console.log("Fetching data for", communityName);
-    
+
         const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getCommInfo.php`, {
           method: 'POST',
           headers: {
@@ -68,7 +66,7 @@ const CommunityResultsProfile = () => {
           credentials: 'include',
           body: JSON.stringify({ name: communityName }),
         });
-    
+
         const data = await res.json();
         console.log("Raw response from getCommInfo:", data);
         communityDataList.push({
@@ -76,10 +74,10 @@ const CommunityResultsProfile = () => {
           background_image: data.picture || defaultImage,
           id: data.id,
         });
-    }
-    console.log("Community data list:", communityDataList);
-    setCommunities(communityDataList);
-  };
+      }
+      console.log("Community data list:", communityDataList);
+      setCommunities(communityDataList);
+    };
 
     const CallThe3FunctionsIJustmade = async () => {
       const username = await verifyUserSession();
@@ -91,29 +89,36 @@ const CommunityResultsProfile = () => {
       }
     }
 
-
     CallThe3FunctionsIJustmade();
-  
+
   }, [csrfToken]);
 
   return (
     <div>
-      <div className="ep-community-circle-row ">
-          {communities.map((community) => (
-            console.log(community),
-            <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.name}`)}>
-              <img
-                  src={community.background_image}
-                  className="community-circle-image"
-                  alt={community.name}
-                />
-
-              <p className="ep-community-name">{community.name}</p>
-            </div>
-          ))}
-        
+      <div className="d-flex justify-content-between align-items-center mb-3"> {/* Header with button */}
+        <h2 className="h3 fw-bold mb-0">My Communities</h2> {/* Consistent title style can be applied in UserProfile if needed */}
+        <a
+          href="#/create-community"
+          className="btn btn-success rounded-circle d-flex justify-content-center align-items-center" 
+          aria-label="Create new community"
+        >
+          +
+        </a>
+      </div>
+      <div className="ep-community-circle-row">
+        {communities.map((community) => (
+          console.log(community),
+          <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.name}`)}>
+            <img
+              src={community.background_image}
+              className="community-circle-image"
+              alt={community.name}
+            />
+            <p className="ep-community-name">{community.name}</p>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
   );
 };
 

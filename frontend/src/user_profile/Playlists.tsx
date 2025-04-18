@@ -64,9 +64,9 @@ function Playlists() {
   };
 
   return (
-    <div className="mt-4 px-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="h3 fw-bold">♬ Playlists</h2>
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="h3 fw-bold">My Playlists</h2>
         <button className="btn btn-link text-dark fw-semibold" onClick={handleShowAllClick}>
           Show all
         </button>
@@ -80,9 +80,9 @@ function Playlists() {
           ))
         ) : (
           username === (user) || ((user || "") === "") ? (
-            <p>Please login in with Spotify or like songs</p>
+            <p className="text-muted fst-italic">No Playlist found</p>
           ) : (
-            <p>{user} has no Playlist</p>
+            <p className="text-muted fst-italic">No Playlist found</p>
           )
         )}
       </div>

@@ -299,24 +299,30 @@ const Explore: React.FC = () => {
         <div className="ep-events-container">
           {myEvents.length > 0 ? (
             myEvents.map((event) => (
-              <div
+                <div
                 key={event.id}
-                className="ep-event-circle"
+                className="ep-event-item"
                 onClick={() => navigate(`/event?id=${event.id}`)}
-                style={{
-                  backgroundImage: `url(${event.image_url})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
+                style={{ cursor: "pointer" }}
               >
-                <div className="ep-event-overlay">
-                  <div className="ep-event-date">
-                    {event.date}
-                    <br />
-                    {event.time}
+                <div
+                  className="ep-event-circle"
+                  style={{
+                    backgroundImage: `url(${event.image_url})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  <div className="ep-event-overlay">
+                    <div className="ep-event-date">
+                      {event.date}
+                      <br />
+                      {event.time}
+                    </div>
+                    <div className="ep-event-location">{event.location}</div>
                   </div>
-                  <div className="ep-event-location">{event.location}</div>
                 </div>
+                <p className="ep-event-title">{event.title}</p>
               </div>
             ))
           ) : (
