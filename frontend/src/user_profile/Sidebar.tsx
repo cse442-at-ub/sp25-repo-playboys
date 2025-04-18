@@ -14,6 +14,12 @@ interface Event {
   id: string;
 }
 
+interface Community {
+  name: string;
+  background_image: string;
+  id: number;
+}
+
 function Sidebar() {
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user");
@@ -24,6 +30,7 @@ function Sidebar() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const { csrfToken } = useCSRFToken();
+  const [communityDataList, setCommunities] = useState<Community[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -55,6 +62,7 @@ function Sidebar() {
     }
     fetchEvents();
   }, []);
+
   useEffect(() => {
     const fetchFriends = async () => {
       try {
@@ -80,9 +88,82 @@ function Sidebar() {
     fetchFriends();
   }, []);
 
-  const sections = [
-    { title: "Community", count: 8 },
-  ];
+  useEffect(() => {
+      const verifyUserSession = async () => {
+        const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken,
+          },
+          credentials: 'include',
+        });
+        const profileData = await profileRes.json();
+        if (profileData.status !== 'success') {
+          return "error";
+        }
+        return profileData.loggedInUser;
+      }
+  
+      // returns a list of strings of the communities the user is in
+      const getUserCommunities = async (username: string) => {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getcomms.php`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ "user": username })
+        });
+        const data = await res.json();
+        console.log("Fetching communities from:", res);
+        return data
+      }
+  
+      // gets the counities data from the backend and sets the state of the communities
+      const getCommunityData = async (communityNames: string[]) => {
+        const communityDataList: Community[] = [];
+      
+        for (const communityName of communityNames) {
+          console.log("Fetching data for", communityName);
+      
+          const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getCommInfo.php`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'CSRF-Token': csrfToken,
+            },
+            credentials: 'include',
+            body: JSON.stringify({ name: communityName }),
+          });
+      
+          const data = await res.json();
+          console.log("Raw response from getCommInfo:", data);
+          communityDataList.push({
+            name: data.community_name,
+            background_image: data.picture,
+            id: data.id,
+          });
+      }
+      console.log("Community data list:", communityDataList);
+      setCommunities(communityDataList);
+    };
+  
+      const CallThe3FunctionsIJustmade = async () => {
+        const username = await verifyUserSession();
+        if (username !== "error") {
+          const comms = await getUserCommunities(username);
+          console.log("User is in communities:", comms); // <- Check this!
+  
+          await getCommunityData(comms);
+        }
+      }
+  
+  
+      CallThe3FunctionsIJustmade();
+    
+    }, [csrfToken]);
 
   const menuItems = [
     { icon: "./static/ExploreIcon.png", text: "Explore", handleClick: () => navigate('/explore') },
@@ -155,10 +236,8 @@ function Sidebar() {
       {isOpen && (
         <>
           <SidebarSection title="Friends" friends={friends} user={user || ''} />
-          {sections.map((section, index) => (
-            <SidebarSection key={index} title={section.title} count={section.count} />
-          ))}
           <SidebarSection title="Events" events={events} />
+          <SidebarSection title="Communities" communities={communityDataList} />
           <hr className="my-4 border-3" style={{ width: "100%", margin: "auto" }} />
         </>
       )}
@@ -170,7 +249,7 @@ function Sidebar() {
   );
 }
 
-function SidebarSection({ title, count, friends, events, user }: { title: string; count?: number; friends?: Friend[]; events?: Event[]; user?: string }) {
+function SidebarSection({ title, count, friends, events, user, communities }: { title: string; count?: number; friends?: Friend[]; events?: Event[]; user?: string, communities?: Community[] }) {
   const navigate = useNavigate();
   const handleFriendClick = (friendName: string) => {
     navigate(`/userprofile?user=${friendName || ""}`);
@@ -223,12 +302,27 @@ function SidebarSection({ title, count, friends, events, user }: { title: string
               </div>
             </div>
           ))
-        ) : (
-          [...Array(count || 0)].map((_, i) => (
-            <button key={i} className="bg-secondary rounded-circle mb-2" style={{ width: "50px", height: "50px" }} />
+        ) : title === "Communities" && communities && communities.length > 0 ? (
+          /* Communities Section */
+          communities.map((community, i) =>(
+            <div key={i} className="text-center">
+              <img
+                src={community.background_image || "./static/EventPlaceholder.png"}
+                alt={community.name}
+                className="rounded-circle"
+                style={{ width: "50px", height: "50px", cursor: "pointer" }}
+                onClick={() => navigate(`/community/${community.name}`)}
+                onError={(e) => (e.currentTarget.src = "./static/EventPlaceholder.png")}
+              />
+              <div style={{ fontSize: "12px", cursor: "pointer" }}>
+                {community.name}
+              </div>
+            </div>
           ))
-        )}
-      </div>
+          ) : (
+            <div style={{ fontSize: "12px", color: "gray" }}>No items to display</div>
+          )}
+        </div>
     </div>
   );
 }
