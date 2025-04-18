@@ -30,6 +30,7 @@ const Register: React.FC = () => {
             window.location.href = "#/login";
         }
         else {
+            console.log(result["message"])
             setError(result["message"]);
         }
 
@@ -46,6 +47,12 @@ const Register: React.FC = () => {
 
                 <label>Email</label>
                 <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <ul>
+                    Password must meet the following requirements:
+                    Have at least 8 characters
+                    Have at least 1 uppercase characters
+                    Have at least 1 special character (!@#$%^&*)</ul>
+    
 
                 <label>Password</label>
                 <input type="password" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -55,6 +62,9 @@ const Register: React.FC = () => {
                 <button type="submit" >Register</button>
                 {error && <p className="error-message">{error}</p>}
             </form>
+            <div className="register-link">
+                <a href="#/login"><span>Return to login</span></a>
+            </div>
         </div>
     </div>
   );
