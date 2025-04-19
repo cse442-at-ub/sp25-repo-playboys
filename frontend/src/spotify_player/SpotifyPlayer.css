@@ -3,7 +3,6 @@
   background: #fff;
   border: 2px solid #000;
   border-radius: 20px;
-  width: 600px;
   padding: 16px;
   box-sizing: border-box;
 }
@@ -12,8 +11,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: move;
   margin-bottom: 12px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+}
+
+.move-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: move;
+  margin-right: 8px;
 }
 
 .header-buttons .icon-btn {
@@ -87,7 +98,6 @@
   font-size: 32px;
 }
 
-/* Volume slider */
 .volume-slider {
   width: 100px;
   margin-left: 16px;

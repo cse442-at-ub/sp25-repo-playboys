@@ -32,9 +32,9 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const isResizing = useRef(false);
   const resizeStart = useRef({ x: 0, y: 0, width: 600, height: 200 });
 
-  // Mouse handlers for dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).getAttribute('data-resize-handle')) return;
+  // Mouse handlers for dragging from move handle
+  const handleMoveMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
     isDragging.current = true;
     offset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
   };
@@ -128,10 +128,17 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       className="spotify-player-wrapper"
       style={{ left: position.x, top: position.y, width: size.width, height: size.height }}
       ref={dragRef}
-      onMouseDown={handleMouseDown}
     >
       <div className="player-header">
-        <div className="header-title"></div>
+        <div className="header-title">
+          <button
+            className="icon-btn move-btn"
+            title="Move"
+            onMouseDown={handleMoveMouseDown}
+          >
+            ☰
+          </button>
+        </div>
         <div className="header-buttons">
           <button className="icon-btn" onClick={handleLike}>❤️</button>
           <button className="icon-btn" onClick={onClose}>❌</button>
