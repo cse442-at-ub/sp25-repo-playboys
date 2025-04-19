@@ -1,4 +1,3 @@
-// SpotifyPlayer.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import './SpotifyPlayer.css';
 import PlaylistPopup from '../addingToPlaylist/PlaylistPopup';
@@ -25,10 +24,10 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
 
-  // Popup state
   const [showPlaylistPopup, setShowPlaylistPopup] = useState(false);
 
-  // Drag/resize state
+  const [notification, setNotification] = useState<string | null>(null);
+
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const [size, setSize] = useState({ width: 600, height: 200 });
   const dragRef = useRef<HTMLDivElement>(null);
@@ -37,7 +36,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const isResizing = useRef(false);
   const resizeStart = useRef({ x: 0, y: 0, width: 600, height: 200 });
 
-  // Mouse handlers for dragging
   const handleMoveMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
     isDragging.current = true;
@@ -77,14 +75,10 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     };
   }, [position, size]);
 
-  // Sync volume
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  // Audio event listeners
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -109,23 +103,22 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     }
   };
 
-  const seek = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const seek = (e: React.MouseEvent<HTMLDivElement>) => {
     const bar = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - bar.left;
     const newTime = (clickX / bar.width) * duration;
     if (audioRef.current) audioRef.current.currentTime = newTime;
   };
 
-  // Open the "Add to ..." popup
+  // Open "Add to..." popup
   const handleLike = () => {
     setShowPlaylistPopup(true);
   };
 
-  // Handle selecting a playlist (placeholder)
   const handleAddToPlaylist = (playlist: string) => {
-    console.log(`Adding "${title}" by ${artist} to playlist "${playlist}"`);
-    alert(`Song added to ${playlist} playlist`);
+    setNotification(`Song added to ${playlist} playlist`);
     setShowPlaylistPopup(false);
+    setTimeout(() => setNotification(null), 3000);
   };
 
   return (
@@ -134,9 +127,15 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       style={{ left: position.x, top: position.y, width: size.width, height: size.height }}
       ref={dragRef}
     >
+      {notification && <div className="sp-notification">{notification}</div>}
+
       <div className="player-header">
         <div className="header-title">
-          <button className="icon-btn move-btn" title="Move" onMouseDown={handleMoveMouseDown}>
+          <button
+            className="icon-btn move-btn"
+            title="Move"
+            onMouseDown={handleMoveMouseDown}
+          >
             ☰
           </button>
         </div>
@@ -177,11 +176,10 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
           max={1}
           step={0.01}
           value={volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
+          onChange={e => setVolume(parseFloat(e.target.value))}
         />
       </div>
 
-      {/* Resize handle */}
       <div
         data-resize-handle
         style={{
@@ -196,7 +194,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         onMouseDown={handleResizeMouseDown}
       />
 
-      {/* Add-to-playlist popup */}
       <PlaylistPopup
         visible={showPlaylistPopup}
         onClose={() => setShowPlaylistPopup(false)}
