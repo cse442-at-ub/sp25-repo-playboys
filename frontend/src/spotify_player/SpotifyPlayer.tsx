@@ -1,5 +1,7 @@
+// SpotifyPlayer.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import './SpotifyPlayer.css';
+import PlaylistPopup from '../addingToPlaylist/PlaylistPopup';
 
 interface SpotifyPlayerProps {
   trackUrl: string;
@@ -23,6 +25,9 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
 
+  // Popup state
+  const [showPlaylistPopup, setShowPlaylistPopup] = useState(false);
+
   // Drag/resize state
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const [size, setSize] = useState({ width: 600, height: 200 });
@@ -32,7 +37,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const isResizing = useRef(false);
   const resizeStart = useRef({ x: 0, y: 0, width: 600, height: 200 });
 
-  // Mouse handlers for dragging from move handle
+  // Mouse handlers for dragging
   const handleMoveMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
     isDragging.current = true;
@@ -72,7 +77,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     };
   }, [position, size]);
 
-  // Sync volume whenever it changes
+  // Sync volume
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -111,16 +116,16 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     if (audioRef.current) audioRef.current.currentTime = newTime;
   };
 
+  // Open the "Add to ..." popup
   const handleLike = () => {
-    const formattedArtist = artist.charAt(0).toUpperCase() + artist.slice(1);
-    const args = { title, artist: formattedArtist };
-    const queryString = new URLSearchParams(args).toString();
-    fetch(
-      `https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php?${queryString}`
-    )
-      .then((res) => res.text())
-      .then(() => alert('Song added to Liked Songs Playlist'))
-      .catch((err) => console.error('Error liking song:', err));
+    setShowPlaylistPopup(true);
+  };
+
+  // Handle selecting a playlist (placeholder)
+  const handleAddToPlaylist = (playlist: string) => {
+    console.log(`Adding "${title}" by ${artist} to playlist "${playlist}"`);
+    alert(`Song added to ${playlist} playlist`);
+    setShowPlaylistPopup(false);
   };
 
   return (
@@ -131,17 +136,17 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     >
       <div className="player-header">
         <div className="header-title">
-          <button
-            className="icon-btn move-btn"
-            title="Move"
-            onMouseDown={handleMoveMouseDown}
-          >
+          <button className="icon-btn move-btn" title="Move" onMouseDown={handleMoveMouseDown}>
             ☰
           </button>
         </div>
         <div className="header-buttons">
-          <button className="icon-btn" onClick={handleLike}>❤️</button>
-          <button className="icon-btn" onClick={onClose}>❌</button>
+          <button className="icon-btn" title="Like" onClick={handleLike}>
+            ❤️
+          </button>
+          <button className="icon-btn" title="Close" onClick={onClose}>
+            ❌
+          </button>
         </div>
       </div>
 
@@ -162,7 +167,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       </div>
 
       <div className="controls">
-        <button className="icon-btn play" onClick={togglePlay}>
+        <button className="icon-btn play" title="Play" onClick={togglePlay}>
           {isPlaying ? '⏸️' : '▶️'}
         </button>
         <input
@@ -172,7 +177,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
           max={1}
           step={0.01}
           value={volume}
-          onChange={e => setVolume(parseFloat(e.target.value))}
+          onChange={(e) => setVolume(parseFloat(e.target.value))}
         />
       </div>
 
@@ -189,6 +194,13 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
           zIndex: 10,
         }}
         onMouseDown={handleResizeMouseDown}
+      />
+
+      {/* Add-to-playlist popup */}
+      <PlaylistPopup
+        visible={showPlaylistPopup}
+        onClose={() => setShowPlaylistPopup(false)}
+        onAdd={handleAddToPlaylist}
       />
 
       <audio ref={audioRef} src={trackUrl} />
