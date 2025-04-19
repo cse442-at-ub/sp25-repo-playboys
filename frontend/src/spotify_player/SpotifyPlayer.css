@@ -86,3 +86,11 @@
 .icon-btn.play {
   font-size: 32px;
 }
+
+/* Volume slider */
+.volume-slider {
+  width: 100px;
+  margin-left: 16px;
+  vertical-align: middle;
+  cursor: pointer;
+}

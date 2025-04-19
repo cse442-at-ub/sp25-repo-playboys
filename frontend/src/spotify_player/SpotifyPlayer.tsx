@@ -21,6 +21,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
 
   // Drag/resize state
   const [position, setPosition] = useState({ x: 20, y: 20 });
@@ -33,7 +34,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
 
   // Mouse handlers for dragging
   const handleMouseDown = (e: React.MouseEvent) => {
-    // Don't start drag when clicking the resize handle
     if ((e.target as HTMLElement).getAttribute('data-resize-handle')) return;
     isDragging.current = true;
     offset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
@@ -71,6 +71,13 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       document.removeEventListener('mouseup', onMouseUp);
     };
   }, [position, size]);
+
+  // Sync volume whenever it changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   // Audio event listeners
   useEffect(() => {
@@ -119,12 +126,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   return (
     <div
       className="spotify-player-wrapper"
-      style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-      }}
+      style={{ left: position.x, top: position.y, width: size.width, height: size.height }}
       ref={dragRef}
       onMouseDown={handleMouseDown}
     >
@@ -156,6 +158,15 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         <button className="icon-btn play" onClick={togglePlay}>
           {isPlaying ? '⏸️' : '▶️'}
         </button>
+        <input
+          type="range"
+          className="volume-slider"
+          min={0}
+          max={1}
+          step={0.01}
+          value={volume}
+          onChange={e => setVolume(parseFloat(e.target.value))}
+        />
       </div>
 
       {/* Resize handle */}
