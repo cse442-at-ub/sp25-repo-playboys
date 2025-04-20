@@ -258,7 +258,29 @@ function getPostsInCommunity($conn, $community) {
 }
     
     
+function removeUserFromAllCommunities($conn, $user) {
+    // Prepare the SQL query to get all communities
+    $stmt = $conn->prepare("SELECT community_name, picture, members FROM communities");
+    $stmt->execute();
+    $stmt->store_result();
 
+    // Bind the result to variables
+    $stmt->bind_result($community_name, $picture, $members);
+    
+    while ($stmt->fetch()) { // Fetch all results
+        $members = json_decode($members, true); // Decode the members if it's a JSON array
+
+        if (in_array($user, $members)) {
+            $index = array_search($user, $members);
+            unset($members[$index]);
+            $members = json_encode(array_values($members)); // Encode the members array back to JSON
+
+            $updateStmt = $conn->prepare("UPDATE communities SET members = ? WHERE community_name = ?");
+            $updateStmt->bind_param("ss", $members, $community_name);
+            $updateStmt->execute();
+        }
+    }
+}
 
 
 ?>
