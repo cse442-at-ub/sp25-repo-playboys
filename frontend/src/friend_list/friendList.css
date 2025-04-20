@@ -111,3 +111,60 @@
   background-color: #d32f2f;
 }
 
+
+/* Apply styles for mobile view */
+@media only screen and (max-width: 768px) {
+  .friendlist-header {
+    flex-direction: row; /* Arrange items in a single row */
+    align-items: center;
+    justify-content: space-between; /* Distribute space between items */
+    padding: 10px 15px; /* Adjust padding for a tighter look */
+    gap: 5px; /* Reduce spacing between elements */
+  }
+
+  .friendlist-back-button {
+    padding: 6px 10px; /* Adjust padding to make the button smaller */
+    font-size: 12px; /* Reduce font size */
+  }
+
+  .friendlist-title {
+    font-size: 16px; /* Reduce font size to save space */
+    white-space: nowrap; /* Ensure the title doesn't wrap */
+    overflow: hidden; /* Hide overflow text */
+    text-overflow: ellipsis; /* Add ellipsis for long titles */
+  }
+
+  .friendlist-search-bar-container {
+    position: static; /* Remove absolute positioning */
+    margin-left: auto; /* Push it to the right */
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+
+  .friendlist-container {
+    padding: 10px 0; /* Reduce padding for mobile */
+  }
+
+  .friendlist {
+    margin-top: 60px; /* Adjust spacing for the header */
+    padding: 10px; /* Tighten padding */
+  }
+
+  .friend-item {
+    padding: 8px; /* Make items more compact */
+    gap: 10px; /* Adjust spacing between avatar and name */
+  }
+
+  .friend-avatar {
+    width: 40px; /* Reduce size */
+    height: 40px; /* Reduce size */
+  }
+
+  .friend-name {
+    font-size: 14px; /* Smaller font size */
+  }
+
+  .remove-friend-btn {
+    padding: 4px 8px; /* Adjust size */
+    font-size: 12px; /* Reduce font size */
+  }
+}
