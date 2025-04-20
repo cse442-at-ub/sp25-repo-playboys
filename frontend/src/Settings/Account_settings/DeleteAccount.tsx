@@ -21,7 +21,7 @@ const SettingsPrivacy: React.FC = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/delete_account/deleteAccount.php`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/account_functions/deleteAccount.php`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

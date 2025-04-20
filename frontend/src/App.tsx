@@ -35,6 +35,7 @@ import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
+import UpdatePassword from "./Settings/Account_settings/UpdatePassword";
 // Coummunity Components
 // import CommunityPage from "./communities/comunity_page";
 
@@ -108,6 +109,7 @@ function App() {
         <Route path="/settings/playback" element={<ProtectedRoute element={<SettingsPlayback />} />} />
         <Route path="/settings/privacy" element={<ProtectedRoute element={ <SettingsPrivacy />} />} />
         <Route path="/settings/account/delete_account" element={<ProtectedRoute element={ <DeleteAccount />} />} />
+        <Route path="/settings/account/update_password" element={<ProtectedRoute element={ <UpdatePassword />} />} />
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
         <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />

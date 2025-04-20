@@ -5,7 +5,7 @@ import { useCSRFToken } from "../csrfContent";
 const options = [
   { name: "Update Profile", icon: "./static/ProfileIcon.png", path: "settings/account" }, //"settings/account/update_profile" 
   { name: "Update Email", icon: "./static/EmailIcon.png", path: "settings/account" }, //"settings/account/update_email" 
-  { name: "Update Password", icon: "./static/KeyIcon.png", path: "settings/account" }, //"settings/account/update_password"
+  { name: "Update Password", icon: "./static/KeyIcon.png", path: "settings/account/update_password" }, //"settings/account/update_password"
   { name: "Linked Accounts", icon: "./static/LinkIcon.png", path: "settings/account" }, // "settings/account/linked_accounts"
   { name: "Log Out", icon: "./static/LogoutIcon.png", path: "logout" },
   { name: "Delete Account", icon: "./static/DeleteIcon.png", path: "settings/account/delete_account" }
