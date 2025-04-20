@@ -162,6 +162,7 @@
   color: white; /* Text color */
   z-index: 2; /* Ensure text appears above the overlay */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Text shadow for better readability */
+  
 }
 
 .ep-event-date {
@@ -170,8 +171,13 @@
 }
 
 .ep-event-location {
+  width: 100px;
   font-size: 14px;
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+  white-space: nowrap; /* Prevent text from wrapping */
+
 }
 
 .explore-content {

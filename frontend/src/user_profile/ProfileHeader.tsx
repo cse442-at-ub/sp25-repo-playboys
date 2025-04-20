@@ -46,7 +46,25 @@ function ProfileHeader() {
     useEffect(() => {
         fetchProfile();
     }, [user]);
+    const declineFriendRequest = async (friendUsername: string) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+                body: JSON.stringify({ friend: friendUsername, "choice": "declined" }),
+            });
 
+            const result = await response.json();
+            if (result.status === "success") {
+                setPendingFriends(pendingFriends.filter(name => name !== friendUsername));
+            } else {
+                console.error("Error declining request:", result.message);
+            }
+        } catch (err) {
+            console.error("⚠️ Network error:", err);
+        }
+    };
     const sendFriendRequest = async (status: string) => {
         if (!profile || isLoading) return;
         setIsLoading(true);
@@ -126,19 +144,51 @@ function ProfileHeader() {
                             Pending Friend Requests ({pendingFriends.length})
                         </button>
                         {showDropdown && (
-                            <ul className="dropdown-menu show w-100">
-                                {pendingFriends.map((friend, index) => (
-                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center" >
-                                        <div onClick={() => goToProfile(friend) } style={{ cursor: "pointer" }}>
-                                            {friend}
-                                        </div>
-                                        
-                                        <button className="btn btn-success btn-sm" onClick={() => acceptFriendRequest(friend)}>
-                                            ✅ Accept
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+                            <ul
+                            className="dropdown-menu show px-2 py-2"
+                            style={{ minWidth: "auto", width: "100%" }}
+                          >
+                            {pendingFriends.map((friend, index) => (
+                              <li
+                                key={index}
+                                className="dropdown-item"
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "flex-start",
+                                  paddingBottom: "0.5rem",
+                                  borderBottom: "1px solid #e9ecef",
+                                  width: "100%",
+                                }}
+                              >
+                                <div
+                                  onClick={() => goToProfile(friend)}
+                                  className="fw-semibold text-primary mb-1"
+                                  style={{ cursor: "pointer", wordBreak: "break-word", width: "100%" }}
+                                >
+                                  {friend}
+                                </div>
+                          
+                                <div className="d-flex w-100 justify-content-between">
+                                  <button
+                                    className="btn btn-success btn-sm px-2 py-1"
+                                    style={{ fontSize: "0.75rem" }}
+                                    onClick={() => acceptFriendRequest(friend)}
+                                  >
+                                    ✅ Accept
+                                  </button>
+                                  <button
+                                    className="btn btn-danger btn-sm px-2 py-1"
+                                    style={{ fontSize: "0.75rem" }}
+                                    onClick={() => declineFriendRequest(friend)}
+                                  >
+                                    ❌ Decline
+                                  </button>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                          
                         )}
                     </div>
                 </div>
