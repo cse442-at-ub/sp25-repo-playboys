@@ -181,7 +181,7 @@ function ProfileHeader() {
                                     >
                                     {profile.friends} Friends
                                 </span>
-                                • {profile.followers} Followers • {profile.followings} Following
+                              
                             </p>
 
                             <div className="d-flex flex-column flex-md-row justify-content-center justify-content-md-start mt-3">
@@ -191,7 +191,7 @@ function ProfileHeader() {
                                     </button>
                                 ) : (
                                     <>
-                                        <button className="btn btn-primary btn-sm mt-2 mt-md-0 mx-1">➕ Follow</button>
+                                        {/* <button className="btn btn-primary btn-sm mt-2 mt-md-0 mx-1">➕ Follow</button> */}
 
                                         {friendStatus === "none" && (
                                             <button className="btn btn-success btn-sm mt-2 mt-md-0 mx-1" onClick={() => sendFriendRequest("add")} disabled={isLoading}>

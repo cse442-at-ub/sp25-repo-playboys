@@ -28,10 +28,10 @@ import StyleGuide from "./style_guide";
 import Settings from "./Settings/Settings";
 import SettingsAccount from "./Settings/Account";
 import SettingsApplicaton from "./Settings/Applicaton";
-import SettingsCommunity from "./Settings/Community";
-import SettingsNotifications from "./Settings/Notifications";
+// import SettingsCommunity from "./Settings/Community";
+// import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
-import SettingsPrivacy from "./Settings/Privacy";
+// import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
@@ -85,7 +85,7 @@ function App() {
     <Router>
       <Routes>
       <Route path="/style_guide" element={<StyleGuide />}></Route>
-        <Route path="/" element={ <Explore />} />
+        <Route path="/" element={ <LandingPage />} />
         <Route path="/register" element={ <Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
@@ -103,10 +103,10 @@ function App() {
         <Route path="/settings" element={<ProtectedRoute element={ <Settings />} />} />
         <Route path="/settings/account" element={<ProtectedRoute element={ <SettingsAccount />} />} />
         <Route path="/settings/app" element={<ProtectedRoute element={<SettingsApplicaton />} />} />
-        <Route path="/settings/community" element={<ProtectedRoute element={<SettingsCommunity />} />} />
-        <Route path="/settings/notifications" element={<ProtectedRoute element={ <SettingsNotifications />} />} />
+        {/* <Route path="/settings/community" element={<ProtectedRoute element={<SettingsCommunity />} />} />
+        <Route path="/settings/notifications" element={<ProtectedRoute element={ <SettingsNotifications />} />} /> */}
         <Route path="/settings/playback" element={<ProtectedRoute element={<SettingsPlayback />} />} />
-        <Route path="/settings/privacy" element={<ProtectedRoute element={ <SettingsPrivacy />} />} />
+        {/* <Route path="/settings/privacy" element={<ProtectedRoute element={ <SettingsPrivacy />} />} /> */}
         <Route path="/settings/account/delete_account" element={<ProtectedRoute element={ <DeleteAccount />} />} />
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
