@@ -73,7 +73,12 @@ const SettingsPrivacy: React.FC = () => {
     return (
         <MainContent>
         <div className="settings-page">
-            <div className="auth-container">                    
+            <div className="auth-container"> 
+                <div className="settings-header">
+                    <div className="settings-header-text">
+                        <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
+                    </div>
+                </div>                   
                 <div className="login-box" style={{padding: "20px"}}>
                     <h2>Update Password</h2>
                     <h4>To Update Your Password Enter your Current Username, Email, and password. Then enter your new password</h4>

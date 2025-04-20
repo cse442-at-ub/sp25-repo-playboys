@@ -1,6 +1,8 @@
 import React from "react";
 import "./Settings.css";
 import { useNavigate } from 'react-router-dom';
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
 
 const options = [
   { name: "Friend Requests", icon: "./static/FriendRequest.png", path: "settings/community/friend_requests" },
@@ -21,6 +23,8 @@ const SettingsComunity = () => {
     };
 
   return (
+    <MainContent>
+      <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
@@ -42,6 +46,7 @@ const SettingsComunity = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 

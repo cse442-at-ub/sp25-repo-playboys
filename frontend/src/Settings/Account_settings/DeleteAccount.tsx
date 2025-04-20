@@ -1,5 +1,8 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
+import MainContent from "../../MainContent";
+import Sidebar from "../../user_profile/Sidebar";
+import { useCSRFToken } from '../../csrfContent';
 
 const SettingsPrivacy: React.FC = () => {
 
@@ -9,6 +12,8 @@ const SettingsPrivacy: React.FC = () => {
     const [error, setError] = React.useState("");
     const [delete_account, setDelete_account] = React.useState("");
     const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+    const csrfToken = useCSRFToken().csrfToken;
+    
 
     const navigate = useNavigate();
 
@@ -25,6 +30,7 @@ const SettingsPrivacy: React.FC = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    'CSRF-Token': csrfToken,
                 },
                 body: JSON.stringify({
                     username,
@@ -57,12 +63,13 @@ const SettingsPrivacy: React.FC = () => {
     };
 
     return (
+        <MainContent>
+            <Sidebar />
         <div className="settings-page">
             <div className="auth-container">
                 <div className="settings-header">
                     <div className="settings-header-text">
                         <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
-                        <span>Account Deletion</span>
                     </div>
                 </div>
                 <div className="login-box">
@@ -98,6 +105,7 @@ const SettingsPrivacy: React.FC = () => {
                 </div>
             )}
         </div>
+        </MainContent>
     );
 };
 

@@ -1,6 +1,8 @@
 import React from "react";
 import "./Settings.css";
 import { useNavigate } from 'react-router-dom';
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
 
 const options = [
     { name: "Music Source", icon: "./static/MusicIcon.png", path: "settings/playback/default_music_source" },
@@ -19,6 +21,8 @@ const SettingsPlayback = () => {
     };
 
   return (
+    <MainContent>
+      <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
@@ -40,6 +44,7 @@ const SettingsPlayback = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 

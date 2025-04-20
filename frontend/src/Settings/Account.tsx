@@ -2,6 +2,9 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import "./Settings.css";
 import { useCSRFToken } from "../csrfContent";
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
+
 const options = [
   { name: "Update Profile", icon: "./static/ProfileIcon.png", path: "settings/account" }, //"settings/account/update_profile" 
   { name: "Update Email", icon: "./static/EmailIcon.png", path: "settings/account" }, //"settings/account/update_email" 
@@ -51,6 +54,8 @@ const SettingsAccount = () => {
   };
 
   return (
+    <MainContent>
+            <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
@@ -76,6 +81,7 @@ const SettingsAccount = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 
