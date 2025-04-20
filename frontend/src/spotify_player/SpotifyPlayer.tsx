@@ -109,7 +109,9 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     const args = { title, artist: formattedArtist };
     const queryString = new URLSearchParams(args).toString();
     fetch(
-      `https://se-dev.cse.buffalo.edu/CSE442/2025-Spring/cse-442ah/backend/addToLikePlaylist.php?${queryString}`
+      `${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?${queryString}`, {
+        credentials: 'include'
+      }
     )
       .then((res) => res.text())
       .then(() => alert('Song added to Liked Songs Playlist'))
