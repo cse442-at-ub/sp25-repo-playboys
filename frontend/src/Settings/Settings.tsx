@@ -3,10 +3,10 @@ import "./Settings.css"; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 const options = [
   { name: "Account", imageUrl: "./static/AccountIcon.png" },
-  { name: "Privacy", imageUrl: "./static/LockIcon.png" },
-  { name: "Notifications", imageUrl: "./static/BellIcon.png" },
+  // { name: "Privacy", imageUrl: "./static/LockIcon.png" },
+  // { name: "Notifications", imageUrl: "./static/BellIcon.png" },
   { name: "Playback & Data", imageUrl: "./static/RewindIcon.png" },
-  { name: "Community & Social", imageUrl: "./static/CommunityIcon.png" },
+  // { name: "Community & Social", imageUrl: "./static/CommunityIcon.png" },
   { name: "App & Support", imageUrl: "./static/ClogIcon.png" },
 ];
 

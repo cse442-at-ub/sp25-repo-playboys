@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 
 const options = [
-  { name: "Theme & Appearance", icon: "./static/ThemeIcon.png", path: "settings/app_support/theme_appearance" },
-  { name: "Language", icon: "./static/LanguageIcon.png", path: "settings/app_support/language" },
-  { name: "Help Center", icon: "./static/SupportIcon.png", path: "settings/app_support/help_center" },
-  { name: "Report a Problem", icon: "./static/AlertIcon.png", path: "settings/app_support/report_problem" },
-  { name: "Offline Storage", icon: "./static/FlopyDiskIcon.png", path: "settings/playback/offline_data_storage" },
-  { name: "Data Sync Frequency", icon: "./static/SyncIcon.png", path: "settings/playback/data_sync_frequency" }
+  { name: "Theme & Appearance", icon: "./static/ThemeIcon.png", path: "settings/app" },
+  { name: "Language", icon: "./static/LanguageIcon.png", path: "settings/app"},
+  { name: "Help Center", icon: "./static/SupportIcon.png", path: "settings/app" },
+  { name: "Report a Problem", icon: "./static/AlertIcon.png", path: "settings/app" },
+  { name: "Offline Storage", icon: "./static/FlopyDiskIcon.png", path: "settings/app" },
+  { name: "Data Sync Frequency", icon: "./static/SyncIcon.png", path: "settings/app" }
 
 ];
 
