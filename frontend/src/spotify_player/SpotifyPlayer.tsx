@@ -119,6 +119,17 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
     setNotification(`Song added to ${playlist} playlist`);
     setShowPlaylistPopup(false);
     setTimeout(() => setNotification(null), 3000);
+    const formattedArtist = artist.charAt(0).toUpperCase() + artist.slice(1);
+    const args = { title, artist: formattedArtist };
+    const queryString = new URLSearchParams(args).toString();
+    fetch(
+      `${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?${queryString}`, {
+        credentials: 'include'
+      }
+    )
+      .then((res) => res.text())
+      .then(() => alert('Song added to Liked Songs Playlist'))
+      .catch((err) => console.error('Error liking song:', err));
   };
 
   return (

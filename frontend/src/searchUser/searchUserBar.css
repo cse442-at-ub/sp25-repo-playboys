@@ -91,4 +91,52 @@
     font-size: 12px; 
     font-style: italic;
   }
+
+
+/* Mobile-specific styles */
+@media only screen and (max-width: 768px) {
+  .user-search-bar {
+    position: relative; /* Ensure the dropdown aligns with the search bar */
+  }
+
+  .user-search-bar-results-dropdown {
+    position: absolute;
+    top: calc(100% + 5px); /* Position it just below the search bar with a small gap */
+    left: 0;
+    width: 100%; /* Make it match the search bar's width */
+    max-height: 150px; /* Reduce height for smaller screens */
+    overflow-y: auto; /* Allow scrolling if there are too many results */
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Optional: keep rounded edges */
+    background-color: #fff;
+  }
+
+  .user-search-bar-input {
+    width: 100%; /* Make the input full width for mobile */
+    font-size: 12px; /* Slightly smaller font size */
+    padding: 6px 8px; /* Adjust padding for a tighter layout */
+  }
+
+  .user-search-bar-button {
+    font-size: 12px; /* Reduce the font size */
+    padding: 6px 10px; /* Adjust button size */
+  }
+
+  .user-search-bar-result-item {
+    font-size: 12px; /* Smaller font size for dropdown items */
+    padding: 6px; /* Compact spacing */
+  }
+
+  .user-search-bar-results-dropdown::-webkit-scrollbar {
+    width: 6px; /* Smaller scrollbar for mobile */
+  }
+
+  .user-search-bar-results-dropdown::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* Subtle scrollbar color */
+    border-radius: 10px;
+  }
+}
+
   

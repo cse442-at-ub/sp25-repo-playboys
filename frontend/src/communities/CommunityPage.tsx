@@ -25,6 +25,9 @@ interface Post {
   media_path: string;
   description: string;
   media_type: 'image' | 'video';
+  like_count: number;
+  comment_count: number;
+  created_at: string;
 }
 
 const CommunityPage: React.FC = () => {
@@ -50,6 +53,9 @@ const CommunityPage: React.FC = () => {
   const [comments, setComments] = useState<{ [key: number]: any[] }>({});
   const [likedPosts, setLikedPosts] = useState<{ [key: number]: boolean }>({});
   const [totalComments, setTotalComments] = useState<{ [key: number]: number }>({});
+  const [filter, setFilter] = useState("most_recent");
+  const [likeCounts, setLikeCounts] = useState<{ [key: number]: number }>({});
+  
 
 
   const getCommunityName = () => {
@@ -86,6 +92,12 @@ const CommunityPage: React.FC = () => {
       const user = await verifyUserSession();
       const data = await getCommunityData(communityName);
       const posts = createPosts(data.posts);
+      const counts: { [key: number]: number } = {};
+      posts.forEach((post) => {
+        counts[post.post_id] = post.like_count;
+      });
+      setLikeCounts(counts);
+
       setCommunityData({
         community_name: data.community_name,
         picture: data.picture,
@@ -269,15 +281,22 @@ const CommunityPage: React.FC = () => {
   
     const endpoint = liked ? "unlikePost.php" : "likePost.php";
   
-    await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/${endpoint}`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
       credentials: "include",
       body: JSON.stringify({ post_id: postId, username: currentUser }),
     });
   
-    setLikedPosts((prev) => ({ ...prev, [postId]: !liked }));
+    if (res.ok) {
+      setLikedPosts((prev) => ({ ...prev, [postId]: !liked }));
+      setLikeCounts((prev) => ({
+        ...prev,
+        [postId]: liked ? prev[postId] - 1 : prev[postId] + 1,
+      }));
+    }
   };
+  
   
   const toggleComments = (postId: number) => {
     const isExpanded = expanded[postId];
@@ -289,15 +308,56 @@ const CommunityPage: React.FC = () => {
   const handleCommentSubmit = async (postId: number) => {
     const text = newComments[postId];
     if (!text) return;
-    await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/addComment.php`, {
+  
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/addComment.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
       credentials: "include",
       body: JSON.stringify({ post_id: postId, username: currentUser, comment: text }),
     });
-    setNewComments((prev) => ({ ...prev, [postId]: "" }));
-    fetchComments(postId, expanded[postId] ? 10 : 3);
+  
+    if (res.ok) {
+      // Update state
+      setNewComments((prev) => ({ ...prev, [postId]: "" }));
+      setComments((prev) => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), { username: currentUser, comment_text: text }]
+      }));
+      setTotalComments((prev) => ({
+        ...prev,
+        [postId]: (prev[postId] || 0) + 1
+      }));
+    }
   };
+  
+
+  const filterPosts = (posts: Post[]) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    const lastWeek = new Date(today);
+    const lastMonth = new Date(today);
+  
+    yesterday.setDate(today.getDate() - 1);
+    lastWeek.setDate(today.getDate() - 7);
+    lastMonth.setMonth(today.getMonth() - 1);
+  
+    return posts.slice().filter((post) => {
+      const postDate = new Date(post.created_at);
+  
+      if (filter === "today") return postDate.toDateString() === today.toDateString();
+      if (filter === "yesterday") return postDate.toDateString() === yesterday.toDateString();
+      if (filter === "last_week") return postDate >= lastWeek;
+      if (filter === "last_month") return postDate >= lastMonth;
+  
+      return true; // show all if no time filter
+    }).sort((a, b) => {
+      if (filter === "most_liked") return (likeCounts[b.post_id] || 0) - (likeCounts[a.post_id] || 0);
+      if (filter === "most_commented") return b.comment_count - a.comment_count;
+      if (filter === "most_recent") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      return 0; // keep original order
+    });
+  };
+  
 
 
   return (
@@ -320,10 +380,26 @@ const CommunityPage: React.FC = () => {
 
         <div className="community-details">
           <p><strong>Member count:</strong> {communityData?.member_count}</p>
-          {/*<p><strong>Members:</strong> {communityData?.members.join(", ")}</p>*/}
+        </div>
+        <div className="post-filter">
+          <label htmlFor="postFilter">Sort Posts By:</label>
+          <select
+            id="postFilter"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="filter-dropdown"
+          >
+            <option value="most_recent">Most Recent</option>
+            <option value="most_liked">Most Liked</option>
+            <option value="most_commented">Most Commented</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="last_week">Last Week</option>
+            <option value="last_month">Last Month</option>
+          </select>
         </div>
 
-        {communityData?.posts?.map((post) => (
+        {filterPosts(communityData?.posts || []).map((post) => (
           <div className="post" key={post.post_id}>
             <div className="post-header">
               <img src={process.env.PUBLIC_URL + "/static/ProfilePlaceholder.png"} alt="Profile" className="profile-pic" />
@@ -336,23 +412,29 @@ const CommunityPage: React.FC = () => {
               <img src={post.media_path} alt="Post" className="post-image" />
             )}
             <div className="controls">
-              <button className="heart-btn" onClick={() => handleLike(post.post_id)}>
-              <img
-                src={
-                  likedPosts[post.post_id]
-                    ? process.env.PUBLIC_URL + "/static/HeartIconLike.png"
-                    : process.env.PUBLIC_URL + "/static/HeartIconUnlike.png"
-                }
-                alt="Like"
-              />
+              <div className="like-wrapper">
+                <button className="like-btn" onClick={() => handleLike(post.post_id)}>
+                  <img
+                    src={
+                      likedPosts[post.post_id]
+                        ? process.env.PUBLIC_URL + "/static/HeartIconLike.png"
+                        : process.env.PUBLIC_URL + "/static/HeartIconUnlike.png"
+                    }
+                    alt="Like"
+                  />
+                </button>
+                <span className="like-count">{likeCounts[post.post_id] || 0}</span>
+              </div>
 
-              </button>
-              <button className="comment-btn" onClick={() => {
-                fetchComments(post.post_id);
-                setCommentsVisible(prev => ({ ...prev, [post.post_id]: !prev[post.post_id] }));
-              }}>
-                <img src={process.env.PUBLIC_URL + "/static/CommentIcon.png"} alt="Comment" />
-              </button>
+              <div className="comment-wrapper">
+                <button className="comment-btn" onClick={() => {
+                  fetchComments(post.post_id);
+                  setCommentsVisible(prev => ({ ...prev, [post.post_id]: !prev[post.post_id] }));
+                }}>
+                  <img src={process.env.PUBLIC_URL + "/static/CommentIcon.png"} alt="Comment" />
+                </button>
+                <span className="comment-count">{totalComments[post.post_id] || 0}</span>
+              </div>
             </div>
             
             <div className="comments-section">

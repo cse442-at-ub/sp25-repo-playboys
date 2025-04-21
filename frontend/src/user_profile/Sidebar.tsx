@@ -169,7 +169,7 @@ function Sidebar() {
     { icon: "./static/ExploreIcon.png", text: "Explore", handleClick: () => navigate('/explore') },
     { icon: "./static/StatisticIcon.png", text: "My Stat", handleClick: () => navigate('/statistics') },
     { icon: "./static/ProfileIcon.png", text: "My Profile", handleClick: () => window.location.href = "#/userprofile" },
-    { icon: "./static/SearchIcon.png", text: "Search", handleClick: () => window.location.href = "#/search_results" },
+    { icon: "./static/FriendRequest.png", text: "Friends", handleClick: () => window.location.href = "#/friendlist" },
     { icon: "./static/SettingIcon.png", text: "Setting", handleClick: () => window.location.href = "#/settings" },
   ];
 
@@ -309,12 +309,7 @@ function SidebarSection({
     <div className="mb-4 px-3">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h5 className="mb-0" style={{ fontSize: "15px" }}>{title}</h5>
-        {title === "Friends" && (
-          <button className="btn btn-link text-primary p-0" style={{ fontSize: "12px" }}
-            onClick={() => window.location.href = "#/friendlist"}>
-            Show All
-          </button>
-        )}
+        {title === "Friends"}
       </div>
       <div className="d-flex flex-wrap gap-2">{sectionItems()}</div>
     </div>

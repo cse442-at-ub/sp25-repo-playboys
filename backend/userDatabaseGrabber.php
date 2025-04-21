@@ -218,6 +218,79 @@ function deleteEvent($conn, $id){
     $delete_participants->bind_param("s", $id);
     $delete_participants->execute();
 }
+
+//check if user_playlist row exist for user, if not create one for them 
+function user_playlist_checker($conn, $username){
+    try {
+            $stmt = $conn->prepare("
+            SELECT * FROM user_playlists WHERE username = ?
+        ");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result->num_rows <= 0){
+            // Create a new row for the user with an empty playlist
+            $stmt = $conn->prepare("
+                INSERT INTO user_playlists (username, playlists) VALUES (?, '[]')
+            ");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+        }
+    } catch (Exception $e) {
+        return "failed";
+    }
+    return "success";
+}
+
+//create Playlist
+function createPlaylist($conn, $playlist_name, $username){
+    // grab already existing playlists
+    $stmt = $conn->prepare("
+        SELECT * FROM user_playlists WHERE username = ?
+    ");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if($result->num_rows < 0){
+        return "failed";
+    }
+    $row = $result->fetch_assoc();
+    $json          = $row['playlists'];
+    $playlistsData = json_decode($json, true) ?: [];
+
+    // Check if the playlist already exists
+    foreach ($playlistsData as $playlist) {
+        if (isset($playlist['name']) && $playlist['name'] === $playlist_name) {
+            return "exists"; // Playlist already exists
+        }
+    }
+
+    // Create a new playlist
+    $newPlaylist = [
+        "name"  => $playlist_name,
+        "image" => "https://cdn.dribbble.com/userupload/20851422/file/original-b82fd38c350d47a4f8f4e689f609993a.png?resize=752x&vertical=center",
+        "songs" => [],
+    ];
+
+    // Add the new playlist to the existing playlists
+    $playlistsData[] = $newPlaylist;
+
+    // Encode the updated playlists data as JSON
+    $jsonData = json_encode($playlistsData, JSON_PRETTY_PRINT);
+
+    // Update the database with the new playlists data
+    $stmt = $conn->prepare("
+        UPDATE user_playlists 
+        SET playlists = ? 
+        WHERE username = ?
+    ");
+    $stmt->bind_param("ss", $jsonData, $username);
+    $stmt->execute();
+    
+    return "success";
+}
+
+
 ?>
 
 

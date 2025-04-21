@@ -21,8 +21,31 @@ function FriendList() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { csrfToken } = useCSRFToken();
+  const [pendingFriends, setPendingFriends] = useState<string[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php?user=${user || ""}`, {
+              method: "GET",
+              credentials: "include",
+              headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+          });
+  
+          const result = await response.json();
+  
+          if (result.status === "success") {
+              setPendingFriends(result.pendingFriends || []);
+          } else {
+              
+              navigate("/userprofile");
+          }
+      } catch (err) {
+    
+          console.error("⚠️ Error:", err);
+      }
+   };
     const fetchFriends = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/friendList.php?user=${(user && user !== "null") ? user : ""}`, {
@@ -51,7 +74,9 @@ function FriendList() {
         console.error("Error fetching friends:", error);
       }
     };
-
+    if (user === loggedInUser || user === "" || user === null) {
+      fetchProfile();
+    }
     fetchFriends();
   }, [csrfToken]);
 
@@ -118,6 +143,74 @@ function FriendList() {
     navigate(`/userprofile?user=${friendName || ""}`); 
   };
 
+  const fetchFriends = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/friendList.php?user=${(user && user !== "null") ? user : ""}`, {
+        method: "POST",
+        credentials: "include",
+        headers: { 'page-source': "friendlist", 'CSRF-Token': csrfToken },
+      });
+
+      if (response.ok) {
+        console.log(csrfToken);
+        const data = await response.json();
+        if (data.includes("error")) {
+          console.log("Error fetching friends or user not authenticated");
+        } else {
+          setFriends(data); // Populate the friends list
+          if(loggedInUser == null){
+            setLoggedInUser(data[0]["login_user"]);
+            console.log("logined in friend user: ", loggedInUser);
+          }
+
+        }
+      } else {
+        console.error("Error fetching friends:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+    }
+  };
+  const declineFriendRequest = async (friendUsername: string) => {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+            body: JSON.stringify({ friend: friendUsername, "choice": "declined" }),
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+            setPendingFriends(pendingFriends.filter(name => name !== friendUsername));
+        } else {
+            console.error("Error declining request:", result.message);
+        }
+    } catch (err) {
+        console.error("⚠️ Network error:", err);
+    }
+};
+const acceptFriendRequest = async (friendUsername: string) => {
+  try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/acceptFriends.php`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
+          body: JSON.stringify({ friend: friendUsername, "choice": "accept" }),
+      });
+
+      const result = await response.json();
+      if (result.status === "success") {
+          setPendingFriends(pendingFriends.filter(name => name !== friendUsername));
+          fetchFriends();
+      } else {
+          console.error("Error accepting request:", result.message);
+      }
+  } catch (err) {
+      console.error("⚠️ Network error:", err);
+  }
+};
+
   return (
     <div className="friendlist-container">
       <div className="friendlist-header">
@@ -129,8 +222,69 @@ function FriendList() {
           <UserSearchBar onSearch={(query) => console.log("Searching for:", query)} />
         </div>
       </div>
+      
 
       <div className="friendlist">
+      {pendingFriends.length > 0 && (
+      <div className="d-flex justify-content-center mt-3">
+          <div className="dropdown">
+              <button
+                  className="btn btn-outline-primary dropdown-toggle w-100"
+                  type="button"
+                  onClick={() => setShowDropdown(!showDropdown)}
+              >
+                  Pending Friend Requests ({pendingFriends.length})
+              </button>
+              {showDropdown && (
+                  <ul
+                  className="dropdown-menu show px-2 py-2"
+                  style={{ minWidth: "auto", width: "100%" }}
+                >
+                  {pendingFriends.map((friend, index) => (
+                    <li
+                      key={index}
+                      className="dropdown-item"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        paddingBottom: "0.5rem",
+                        borderBottom: "1px solid #e9ecef",
+                        width: "100%",
+                      }}
+                    >
+                      <div
+                        onClick={() => goToProfile(friend)}
+                        className="fw-semibold text-primary mb-1"
+                        style={{ cursor: "pointer", wordBreak: "break-word", width: "100%" }}
+                      >
+                        {friend}
+                      </div>
+                
+                      <div className="d-flex w-100 justify-content-between">
+                        <button
+                          className="btn btn-success btn-sm px-2 py-1"
+                          style={{ fontSize: "0.75rem" }}
+                          onClick={() => acceptFriendRequest(friend)}
+                        >
+                          ✅ Accept
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm px-2 py-1"
+                          style={{ fontSize: "0.75rem" }}
+                          onClick={() => declineFriendRequest(friend)}
+                        >
+                          ❌ Decline
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                
+              )}
+          </div>
+      </div>
+      )}
         {friends.length > 0 ? (
           friends.map((friend, i) => (
             <div key={i} className="friend-item">

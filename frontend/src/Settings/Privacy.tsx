@@ -1,6 +1,8 @@
 import React from "react";
 import "./Settings.css";
 import { useNavigate } from 'react-router-dom';
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
 
 const options = [
     { name: "Profile Visibility", icon: "./static/AccountIcon.png", path: "settings/privacy/profile_visibility" },
@@ -20,6 +22,8 @@ const SettingsPrivacy = () => {
   };
 
   return (
+    <MainContent>
+      <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
@@ -41,6 +45,7 @@ const SettingsPrivacy = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 

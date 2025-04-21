@@ -349,3 +349,13 @@
 .back-button:hover {
   background-color: #ddd;
 }
+
+.back-button {
+  margin: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #ccc;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

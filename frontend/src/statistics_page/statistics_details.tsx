@@ -28,6 +28,7 @@ const StatisticsDetails: React.FC = ( props ) =>
     const [ timeRange, setTimeRange ] = useState< TimeRange >( "medium_term" );
     const [ topX, setTopX ] = useState< Limit >( 50 );
     const [ loading, setLoading ] = useState<boolean>(true);
+    const [userType, setUserType] = useState<"spotify" | "nonspotify" | null>(null);
 
 
     const getDisplayData = async () => 
@@ -88,6 +89,40 @@ const StatisticsDetails: React.FC = ( props ) =>
     {
         navigate( "/statistics" );
     };
+
+    useEffect(() => {
+        const checkUserType = async () => {
+          try {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}backend/independentCookieAuth.php`, {
+              credentials: "include",
+            });
+            const data = await res.json();
+            if (data.status === "success") {
+              setUserType(data.spotify_id ? "spotify" : "nonspotify");
+            } else {
+              setUserType("nonspotify");
+            }
+          } catch (error) {
+            console.error("Error checking user type:", error);
+            setUserType("nonspotify");
+          }
+        };
+        checkUserType();
+      }, []);
+    
+
+
+      if (userType === "nonspotify") {
+        return (
+          <div className="statistics-container">
+            <button className="back-button" onClick={() => navigate("/explore")}>←</button>
+            <div className="statistics-content">
+              <h2>You must log in with Spotify to use this feature.</h2>
+            </div>
+          </div>
+        );
+      }
+      
     
     return (
         <div className="statistics-container">

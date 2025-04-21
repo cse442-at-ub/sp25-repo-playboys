@@ -16,6 +16,7 @@ const MyEvent = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user") || "";
+  const [username, setUsername] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +28,22 @@ const MyEvent = () => {
   const scrollAmount = itemWidth * 0.8;
 
   useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.login_user) {
+            setUsername(data.login_user);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      }
+    };
     const fetchEvents = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/joinedEvents.php?user=${(user && user !== "null") ? user : ""}`, {
@@ -50,7 +67,7 @@ const MyEvent = () => {
         setLoading(false);
       }
     };
-
+    fetchUsername();
     fetchEvents();
   }, [user]);
 
@@ -73,14 +90,23 @@ const MyEvent = () => {
   return (
     <div> {/* Changed from a div with a specific class to a plain div */}
       <div className="d-flex justify-content-between align-items-center mb-3"> {/* Added header with button */}
-        <h2 className="h3 fw-bold mb-0">My Events</h2> {/* Consistent title style can be applied in UserProfile if needed */}
-        <a
-          href="#/event-creation"
-          className="btn btn-success rounded-circle d-flex justify-content-center align-items-center" 
-          aria-label="Create new event"
-        >
-          +
-        </a>
+        <h2 className="h3 fw-bold mb-0">
+          {username === user || user === "" ? (
+                    "My Events"
+                  ) : (
+                    `${user}'s Events`
+          )}
+        </h2> {/* Consistent title style can be applied in UserProfile if needed */}
+        {username === user || user === "" ? (
+          <a
+            href="#/event-creation"
+            className="btn btn-success rounded-circle d-flex justify-content-center align-items-center p-0"
+            style={{ width: '32px', height: '32px', fontSize: '1.2em' }}
+            aria-label="Create new event"
+          >
+            +
+          </a>
+        ): null}
       </div>
       <div
         className="event-search-results-compact"
