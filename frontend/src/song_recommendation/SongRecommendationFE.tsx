@@ -152,7 +152,7 @@ const SongRecommendation: React.FC = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ device_ids: [device_id], play: true }),
+          body: JSON.stringify({ device_ids: [device_id] }),
         });
 
         const randomTrack = await getRandomTrackFromRandomPlaylist();
@@ -259,16 +259,9 @@ const SongRecommendation: React.FC = () => {
     setLiked(true);
   
     // Send liked song URI to back-end
-    await fetch(`${process.env.REACT_APP_API_URL}backend/likeSong.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    await fetch(`${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?title=${encodeURIComponent(currentTrack.song_name)}&artist=${encodeURIComponent(currentTrack.artist_name)}`, {
+      method: "GET",
       credentials: "include",
-      body: JSON.stringify({
-        uri: currentTrack.uri,
-        name: currentTrack.name,
-        artist: currentTrack.artists.map((a: any) => a.name).join(", "),
-        album: currentTrack.album.name,
-      }),
     });
   
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });

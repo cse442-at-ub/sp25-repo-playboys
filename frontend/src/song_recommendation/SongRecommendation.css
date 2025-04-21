@@ -57,11 +57,6 @@
   cursor: pointer;
 }
 
-.heart-btn img {
-  width: 100px;
-  height: 100px;
-}
-
 
 /* Swipe Indicator (appears during swipe) */
 .swipe-indicator {
