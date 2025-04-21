@@ -6,7 +6,6 @@ import './playlistPage.css';
 
 const PlaylistPage: React.FC = () => {
     const { playlistName } = useParams<{ playlistName: string }>();
-    // Extract username from the query string: e.g. ?user=usernameValue
     const [searchParams] = useSearchParams();
     const username = searchParams.get("user") || "";
 
@@ -15,42 +14,29 @@ const PlaylistPage: React.FC = () => {
     const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
     const [playlistImage, setPlaylistImage] = useState<string | null>(null);
 
+    const [notification, setNotification] = useState<string | null>(null);
+
     useEffect(() => {
         if (playlistName && username) {
-            // Fetch playlist tracks with the username parameter
             fetch(`${process.env.REACT_APP_API_URL}backend/playlistTracks.php?playlist=${playlistName}&username=${username}`)
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        setTracks(data.tracks);
-                        console.log(data.tracks)
-                    } else {
-                        console.error("Error fetching tracks:", data.message);
-                    }
+                    if (data.status === 'success') setTracks(data.tracks);
+                    else console.error("Error fetching tracks:", data.message);
                     setLoading(false);
                 })
-                .catch(err => {
-                    console.error("Error fetching playlist tracks", err);
-                    setLoading(false);
-                });
+                .catch(err => { console.error("Error fetching playlist tracks", err); setLoading(false); });
 
-            // Fetch the playlist image
             fetch(`${process.env.REACT_APP_API_URL}backend/getPlaylistPic.php?playlist=${playlistName}&username=${username}`)
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        setPlaylistImage(data.imageUrl);
-                    } else {
-                        console.error("Error fetching playlist image:", data.message);
-                    }
+                    if (data.status === 'success') setPlaylistImage(data.imageUrl);
+                    else console.error("Error fetching playlist image:", data.message);
                 })
-                .catch(err => {
-                    console.error("Error fetching playlist image", err);
-                });
+                .catch(err => console.error("Error fetching playlist image", err));
         }
     }, [playlistName, username]);
 
-    // Helper function to format track duration (assumes duration in milliseconds)
     function formatDuration(duration: number): string {
         const totalSeconds = Math.floor(duration / 1000);
         const minutes = Math.floor(totalSeconds / 60);
@@ -58,7 +44,6 @@ const PlaylistPage: React.FC = () => {
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    // Handler for clicking on a track to play it
     const handleTrackClick = async (song: string, artist: string) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
@@ -67,10 +52,8 @@ const PlaylistPage: React.FC = () => {
                 credentials: 'include',
                 body: JSON.stringify({ song_name: song, artist_name: artist })
             });
-
             const result = await response.json();
             if (result.status === 'success') {
-                // Set the active track with the returned track URL, song title, and artist name
                 setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
             } else {
                 console.error("Error playing track:", result.message);
@@ -80,8 +63,20 @@ const PlaylistPage: React.FC = () => {
         }
     };
 
+    const handleDelete = (song: string) => {
+        setNotification(`Song deleted from ${playlistName} playlist`);
+        setTracks(prev => prev.filter(t => t.song !== song));
+        setTimeout(() => setNotification(null), 3000);
+    };
+
     return (
         <div className="pp-playlist-page">
+            {notification && (
+                <div className="pp-notification">
+                    {notification}
+                </div>
+            )}
+
             <Sidebar />
             <div className="pp-playlist-content">
                 <div className="pp-playlist-header">
@@ -93,26 +88,48 @@ const PlaylistPage: React.FC = () => {
                         />
                     )}
                     <h1 className="pp-playlist-title">
-                        {playlistName ? playlistName.charAt(0).toUpperCase() + playlistName.slice(1) : "Playlist"}
+                        {playlistName
+                            ? playlistName.charAt(0).toUpperCase() + playlistName.slice(1)
+                            : "Playlist"}
                     </h1>
                 </div>
+
                 <h2 className="pp-top-tracks-title">Tracks</h2>
                 {loading ? (
                     <p>Loading...</p>
                 ) : (
                     <ul className="pp-tracks-list">
                         {tracks.map((track, index) => (
-                            <li key={index} className="pp-track-item" onClick={() => handleTrackClick(track.song, track.artist)}>
-                                <span className="pp-track-name">{track.song}</span>
-                                {track.duration && (
-                                    <span className="pp-track-duration">{formatDuration(track.duration)}</span>
-                                )}
+                            <li
+                                key={index}
+                                className="pp-track-item"
+                                onClick={() => handleTrackClick(track.song, track.artist)}
+                            >
+                                <div className="pp-track-info">
+                                    <span className="pp-track-name">{track.song}</span>
+                                    {track.duration && (
+                                        <span className="pp-track-duration">
+                                            {formatDuration(track.duration)}
+                                        </span>
+                                    )}
+                                </div>
+                                <span
+                                    className="pp-track-delete"
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        handleDelete(track.song);
+                                    }}
+                                    role="button"
+                                    aria-label="Delete song"
+                                >
+                                    🗑️
+                                </span>
                             </li>
                         ))}
-
                     </ul>
                 )}
             </div>
+
             {activeTrack && (
                 <SpotifyPlayer
                     trackUrl={activeTrack.url}
