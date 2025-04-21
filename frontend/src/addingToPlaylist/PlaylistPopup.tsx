@@ -11,7 +11,7 @@ interface PlaylistPopupProps {
 const PlaylistPopup: React.FC<PlaylistPopupProps> = ({ visible, onClose, onAdd }) => {
   if (!visible) return null;
 
-  const playlists = ['Favorites', 'Chill Vibes', 'Workout Mix']; // placeholders
+  const playlists = ['Liked Songs from Playboys', 'Playlist 1', 'Playlist 2', "Create New Playlist", "aaa"]; // placeholders
 
   return (
     <div className="add-to-playlist-overlay">

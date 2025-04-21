@@ -116,7 +116,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   };
 
   const handleAddToPlaylist = (playlist: string) => {
-    setNotification(`Song added to ${playlist} playlist`);
     setShowPlaylistPopup(false);
     setTimeout(() => setNotification(null), 3000);
     
@@ -129,7 +128,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
       }
     )
       .then((res) => res.text())
-      .then(() => alert('Song added to Liked Songs Playlist'))
+      .then(() => setNotification(`Song added to ${playlist} playlist`))
       .catch((err) => console.error('Error liking song:', err));
   };
 
