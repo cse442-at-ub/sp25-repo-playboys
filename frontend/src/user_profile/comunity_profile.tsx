@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCSRFToken } from '../csrfContent';
 import "./community_profile.css"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface Community {
   name: string;
@@ -12,6 +12,9 @@ interface Community {
 
 const CommunityResultsProfile = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
+  const [searchParams] = useSearchParams();
+  const user = searchParams.get("user") || "";
+  const [username, setUsername] = useState("");
   const { csrfToken } = useCSRFToken();
   const navigate = useNavigate();
 
@@ -33,7 +36,23 @@ const CommunityResultsProfile = () => {
       }
       return profileData.loggedInUser;
     }
-
+    const fetchUsername = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/usernameGrabber.php`, {
+          method: "GET",
+          credentials: "include",
+          headers: { 'CSRF-Token': csrfToken }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.login_user) {
+            setUsername(data.login_user);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      }
+    };
     // returns a list of strings of the communities the user is in
     const getUserCommunities = async (username: string) => {
       const res = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getcomms.php`, {
@@ -89,6 +108,7 @@ const CommunityResultsProfile = () => {
       }
     }
 
+    fetchUsername();
     CallThe3FunctionsIJustmade();
 
   }, [csrfToken]);
@@ -96,14 +116,23 @@ const CommunityResultsProfile = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3"> {/* Header with button */}
-        <h2 className="h3 fw-bold mb-0">My Communities</h2> {/* Consistent title style can be applied in UserProfile if needed */}
-        <a
-          href="#/create-community"
-          className="btn btn-success rounded-circle d-flex justify-content-center align-items-center" 
-          aria-label="Create new community"
-        >
-          +
-        </a>
+        <h2 className="h3 fw-bold mb-0">
+          {username === user || user === "" ? (
+                  "My Communities"
+                ) : (
+                  `${user}'s Communities`
+          )}
+          </h2> {/* Consistent title style can be applied in UserProfile if needed */}
+          {username === user || user === "" ? (
+            <a
+              href="#/create-community"
+              className="btn btn-success rounded-circle d-flex justify-content-center align-items-center p-0"
+              style={{ width: '32px', height: '32px', fontSize: '1.2em' }}
+              aria-label="Create new community"
+            >
+              +
+            </a>
+          ): null }
       </div>
       <div className="ep-community-circle-row">
         {communities.map((community) => (

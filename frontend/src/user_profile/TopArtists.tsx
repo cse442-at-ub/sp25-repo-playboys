@@ -9,7 +9,7 @@ interface Artist {
 
 function TopArtists() {
   const [searchParams] = useSearchParams();
-  const user = searchParams.get("user");
+  const user = searchParams.get("user") || "";
   const [username, setUsername] = useState("");
   const [artists, setArtists] = useState<Artist[]>([]); // State to store artists data
   const navigate = useNavigate();
@@ -83,7 +83,13 @@ function TopArtists() {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="h3 fw-bold">My Top Artists</h2>
+        <h2 className="h3 fw-bold">
+          {username === user || user === "" ? (
+                  "My Top Artists"
+                ) : (
+                  `${user}'s Top Artists`
+          )}
+        </h2>
         <button className="btn btn-link text-dark fw-semibold" onClick={handleShowAllClick}>
           Show all
         </button>

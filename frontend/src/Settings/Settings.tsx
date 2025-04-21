@@ -5,10 +5,10 @@ import MainContent from "../MainContent";
 import Sidebar from "../user_profile/Sidebar";
 const options = [
   { name: "Account", imageUrl: "./static/AccountIcon.png" },
-  { name: "Privacy", imageUrl: "./static/LockIcon.png" },
-  { name: "Notifications", imageUrl: "./static/BellIcon.png" },
+  // { name: "Privacy", imageUrl: "./static/LockIcon.png" },
+  // { name: "Notifications", imageUrl: "./static/BellIcon.png" },
   { name: "Playback & Data", imageUrl: "./static/RewindIcon.png" },
-  { name: "Community & Social", imageUrl: "./static/CommunityIcon.png" },
+  // { name: "Community & Social", imageUrl: "./static/CommunityIcon.png" },
   { name: "App & Support", imageUrl: "./static/ClogIcon.png" },
 ];
 
