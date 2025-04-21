@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import MainContent from "../../MainContent";
 import Sidebar from "../../user_profile/Sidebar";
 import { useCSRFToken } from '../../csrfContent';
+import "../Settings.css"; // Import the CSS file
 
 
 
@@ -105,9 +106,9 @@ const SettingsPrivacy: React.FC = () => {
 
             {/* Success Modal */}
             {showSuccessModal && (
-                <div className="modal-overlay">
-                    <div className="modal-box">
-                        <h3>Account Deleted</h3>
+                <div className="settings-modal-overlay">
+                    <div className="settings-modal-box">
+                        <h3>Password Updated</h3>
                         <p>Your password has been successfully updated.</p>
                         <button onClick={handleModalClose}>OK</button>
                     </div>
