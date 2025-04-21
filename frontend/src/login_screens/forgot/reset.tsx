@@ -36,7 +36,7 @@ const ResetPassword: React.FC = () =>
             if( result[ "status" ] === "success" ) 
             {
                 setMessage( String( result[ "message" ] ) );
-				window.location.href = "#/"
+				window.location.href = "#/login"
             }
             else 
             {
