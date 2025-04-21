@@ -8,7 +8,7 @@ const SongRecommendationNonSpotify: React.FC = () => {
   const [currentSong, setCurrentSong] = useState<any>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true); // default autoPlay is true
+  const [isPlaying, setIsPlaying] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const controls = useAnimation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -37,21 +37,16 @@ const SongRecommendationNonSpotify: React.FC = () => {
     setSwipeDirection("left");
     setLiked(true);
   
-    await fetch(`${process.env.REACT_APP_API_URL}backend/likeLocalSong.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        song_name: currentSong.song_name,
-        artist_name: currentSong.artist_name,
-        cover_url: currentSong.cover_url,
-        preview_url: previewUrl
-      })
+    await fetch(`${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?title=${encodeURIComponent(currentSong.song_name)}&artist=${encodeURIComponent(currentSong.artist_name)}`, {
+      method: "GET",
+      credentials: "include"
     });
+  
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
     await resetState();
     loadSong();
   };
+  
 
   const handleSkip = async () => {
     setSwipeDirection("right");
@@ -115,7 +110,6 @@ const SongRecommendationNonSpotify: React.FC = () => {
                 <audio
                   ref={audioRef}
                   src={previewUrl}
-                  autoPlay
                   onPlay={() => setIsPlaying(true)}
                   onPause={() => setIsPlaying(false)}
                   style={{ display: "none" }}

@@ -219,6 +219,30 @@ function deleteEvent($conn, $id){
     $delete_participants->execute();
 }
 
+//check if user_playlist row exist for user, if not create one for them 
+function user_playlist_checker($conn, $username){
+    try {
+            $stmt = $conn->prepare("
+            SELECT * FROM user_playlists WHERE username = ?
+        ");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result->num_rows <= 0){
+            // Create a new row for the user with an empty playlist
+            $stmt = $conn->prepare("
+                INSERT INTO user_playlists (username, playlists) VALUES (?, '[]')
+            ");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+        }
+    } catch (Exception $e) {
+        return "failed";
+    }
+    return "success";
+}
+
+//create Playlist
 function createPlaylist($conn, $playlist_name, $username){
     // grab already existing playlists
     $stmt = $conn->prepare("

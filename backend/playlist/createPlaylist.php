@@ -19,6 +19,13 @@
         ]);
         exit();
     }
+    if(user_playlist_checker($conn, $login_username) == "failed"){
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to check user playlists'
+        ]);
+        exit();
+    }
     if (createPlaylist($conn, $new_playlist_name, $login_username) == "success") {
         echo json_encode([
             'status' => 'success',

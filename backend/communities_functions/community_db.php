@@ -218,26 +218,53 @@ function getAllCommunities($conn) {
     return $communities;
 }
 
-function getCommInfo($conn, $community) {
-    // Prepare the SQL query to get the community data
-    $stmt = $conn->prepare("SELECT id, community_name, picture, members FROM communities WHERE community_name = ? LIMIT 1");
-    $stmt->bind_param("s", $community);
+function getCommInfo($conn, $communityName) {
+    // Fetch community info
+    $stmt = $conn->prepare("SELECT community_name, picture FROM communities WHERE community_name = ?");
+    $stmt->bind_param("s", $communityName);
     $stmt->execute();
-    $stmt->store_result();
+    $communityResult = $stmt->get_result()->fetch_assoc();
 
-    // Bind the result to variables
-    $stmt->bind_result($id, $community_name, $picture, $members);
-    $stmt->fetch(); // Fetch the result
-    
-    $posts = getPostsInCommunity($conn, $community_name); // Fetch posts for the community
+    // Fetch members
+    $stmt = $conn->prepare("SELECT user_id FROM pb_community_members WHERE community_id = (SELECT community_id FROM communities WHERE community_name = ?)");
+    $stmt->bind_param("s", $communityName);
+    $stmt->execute();
+    $membersResult = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $members = array_map(fn($m) => $m["user_id"], $membersResult);
+
+    // Fetch posts and include like counts
+    $stmt = $conn->prepare("
+        SELECT 
+            p.*, 
+            COALESCE(l.like_count, 0) AS like_count,
+            COALESCE(c.comment_count, 0) AS comment_count
+        FROM posts p
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) AS like_count
+            FROM post_likes
+            GROUP BY post_id
+        ) l ON p.post_id = l.post_id
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) AS comment_count
+            FROM post_comments
+            GROUP BY post_id
+        ) c ON p.post_id = c.post_id
+        WHERE p.community = ?
+        ORDER BY p.created_at DESC
+    ");
+    $stmt->bind_param("s", $communityName);
+    $stmt->execute();
+    $posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
     return [
-        "id" => $id,
-        "community_name" => $community_name,
-        "picture" => $picture,
-        "members" => json_decode($members), // Decoding the members if it's a JSON array
+        "community_name" => $communityResult["community_name"],
+        "picture" => $communityResult["picture"],
+        "members" => $members,
+        "id" => $communityResult["community_name"],
         "posts" => $posts
     ];
 }
+
 
 function getPostsInCommunity($conn, $community) {
     // Prepare the SQL query to fetch all posts for the given community
@@ -258,7 +285,29 @@ function getPostsInCommunity($conn, $community) {
 }
     
     
+function removeUserFromAllCommunities($conn, $user) {
+    // Prepare the SQL query to get all communities
+    $stmt = $conn->prepare("SELECT community_name, picture, members FROM communities");
+    $stmt->execute();
+    $stmt->store_result();
 
+    // Bind the result to variables
+    $stmt->bind_result($community_name, $picture, $members);
+    
+    while ($stmt->fetch()) { // Fetch all results
+        $members = json_decode($members, true); // Decode the members if it's a JSON array
+
+        if (in_array($user, $members)) {
+            $index = array_search($user, $members);
+            unset($members[$index]);
+            $members = json_encode(array_values($members)); // Encode the members array back to JSON
+
+            $updateStmt = $conn->prepare("UPDATE communities SET members = ? WHERE community_name = ?");
+            $updateStmt->bind_param("ss", $members, $community_name);
+            $updateStmt->execute();
+        }
+    }
+}
 
 
 ?>

@@ -96,7 +96,7 @@
   margin-top: 10px;
 }
 
-.heart-btn,
+.like-btn,
 .comment-btn {
   background: none;
   border: none;
@@ -284,4 +284,58 @@
 
 .community-back-btn:hover {
   background-color: #e0e0e0;
+}
+
+.post-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 10px 20px;
+  margin-top: 10px;
+}
+
+.filter-dropdown {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.filter-dropdown:hover {
+  border-color: #999;
+  background-color: #f1f1f1;
+}
+
+.filter-dropdown:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+.like-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+
+.like-count {
+  font-size: 30px;
+  color: #555;
+  font-weight: bold;
+}
+
+.comment-count{
+  font-size: 30px;
+  color: #555;
+  font-weight: bold;
+}
+
+.comment-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0px;
 }
