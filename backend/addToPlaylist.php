@@ -4,65 +4,106 @@ require __DIR__ . "/headers.php";
 require __DIR__ . "/data_base.php";
 // Include cookieAuthHeader to handle authentication and retrieve the username
 require __DIR__ . "/cookieAuthHeader.php";
+require __DIR__ . "/usernameGrabber.php";
 
-
-//Find an existing Spotify playlist by name, or return null.
+// Find an existing Spotify playlist by name, or return null.
 function findSpotifyPlaylist($accessToken, $playlistName) {
     $url = "https://api.spotify.com/v1/me/playlists?limit=50";
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_HTTPHEADER     => ["Authorization: Bearer $accessToken"],
-        CURLOPT_RETURNTRANSFER => true,
-    ]);
-    $resp = curl_exec($ch);
-    curl_close($ch);
-    $data = json_decode($resp, true);
-    if (isset($data['items'])) {
-        foreach ($data['items'] as $pl) {
+    do {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => [
+                "Authorization: Bearer $accessToken"
+            ],
+        ]);
+        $resp = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+        foreach ($resp['items'] as $pl) {
             if (strcasecmp($pl['name'], $playlistName) === 0) {
                 return $pl['id'];
             }
         }
-    }
+        $url = $resp['next']; 
+    } while ($url);
     return null;
+}
+
+// Creates Spotify Playlist if one doesn't exist. Returns new playlist ID.
+function createSpotifyPlaylist($accessToken, $userId, $playlistName) {
+    $url = "https://api.spotify.com/v1/users/$userId/playlists";
+    $body = json_encode([
+        'name'   => $playlistName,
+        'public' => false
+    ]);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $body,
+        CURLOPT_HTTPHEADER     => [
+            "Authorization: Bearer $accessToken",
+            "Content-Type: application/json"
+        ],
+    ]);
+    $resp = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+
+    return $resp['id'];
+}
+
+// Looks up User ID based on access token.
+function getCurrentUserId($accessToken) {
+    $ch = curl_init("https://api.spotify.com/v1/me");
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => [
+            "Authorization: Bearer $accessToken"
+        ],
+    ]);
+    $resp = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+    return $resp['id'];
 }
 
 // Search Spotify for a track by title + artist; return its URI or null.
 function searchSpotifyTrack($accessToken, $title, $artist) {
-    $q = rawurlencode("track:{$title} artist:{$artist}");
-    $url = "https://api.spotify.com/v1/search?q={$q}&type=track&limit=1";
-    $ch = curl_init($url);
+    $q   = rawurlencode("track:$title artist:$artist");
+    $url = "https://api.spotify.com/v1/search?q=$q&type=track&limit=1";
+    $ch  = curl_init($url);
     curl_setopt_array($ch, [
-        CURLOPT_HTTPHEADER     => ["Authorization: Bearer $accessToken"],
         CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => [
+            "Authorization: Bearer $accessToken"
+        ],
     ]);
-    $resp = curl_exec($ch);
+    $resp = json_decode(curl_exec($ch), true);
     curl_close($ch);
-    $data = json_decode($resp, true);
-    if (!empty($data['tracks']['items'][0]['uri'])) {
-        return $data['tracks']['items'][0]['uri'];
+
+    if (!empty($resp['tracks']['items'])) {
+        return $resp['tracks']['items'][0]['uri'];
     }
     return null;
 }
 
 // Add a Spotify track URI to a playlist.
 function addTrackToSpotifyPlaylist($accessToken, $playlistId, $trackUri) {
-    $url = "https://api.spotify.com/v1/playlists/{$playlistId}/tracks";
+    $url  = "https://api.spotify.com/v1/playlists/$playlistId/tracks";
     $body = json_encode(['uris' => [$trackUri]]);
-    $ch = curl_init($url);
+    $ch   = curl_init($url);
     curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $body,
         CURLOPT_HTTPHEADER     => [
             "Authorization: Bearer $accessToken",
             "Content-Type: application/json"
         ],
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $body,
-        CURLOPT_RETURNTRANSFER => true,
     ]);
-    $resp = curl_exec($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $resp = json_decode(curl_exec($ch), true);
     curl_close($ch);
-    return ($code >= 200 && $code < 300);
+
+    return $resp;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -99,7 +140,7 @@ $username = $user["username"];
 $stmt = $conn->prepare("SELECT playlists FROM user_playlists WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
-$resultRow = $stmt->get_result();
+$resultRow       = $stmt->get_result();
 $playlistsData   = [];
 $userHasPlaylist = false;
 
@@ -166,7 +207,9 @@ if ($userHasPlaylist) {
     $ins->close();
 }
 
-// Copy onto Spotify if user has linked account
+// --------------------
+// Copy onto Spotify
+// --------------------
 $spotifyAdded = false;
 $spotifyStmt  = $conn->prepare(
     "SELECT spotify_id, access_token FROM user_login_data WHERE username = ?"
@@ -178,16 +221,24 @@ $loginResult = $spotifyStmt->get_result();
 if ($loginResult && $loginResult->num_rows > 0) {
     $loginRow = $loginResult->fetch_assoc();
     if (!empty($loginRow['spotify_id']) && !empty($loginRow['access_token'])) {
-        $token       = $loginRow['access_token'];
-        $spPlaylist  = findSpotifyPlaylist($token, $playlistName);
+        $token = $loginRow['access_token'];
+
+        // 1) Find or create the Spotify playlist
+        $spPlaylist = findSpotifyPlaylist($token, $playlistName);
+        if (!$spPlaylist) {
+            $spUserId   = getCurrentUserId($token);
+            $spPlaylist = createSpotifyPlaylist($token, $spUserId, $playlistName);
+        }
+
+        // 2) Search for the track
         if ($spPlaylist) {
-            $trackUri   = searchSpotifyTrack($token, $title, $artist);
+            $trackUri = searchSpotifyTrack($token, $title, $artist);
+            // 3) Add it to the Spotify playlist
             if ($trackUri) {
-                $spotifyAdded = addTrackToSpotifyPlaylist(
-                    $token,
-                    $spPlaylist,
-                    $trackUri
-                );
+                $addResp = addTrackToSpotifyPlaylist($token, $spPlaylist, $trackUri);
+                if (isset($addResp['snapshot_id'])) {
+                    $spotifyAdded = true;
+                }
             }
         }
     }
