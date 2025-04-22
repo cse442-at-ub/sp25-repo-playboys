@@ -25,7 +25,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   const [volume, setVolume] = useState(1);
 
   const [showPlaylistPopup, setShowPlaylistPopup] = useState(false);
-
   const [notification, setNotification] = useState<string | null>(null);
 
   const [position, setPosition] = useState({ x: 20, y: 20 });
@@ -135,7 +134,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
   return (
     <div
       className="spotify-player-wrapper"
-      style={{ left: position.x, top: position.y, width: size.width, height: size.height }}
+      style={{ left: position.x, top: position.y, width: size.width, minHeight: size.height }}
       ref={dragRef}
     >
       {notification && <div className="sp-notification">{notification}</div>}
@@ -180,15 +179,18 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         <button className="icon-btn play" title="Play" onClick={togglePlay}>
           {isPlaying ? '⏸️' : '▶️'}
         </button>
-        <input
-          type="range"
-          className="volume-slider"
-          min={0}
-          max={1}
-          step={0.01}
-          value={volume}
-          onChange={e => setVolume(parseFloat(e.target.value))}
-        />
+        <div className="volume-control">
+          <span className="volume-icon" role="img" aria-label="volume">🔉</span>
+          <input
+            type="range"
+            className="volume-slider"
+            min={0}
+            max={1}
+            step={0.01}
+            value={volume}
+            onChange={e => setVolume(parseFloat(e.target.value))}
+          />
+        </div>
       </div>
 
       <div
