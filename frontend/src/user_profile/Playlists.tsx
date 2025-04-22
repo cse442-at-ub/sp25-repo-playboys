@@ -276,7 +276,6 @@ function PlaylistItem({ playlist, onClick }: PlaylistItemProps) {
     <motion.button
       className="text-center border-0 bg-transparent"
       onClick={() => onClick(playlist)}
-      whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
       style={{
         display: "flex",
