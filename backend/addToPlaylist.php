@@ -1,5 +1,4 @@
 <?php
-// addToLikePlaylist.php
 
 require __DIR__ . "/headers.php";
 require __DIR__ . "/data_base.php";
@@ -66,33 +65,37 @@ function addTrackToSpotifyPlaylist($accessToken, $playlistId, $trackUri) {
     return ($code >= 200 && $code < 300);
 }
 
-// Retrieve the authenticated user's info from cookieAuthHeader.
+$input = json_decode(file_get_contents('php://input'), true);
+if (
+    !is_array($input) ||
+    !isset($input['playlist'], $input['song_title'], $input['artist_name'])
+) {
+    echo json_encode([
+        "status"  => "error",
+        "message" => "Missing playlist, song_title, or artist_name"
+    ]);
+    exit();
+}
+
+$playlistName = trim($input['playlist']);
+$title        = trim($input['song_title']);
+$artist       = trim($input['artist_name']);
+
+// filler image for new playlists
+$fillerImage = "https://cdn.dribbble.com/userupload/20851422/file/original-b82fd38c350d47a4f8f4e689f609993a.png?resize=752x&vertical=center";
+
+// retrieve authenticated user
 $user = $result->fetch_assoc();
 if (!isset($user['username'])) {
     echo json_encode([
-        "status" => "error",
+        "status"  => "error",
         "message" => "Unable to retrieve username"
     ]);
     exit();
 }
 $username = $user["username"];
 
-// Check that GET parameters exist
-if (!isset($_GET['title']) || !isset($_GET['artist'])) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Missing title or artist"
-    ]);
-    exit();
-}
-
-$title  = trim($_GET['title']);
-$artist = trim($_GET['artist']);
-
-$playlistName = "My Liked Songs from Playboys";
-$fillerImage  = "https://cdn.dribbble.com/userupload/20851422/file/original-b82fd38c350d47a4f8f4e689f609993a.png?resize=752x&vertical=center";
-
-// Fetch the current playlists for the user from the "user_playlists" table
+// Fetch current playlists JSON from DB
 $stmt = $conn->prepare("SELECT playlists FROM user_playlists WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -101,38 +104,39 @@ $playlistsData   = [];
 $userHasPlaylist = false;
 
 if ($resultRow && $resultRow->num_rows > 0) {
-    $row           = $resultRow->fetch_assoc();
-    $json          = $row['playlists'];
-    $playlistsData = json_decode($json, true) ?: [];
+    $row             = $resultRow->fetch_assoc();
+    $json            = $row['playlists'];
+    $playlistsData   = json_decode($json, true) ?: [];
     $userHasPlaylist = true;
 }
+$stmt->close();
 
-// Insert into or update the JSON‑backed playlist
-$playlistFound   = false;
-$duplicateFound  = false;
-
-foreach ($playlistsData as &$playlist) {
-    if (isset($playlist['name']) && $playlist['name'] === $playlistName) {
-        $playlistFound = true;
-        $playlist['songs'] = $playlist['songs'] ?? [];
-        // check duplicates
-        foreach ($playlist['songs'] as $song) {
-            if (strcasecmp($song['song'], $title) === 0 &&
-                strcasecmp($song['artist'], $artist) === 0) {
+// find or create the named playlist, check for duplicate
+$playlistFound  = false;
+$duplicateFound = false;
+foreach ($playlistsData as &$pl) {
+    if (isset($pl['name']) && $pl['name'] === $playlistName) {
+        $playlistFound        = true;
+        $pl['songs']          = $pl['songs'] ?? [];
+        foreach ($pl['songs'] as $song) {
+            if (
+                strcasecmp($song['song'], $title) === 0 &&
+                strcasecmp($song['artist'], $artist) === 0
+            ) {
                 $duplicateFound = true;
                 break 2;
             }
         }
-        $playlist['songs'][] = ["song" => $title, "artist" => $artist];
+        $pl['songs'][] = ["song" => $title, "artist" => $artist];
         break;
     }
 }
-unset($playlist);
+unset($pl);
 
 if ($duplicateFound) {
     echo json_encode([
         "status"  => "error",
-        "message" => "Song is already in the playlist."
+        "message" => "Song is already in \"{$playlistName}\"."
     ]);
     exit();
 }
@@ -149,7 +153,7 @@ if (!$playlistFound) {
 
 $newPlaylistsJSON = json_encode($playlistsData);
 
-// Insert back to DB
+// write back to DB
 if ($userHasPlaylist) {
     $upd = $conn->prepare("UPDATE user_playlists SET playlists = ? WHERE username = ?");
     $upd->bind_param("ss", $newPlaylistsJSON, $username);
@@ -162,36 +166,43 @@ if ($userHasPlaylist) {
     $ins->close();
 }
 
-// Integrate with Spotify if the user has one
+// Copy onto Spotify if user has linked account
 $spotifyAdded = false;
-$spotifyStmt = $conn->prepare("SELECT spotify_id, access_token FROM user_login_data WHERE username = ?");
+$spotifyStmt  = $conn->prepare(
+    "SELECT spotify_id, access_token FROM user_login_data WHERE username = ?"
+);
 $spotifyStmt->bind_param("s", $username);
 $spotifyStmt->execute();
 $loginResult = $spotifyStmt->get_result();
+
 if ($loginResult && $loginResult->num_rows > 0) {
     $loginRow = $loginResult->fetch_assoc();
     if (!empty($loginRow['spotify_id']) && !empty($loginRow['access_token'])) {
-        $token      = $loginRow['access_token'];
-        // find or create playlist on Spotify
-        $spPlaylistId = findSpotifyPlaylist($token, $playlistName);
-        if ($spPlaylistId) {
-            $trackUri = searchSpotifyTrack($token, $title, $artist);
+        $token       = $loginRow['access_token'];
+        $spPlaylist  = findSpotifyPlaylist($token, $playlistName);
+        if ($spPlaylist) {
+            $trackUri   = searchSpotifyTrack($token, $title, $artist);
             if ($trackUri) {
-                $spotifyAdded = addTrackToSpotifyPlaylist($token, $spPlaylistId, $trackUri);
+                $spotifyAdded = addTrackToSpotifyPlaylist(
+                    $token,
+                    $spPlaylist,
+                    $trackUri
+                );
             }
         }
     }
 }
 $spotifyStmt->close();
-
 $conn->close();
 
-// Final response
+// final response
 $response = [
     "status"  => $ok ? "success" : "error",
     "message" => $ok
-        ? "Playlist saved locally" . ($spotifyAdded ? " and added on Spotify." : " — Spotify skipped or failed.")
-        : "Failed to save playlist locally."
+        ? "Saved locally" . ($spotifyAdded
+            ? " and added on Spotify."
+            : " (Spotify skipped or failed.)")
+        : "Failed to save locally."
 ];
 
 echo json_encode($response);
