@@ -1,5 +1,5 @@
 // PlaylistPopup.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './PlaylistPopup.css';
 
 interface PlaylistPopupProps {
@@ -9,22 +9,60 @@ interface PlaylistPopupProps {
 }
 
 const PlaylistPopup: React.FC<PlaylistPopupProps> = ({ visible, onClose, onAdd }) => {
-  if (!visible) return null;
+  const [playlists, setPlaylists] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const playlists = ['Liked Songs from Playboys', 'Playlist 1', 'Playlist 2', "Create New Playlist", "aaa"]; // placeholders
+  useEffect(() => {
+    if (!visible) return;
+
+    setLoading(true);
+    setError(null);
+
+    fetch(`${process.env.REACT_APP_API_URL}/backend/getUserPlaylists.php`, {
+      method: 'GET',
+      credentials: 'include', 
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data.playlists)) {
+          setPlaylists(data.playlists);
+        } else {
+          throw new Error('Unexpected response format');
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch playlists:', err);
+        setError('Could not load playlists.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [visible]);
+
+  if (!visible) return null;
 
   return (
     <div className="add-to-playlist-overlay">
       <div className="add-to-playlist-popup">
         <button className="close-popup" onClick={onClose}>×</button>
         <h3>Add to…</h3>
-        <ul>
-          {playlists.map((pl) => (
-            <li key={pl} onClick={() => onAdd(pl)}>
-              {pl}
-            </li>
-          ))}
-        </ul>
+
+        {loading && <p>Loading playlists…</p>}
+        {error && <p className="error">{error}</p>}
+
+        {!loading && !error && (
+          <ul>
+            {playlists.map((pl) => (
+              <li key={pl} onClick={() => onAdd(pl)}>
+                {pl}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
