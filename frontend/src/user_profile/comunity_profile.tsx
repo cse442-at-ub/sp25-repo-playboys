@@ -22,7 +22,7 @@ const CommunityResultsProfile = () => {
 
   useEffect(() => {
     const verifyUserSession = async () => {
-      const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
+      const profileRes = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php?user=${user || ""}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ const CommunityResultsProfile = () => {
       if (profileData.status !== 'success') {
         return "error";
       }
-      return profileData.loggedInUser;
+      return profileData.profile.username;
     }
     const fetchUsername = async () => {
       try {
@@ -47,6 +47,8 @@ const CommunityResultsProfile = () => {
           const data = await response.json();
           if (data.login_user) {
             setUsername(data.login_user);
+
+           
           }
         }
       } catch (error) {
@@ -111,7 +113,7 @@ const CommunityResultsProfile = () => {
     fetchUsername();
     CallThe3FunctionsIJustmade();
 
-  }, [csrfToken]);
+  }, [user]);
 
   return (
     <div>
