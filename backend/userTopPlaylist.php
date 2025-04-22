@@ -17,14 +17,14 @@ if (isset($_GET['user'])) {
             $stmt->bind_param("s", $_GET['user']);
             $stmt->execute();
             $result = $stmt->get_result()->fetch_assoc();
-            if ($result == NULL) {
-                echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
-                exit();
-            }
-            if ($result['spotify_id'] == "" || $result['spotify_id'] == NULL) {
-                echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
-                exit();
-            }
+            // if ($result == NULL) {
+            //     echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
+            //     exit();
+            // }
+            // if ($result['spotify_id'] == "" || $result['spotify_id'] == NULL) {
+            //     echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
+            //     exit();
+            // }
             $login_username = $_GET['user'];
         }
     }
