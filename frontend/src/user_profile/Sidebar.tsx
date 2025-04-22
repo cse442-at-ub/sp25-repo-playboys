@@ -368,7 +368,7 @@ function SidebarSection({
         </div>
       ) : (
         <div className="d-flex justify-content-center align-items-center">
-          <div className="d-flex flex-wrap gap-2" style={{ width: '160px', height: '72px' }}>
+          <div className="d-flex flex-wrap gap-2" style={{ width: '182px', height: '72px' }}>
             {sectionItems()}
           </div>
         </div>
