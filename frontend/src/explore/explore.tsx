@@ -200,13 +200,10 @@ const Explore: React.FC = () => {
             </h3>
             {topTracks.length > 0 ? (
               topTracks.slice(0, 5).map((track, index) => (
-                <div
-                  className="ep-list-item"
-                  key={track.name + index}
-                  onClick={() => handleSongClick(track.name, track.artist.name)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {track.name} - {track.artist.name}
+                <div className="ep-list-item" key={track.name + index} onClick={() => handleSongClick(track.name, track.artist.name)}
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px"}}>
+                    <img src={track.image_url} alt={track.name} style={{ width: "40px", height: "40px", borderRadius: "5px" }} />
+                  <span>{track.name} - {track.artist.name}</span>
                 </div>
               ))
             ) : (

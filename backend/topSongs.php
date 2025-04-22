@@ -4,31 +4,86 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
-$apiKey = "a70481ad121829a3431effe4024e89c2";
+require_once __DIR__ . "/access_token.php";
+// Read Spotify access token from cookie
+$accessToken = $_COOKIE['spotify_access_token'] ?? null;
 
-// API endpoint for top tracks
-$trackUrl = "http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key={$apiKey}&format=json";
+// Last.fm API key and endpoint for top tracks
+$apiKey  = "a70481ad121829a3431effe4024e89c2";
+$trackUrl = "http://ws.audioscrobbler.com/2.0/"
+          . "?method=chart.gettoptracks"
+          . "&api_key={$apiKey}"
+          . "&format=json";
 
-// Fetch the data
 $response = file_get_contents($trackUrl);
-if ($response === false) {
-    echo json_encode(['error' => 'Unable to fetch top tracks data.']);
+if (!$response) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to fetch Last.fm data']);
     exit;
 }
 
-// Decode the JSON response
-$toptracksData = json_decode($response, true);
-if (!$toptracksData || !isset($toptracksData['tracks']['track'])) {
-    echo json_encode(['error' => 'Invalid data received for top tracks.']);
+$data = json_decode($response, true);
+if (empty($data['tracks']['track'])) {
+    echo json_encode([]);
     exit;
 }
 
-// Sort the tracks by descending listener count
-usort($toptracksData['tracks']['track'], function($a, $b) {
-    return (int)$b['listeners'] - (int)$a['listeners'];
-});
+$tracks = $data['tracks']['track'];
 
-$result = $toptracksData['tracks']['track'];
+/**
+ * Fetch album art URL from Spotify by searching track+artist.
+ * Returns URL string or null on failure.
+ */
+function fetchSpotifyImage(string $trackName, string $artistName, string $token): ?string {
+    $q = urlencode("track:$trackName artist:$artistName");
+    $url = "https://api.spotify.com/v1/search?q={$q}&type=track&limit=1";
 
-echo json_encode($result);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_HTTPHEADER     => ["Authorization: Bearer $token"],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 5,
+    ]);
+    $resp = curl_exec($ch);
+    curl_close($ch);
+
+    if (!$resp) return null;
+    $json = json_decode($resp, true);
+    if (!empty($json['tracks']['items'][0]['album']['images'])) {
+        $images = $json['tracks']['items'][0]['album']['images'];
+        // Pick medium-size if available, otherwise first
+        return $images[1]['url'] ?? $images[0]['url'];
+    }
+    return null;
+}
+
+// Build simplified array for frontend
+$simplified = [];
+foreach ($tracks as $track) {
+    $name   = $track['name'];
+    $artist = $track['artist']['name'];
+
+    // Try Spotify
+    $image_url = null;
+    if ($accessToken) {
+        $fetched = fetchSpotifyImage($name, $artist, $accessToken);
+        if ($fetched) {
+            $image_url = $fetched;
+        }
+    }
+
+    // Fallback to Last.fm image
+    if (!$image_url && !empty($track['image'])) {
+        $lastImg   = end($track['image']);
+        $image_url = $lastImg['#text'];
+    }
+
+    $simplified[] = [
+        'name'      => $name,
+        'artist'    => ['name' => $artist],
+        'image_url' => $image_url,
+    ];
+}
+
+echo json_encode($simplified);
 ?>
