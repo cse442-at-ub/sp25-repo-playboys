@@ -1,6 +1,8 @@
 import React from "react";
 import "./Settings.css";
 import { useNavigate } from 'react-router-dom';
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
 
 const options = [
   { name: "Do Not Disturb", icon: "./static/SilenceIcon.png", path: "settings/app_support/report_problem" },
@@ -20,6 +22,8 @@ const SettingsNotifications = () => {
   };
 
   return (
+    <MainContent>
+      <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
@@ -41,6 +45,7 @@ const SettingsNotifications = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 
