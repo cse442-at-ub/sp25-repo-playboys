@@ -71,6 +71,7 @@ const ArtistPage: React.FC = () => {
         setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
       } else {
         setNotification("Song not available");
+        setTimeout(() => setNotification(null), 3000);
       }
     } catch (error) {
       console.error("Error playing song:", error);
