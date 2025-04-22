@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo} from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
@@ -181,9 +181,6 @@ const Explore: React.FC = () => {
     checkUserType();
   }, []);
 
-
-
-
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
@@ -275,7 +272,10 @@ const Explore: React.FC = () => {
                   <div
                     className="ep-list-item"
                     key={genre.name + index}
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `hsl(${(index * 72) % 360}, ${((index * 10) % 40) + 60}%, ${((index * 5) % 20) + 30}%)`
+                    }}                      
                     onClick={() => handleGenreClick(genre.name)}
                   >
                     {capitalize(genre.name)}
@@ -371,5 +371,6 @@ const Explore: React.FC = () => {
     </MainContent>
   );
 };
+
 
 export default Explore;
