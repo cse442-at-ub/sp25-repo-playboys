@@ -116,19 +116,9 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
 
   const handleAddToPlaylist = (playlist: string) => {
     setShowPlaylistPopup(false);
+    setNotification(`Added "${title}" to ${playlist}`)
     setTimeout(() => setNotification(null), 3000);
     
-    const formattedArtist = artist.charAt(0).toUpperCase() + artist.slice(1);
-    const args = { title, artist: formattedArtist };
-    const queryString = new URLSearchParams(args).toString();
-    fetch(
-      `${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?${queryString}`, {
-        credentials: 'include'
-      }
-    )
-      .then((res) => res.text())
-      .then(() => setNotification(`Song added to ${playlist} playlist`))
-      .catch((err) => console.error('Error liking song:', err));
   };
 
   return (
@@ -211,6 +201,8 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({ trackUrl, title, artist, 
         visible={showPlaylistPopup}
         onClose={() => setShowPlaylistPopup(false)}
         onAdd={handleAddToPlaylist}
+        songTitle={title}
+        songArtist={artist}
       />
 
       <audio ref={audioRef} src={trackUrl} />
