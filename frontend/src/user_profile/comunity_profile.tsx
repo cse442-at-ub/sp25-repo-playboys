@@ -46,11 +46,8 @@ const CommunityResultsProfile = () => {
         if (response.ok) {
           const data = await response.json();
           if (data.login_user) {
-            if(data.login_user === user || user === "" || user === null){
-              setUsername(data.login_user);
-            }else {
-              setUsername(user);
-            }
+            setUsername(data.login_user);
+
            
           }
         }
