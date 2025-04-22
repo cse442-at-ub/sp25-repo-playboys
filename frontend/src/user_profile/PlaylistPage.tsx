@@ -63,10 +63,30 @@ const PlaylistPage: React.FC = () => {
         }
     };
 
-    const handleDelete = (song: string) => {
-        setNotification(`Song deleted from ${playlistName} playlist`);
-        setTracks(prev => prev.filter(t => t.song !== song));
-        setTimeout(() => setNotification(null), 3000);
+    const handleDelete = (song: string, artist: string) => {
+        fetch(`${process.env.REACT_APP_API_URL}backend/deleteFromPlaylist.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // if you’re using cookies/session auth
+            body: JSON.stringify({
+                username: username,
+                playlist: playlistName,
+                song: song,
+                artist: artist
+            })
+        })
+            .then(result => result.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    setNotification(`Song deleted from ${playlistName} playlist`);
+                    setTracks(prev => prev.filter(t => t.song !== song));
+                } else {
+                    setNotification(data.message)
+                }
+                setTimeout(() => setNotification(null), 3000);
+
+            })
+
     };
 
     return (
@@ -117,7 +137,7 @@ const PlaylistPage: React.FC = () => {
                                     className="pp-track-delete"
                                     onClick={e => {
                                         e.stopPropagation();
-                                        handleDelete(track.song);
+                                        handleDelete(track.song, track.artist);
                                     }}
                                     role="button"
                                     aria-label="Delete song"

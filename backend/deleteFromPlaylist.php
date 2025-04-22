@@ -1,99 +1,72 @@
 <?php
 // deleteFromPlaylist.php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-require __DIR__ . '/headers.php';            // e.g. sets CORS & Content-Type
-require __DIR__ . '/cookieAuthHeader.php';   // e.g. checks session/cookie auth
-require __DIR__ . '/usernameGrabber.php';    // must define $username
-require __DIR__ . '/userDatabaseGrabber.php';// must define $conn (mysqli)
 
-// Read and decode JSON input
+// Allow CORS and get DB connection
+require __DIR__ . '/headers.php';  // includes data_base.php for $conn :contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3}
+
+// Read and decode input
 $input = json_decode(file_get_contents('php://input'), true);
+$username     = $conn->real_escape_string($input['username'] ?? '');
+$playlistName = $input['playlist']  ?? '';
+$songToDel    = $input['song']      ?? '';
+$artistToDel  = $input['artist']    ?? '';
 
-$playlistName = $input['playlist'] ?? null;
-$songToRemove  = $input['song']     ?? null;
-$artistToRemove= $input['artist']   ?? null;
-
-if (!$playlistName || !$songToRemove || !$artistToRemove) {
+// Validate
+if (!$username || !$playlistName || !$songToDel || !$artistToDel) {
     http_response_code(400);
-    echo json_encode([
-        'status'  => 'error',
-        'message' => 'Missing required fields: playlist, song, and artist.'
-    ]);
-    exit;
+    echo json_encode(['status'=>'error','message'=>'Missing parameters']);
+    exit();
 }
 
-// Fetch current playlists JSON for this user
+// Fetch current playlists JSON
 $stmt = $conn->prepare("SELECT playlists FROM user_playlists WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
-$stmt->bind_result($playlistsJson);
+$result = $stmt->get_result();
 
-if (!$stmt->fetch()) {
+if ($result->num_rows === 0) {
     http_response_code(404);
-    echo json_encode([
-        'status'  => 'error',
-        'message' => 'User not found or no playlists stored.'
-    ]);
-    exit;
-}
-$stmt->close();
-
-// Decode playlists into PHP array
-$playlists = json_decode($playlistsJson, true);
-if (!is_array($playlists)) {
-    http_response_code(500);
-    echo json_encode([
-        'status'  => 'error',
-        'message' => 'Corrupted playlists data.'
-    ]);
-    exit;
+    echo json_encode(['status'=>'error','message'=>'User not found']);
+    exit();
 }
 
-// Locate the right playlist and remove the song(s)
-$foundPlaylist = false;
-foreach ($playlists as &$pl) {
+$row = $result->fetch_assoc();
+$playlistsData = json_decode($row['playlists'], true) ?: [];
+
+// Find and update the target playlist
+$found = false;
+foreach ($playlistsData as &$pl) {
     if (isset($pl['name']) && $pl['name'] === $playlistName) {
-        $foundPlaylist = true;
-        $pl['songs'] = array_values(array_filter(
-            $pl['songs'],
-            function($s) use ($songToRemove, $artistToRemove) {
-                return !(
-                    isset($s['song'], $s['artist'])
-                    && $s['song']   === $songToRemove
-                    && $s['artist'] === $artistToRemove
-                );
+        $newSongs = [];
+        foreach ($pl['songs'] as $entry) {
+            // Keep everything except the matching song/artist
+            if (!($entry['song'] === $songToDel && $entry['artist'] === $artistToDel)) {
+                $newSongs[] = $entry;
+            } else {
+                $found = true;
             }
-        ));
+        }
+        $pl['songs'] = $newSongs;
         break;
     }
 }
 unset($pl);
 
-if (!$foundPlaylist) {
+if (!$found) {
     http_response_code(404);
-    echo json_encode([
-        'status'  => 'error',
-        'message' => "Playlist \"$playlistName\" not found."
-    ]);
-    exit;
+    echo json_encode(['status'=>'error','message'=>'Song not found in playlist']);
+    exit();
 }
 
-// update the DB
-$newJson = json_encode($playlists);
-$updates = $conn->prepare("UPDATE user_playlists SET playlists = ? WHERE username = ?");
-$updates->bind_param("ss", $newJson, $username);
-
-if ($updates->execute()) {
-    echo json_encode(['status' => 'success']);
-} else {
+// Write updated JSON back to database
+$updatedJson = json_encode($playlistsData, JSON_PRETTY_PRINT);
+$updStmt = $conn->prepare("UPDATE user_playlists SET playlists = ? WHERE username = ?");
+$updStmt->bind_param("ss", $updatedJson, $username);
+if (!$updStmt->execute()) {
     http_response_code(500);
-    echo json_encode([
-        'status'  => 'error',
-        'message' => 'Database update failed: '.$conn->error
-    ]);
+    echo json_encode(['status'=>'error','message'=>'Failed to update playlist']);
+    exit();
 }
 
-$updates->close();
-$conn->close();
+// Success
+echo json_encode(['status'=>'success','message'=>'Song removed from playlist']);
