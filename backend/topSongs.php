@@ -3,10 +3,7 @@ header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
-
-require_once __DIR__ . "/access_token.php";
-// Read Spotify access token from cookie
-$accessToken = $_COOKIE['spotify_access_token'] ?? null;
+include_once "./access_token.php";
 
 // Last.fm API key and endpoint for top tracks
 $apiKey  = "a70481ad121829a3431effe4024e89c2";
@@ -65,8 +62,8 @@ foreach ($tracks as $track) {
 
     // Try Spotify
     $image_url = null;
-    if ($accessToken) {
-        $fetched = fetchSpotifyImage($name, $artist, $accessToken);
+    if ($spotify_access_token) {
+        $fetched = fetchSpotifyImage($name, $artist, $spotify_access_token);
         if ($fetched) {
             $image_url = $fetched;
         }
