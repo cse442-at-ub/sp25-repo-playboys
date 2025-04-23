@@ -27,3 +27,4 @@ curl_close($ch);
 // Decode the JSON response
 $result = json_decode($response, true);
 $spotify_access_token = $result['access_token'];
+setcookie("spotify_access_token", $spotify_access_token, time() + 600, "/");
