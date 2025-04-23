@@ -4,7 +4,8 @@ require __DIR__ . "/headers.php";
 require __DIR__ . "/data_base.php";
 // Include cookieAuthHeader to handle authentication and retrieve the username
 require __DIR__ . "/cookieAuthHeader.php";
-require __DIR__ . "/usernameGrabber.php";
+
+header('Content-Type: application/json');
 
 // Find an existing Spotify playlist by name, or return null.
 function findSpotifyPlaylist($accessToken, $playlistName) {
