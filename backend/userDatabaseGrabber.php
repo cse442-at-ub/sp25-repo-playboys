@@ -243,56 +243,292 @@ function user_playlist_checker($conn, $username){
 }
 
 //create Playlist
-function createPlaylist($conn, $playlist_name, $username){
+function createPlaylist($conn, $playlist_name, $username) {
     // grab already existing playlists
     $stmt = $conn->prepare("
-        SELECT * FROM user_playlists WHERE username = ?
+        SELECT playlists 
+          FROM user_playlists 
+         WHERE username = ?
     ");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
-    if($result->num_rows < 0){
+    if ($result->num_rows < 0) {
         return "failed";
     }
     $row = $result->fetch_assoc();
-    $json          = $row['playlists'];
-    $playlistsData = json_decode($json, true) ?: [];
+    $playlistsData = json_decode($row['playlists'], true) ?: [];
 
     // Check if the playlist already exists
     foreach ($playlistsData as $playlist) {
         if (isset($playlist['name']) && $playlist['name'] === $playlist_name) {
-            return "exists"; // Playlist already exists
+            return "exists";
         }
     }
 
-    // Create a new playlist
+    // Create a new playlist locally
     $newPlaylist = [
         "name"  => $playlist_name,
         "image" => "https://cdn.dribbble.com/userupload/20851422/file/original-b82fd38c350d47a4f8f4e689f609993a.png?resize=752x&vertical=center",
         "songs" => [],
     ];
-
-    // Add the new playlist to the existing playlists
     $playlistsData[] = $newPlaylist;
-
-    // Encode the updated playlists data as JSON
     $jsonData = json_encode($playlistsData, JSON_PRETTY_PRINT);
 
-    // Update the database with the new playlists data
-    $stmt = $conn->prepare("
+    // Write back to local DB
+    $upd = $conn->prepare("
         UPDATE user_playlists 
-        SET playlists = ? 
-        WHERE username = ?
+           SET playlists = ? 
+         WHERE username = ?
     ");
-    $stmt->bind_param("ss", $jsonData, $username);
-    $stmt->execute();
-    
+    $upd->bind_param("ss", $jsonData, $username);
+    $upd->execute();
+
+    // ——— Sync to Spotify ———
+    $userStmt = $conn->prepare("
+        SELECT spotify_id, access_token 
+          FROM user_login_data 
+         WHERE username = ?
+    ");
+    $userStmt->bind_param("s", $username);
+    $userStmt->execute();
+    $loginResult = $userStmt->get_result();
+    if ($loginResult && $loginResult->num_rows > 0) {
+        $u = $loginResult->fetch_assoc();
+        $spotifyUserId   = $u['spotify_id']   ?? '';
+        $spotifyToken    = $u['access_token'] ?? '';
+        if ($spotifyUserId && $spotifyToken) {
+            // if it doesn't already exist on Spotify, create it
+            $spId = getSpotifyPlaylistId($spotifyToken, $spotifyUserId, $playlist_name);
+            if (!$spId) {
+                createSpotifyPlaylist($spotifyToken, $spotifyUserId, $playlist_name);
+            }
+        }
+    }
+    $userStmt->close();
+
     return "success";
 }
 
+function getSpotifyPlaylistId(string $accessToken, string $userId, string $playlistName): string
+{
+    $url = "https://api.spotify.com/v1/users/{$userId}/playlists?limit=50";
+    do {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer {$accessToken}",
+                "Content-Type: application/json"
+            ],
+        ]);
+
+        $raw = curl_exec($ch);
+        if ($raw === false) {
+            curl_close($ch);
+            return "";
+        }
+
+        $data = json_decode($raw, true);
+        curl_close($ch);
+
+        if (!isset($data['items']) || !is_array($data['items'])) {
+            return "";
+        }
+
+        foreach ($data['items'] as $playlist) {
+            if (
+                isset($playlist['name'], $playlist['id']) &&
+                strcasecmp($playlist['name'], $playlistName) === 0
+            ) {
+                return $playlist['id'];
+            }
+        }
+
+        $url = !empty($data['next']) ? $data['next'] : null;
+    } while ($url);
+    return "";
+}
+
+// Creates new Spotify Playlist. Returns new playlist ID.
+function createSpotifyPlaylist(string $accessToken, string $userId, string $playlistName, bool $public = false, string $description = ""): string
+{
+    $url = "https://api.spotify.com/v1/users/{$userId}/playlists";
+    $payload = json_encode([
+        'name' => $playlistName,
+        'public' => $public,
+        'description' => $description
+    ]);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$accessToken}",
+            "Content-Type: application/json"
+        ],
+        CURLOPT_POSTFIELDS => $payload,
+    ]);
+    $raw = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
+    if ($raw === false || $err) {
+        return "";
+    }
+    $data = json_decode($raw, true);
+    if (isset($data['id'])) {
+        return $data['id'];
+    }
+
+    return "";
+}
+
+// Add a Spotify track URI to a playlist.
+function addTrackToPlaylist(string $accessToken, string $playlistId, string $trackId): string
+{
+    $url = "https://api.spotify.com/v1/playlists/{$playlistId}/tracks";
+    $payload = json_encode([
+        'uris' => ["spotify:track:{$trackId}"]
+    ]);
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$accessToken}",
+            "Content-Type: application/json"
+        ],
+        CURLOPT_POSTFIELDS => $payload,
+    ]);
+
+    $raw = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
+
+    if ($raw === false || $err) {
+        return "";
+    }
+
+    $data = json_decode($raw, true);
+    return isset($data['snapshot_id']) ? $data['snapshot_id'] : "";
+}
+
+// Retrieve all track IDs from a Spotify playlist.
+function getPlaylistTrackIds(string $accessToken, string $playlistId): array
+{
+    $url = "https://api.spotify.com/v1/playlists/{$playlistId}/tracks?fields=items(track(id)),next&limit=100";
+    $trackIds = [];
+    do {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer {$accessToken}",
+                "Content-Type: application/json"
+            ],
+        ]);
+        $raw = curl_exec($ch);
+        curl_close($ch);
+        if ($raw === false) {
+            break;
+        }
+        $data = json_decode($raw, true);
+        if (empty($data['items']) || !is_array($data['items'])) {
+            break;
+        }
+        foreach ($data['items'] as $item) {
+            if (!empty($item['track']['id'])) {
+                $trackIds[] = $item['track']['id'];
+            }
+        }
+        $url = !empty($data['next']) ? $data['next'] : null;
+    } while ($url);
+    return $trackIds;
+}
+
+// Search and return a matching track ID (or "" if none found).
+function findTrackId(string $accessToken, string $songName, string $artistsCsv): string
+{
+    $artistTerms = array_map('trim', explode(',', $artistsCsv));
+    $queryParts = ["track:{$songName}"];
+    foreach ($artistTerms as $artist) {
+        if ($artist !== '') {
+            $queryParts[] = "artist:{$artist}";
+        }
+    }
+    $q = rawurlencode(implode(' ', $queryParts));
+    $url = "https://api.spotify.com/v1/search?q={$q}&type=track&limit=10";
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$accessToken}",
+            "Content-Type: application/json"
+        ],
+    ]);
+
+    $response = curl_exec($ch);
+    if ($response === false) {
+        curl_close($ch);
+        return "";
+    }
+    $data = json_decode($response, true);
+    curl_close($ch);
+
+    if (empty($data['tracks']['items']) || !is_array($data['tracks']['items'])) {
+        return "";
+    }
+
+    $normalize = function (string $s): string {
+        $noParen = preg_replace('/\s*\(.*?\)\s*/', ' ', $s);
+        $clean = preg_replace('/[^\w\s]/u', ' ', $noParen);
+        $lower = mb_strtolower($clean, 'UTF-8');
+        return preg_replace('/\s+/', ' ', trim($lower));
+    };
+
+    $targetName = $normalize($songName);
+    $targetArtists = array_map(function ($a) use ($normalize) {
+        return $normalize($a);
+    }, $artistTerms);
+
+    foreach ($data['tracks']['items'] as $item) {
+        if (empty($item['id']) || empty($item['name']) || empty($item['artists'])) {
+            continue;
+        }
+
+        $itemName = $normalize($item['name']);
+        if (strpos($itemName, $targetName) === false && strpos($targetName, $itemName) === false) {
+            continue;
+        }
+
+        $itemArtists = array_map(function ($a) use ($normalize) {
+            return $normalize($a['name'] ?? '');
+        }, $item['artists']);
+        $allMatch = true;
+        foreach ($targetArtists as $tArtist) {
+            if ($tArtist === '')
+                continue;
+            $found = false;
+            foreach ($itemArtists as $ia) {
+                if (strpos($ia, $tArtist) !== false || strpos($tArtist, $ia) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $allMatch = false;
+                break;
+            }
+        }
+        if ($allMatch) {
+            return $item['id'];
+        }
+    }
+    return "";
+}
 
 ?>
-
-
 
 
