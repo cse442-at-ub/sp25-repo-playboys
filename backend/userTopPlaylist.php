@@ -17,14 +17,6 @@ if (isset($_GET['user'])) {
             $stmt->bind_param("s", $_GET['user']);
             $stmt->execute();
             $result = $stmt->get_result()->fetch_assoc();
-            // if ($result == NULL) {
-            //     echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
-            //     exit();
-            // }
-            // if ($result['spotify_id'] == "" || $result['spotify_id'] == NULL) {
-            //     echo json_encode(["error" => "Visited profile isn't logined with Spotify"]);
-            //     exit();
-            // }
             $login_username = $_GET['user'];
         }
     }
@@ -110,6 +102,7 @@ foreach ($top_playlists['items'] as $playlist) {
             if (isset($item['track']) && $item['track'] !== null) {
                 $track = $item['track'];
                 $songName = $track['name'];
+                $trackId  = $track['id'];  // Spotify track ID
                 
                 // Extract artist names (join multiple artists with a comma)
                 $artistNames = [];
@@ -120,10 +113,11 @@ foreach ($top_playlists['items'] as $playlist) {
                 }
                 $artistStr = implode(', ', $artistNames);
                 
-                // Add the song to the songs array
+                // Add the song to the songs array, including trackId
                 $songs[] = [
-                    "song"   => $songName,
-                    "artist" => $artistStr
+                    "song"    => $songName,
+                    "artist"  => $artistStr,
+                    "trackId" => $trackId
                 ];
             }
         }

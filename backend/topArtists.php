@@ -63,7 +63,7 @@ foreach ($artists as $artist) {
     $image_url = null;
 
     // Try Spotify first
-    if ($accessToken) {
+    if (!$spotify_access_token) {
         $fetched = fetchSpotifyArtistImage($name, $accessToken);
         if ($fetched) {
             $image_url = $fetched;
@@ -78,7 +78,7 @@ foreach ($artists as $artist) {
 
     // Final fallback: placeholder
     if (!$image_url) {
-        $image_url = '/default_artist.png';
+        $image_url = '';
     }
 
     $simplified[] = [

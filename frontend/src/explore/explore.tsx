@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo} from "react";
+import React, { useState, useEffect } from "react";
 import "./explore.css";
 import { useNavigate } from "react-router-dom";
 import SongRecommendation from "../song_recommendation/SongRecommendationFE";
@@ -24,12 +24,12 @@ const Explore: React.FC = () => {
   const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [randomCommunities, setRandomCommunities] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [userType, setUserType] = useState<"spotify" | "nonspotify" | null>(null);
   const [artistPics, setArtistPics] = useState<Record<string, string>>({});
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && searchQuery.trim() !== '') {
+    if (e.key === "Enter" && searchQuery.trim() !== "") {
       navigate(`/search_results?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
@@ -44,27 +44,36 @@ const Explore: React.FC = () => {
       .catch((error) => console.error("Error fetching top artists:", error));
   }, []);
 
-  // Artist pics
   useEffect(() => {
-    if (!topArtists.length) return;
+    if (topArtists.length === 0) return;
 
-    topArtists.forEach((artist) => {
-      if (artistPics[artist.name]) return;
+    // Only care about the first N renders
+    const VISIBLE_COUNT = 5;
+    const visibleArtists = topArtists.slice(0, VISIBLE_COUNT);
 
-      fetch(
-        `${process.env.REACT_APP_API_URL}backend/getArtistPic.php?artist=${encodeURIComponent(
-          artist.name
-        )}`
+    const toFetch = visibleArtists.filter(a => !artistPics[a.name]);
+    if (toFetch.length === 0) return;
+
+    // Fire off all your calls in parallel
+    Promise.all(
+      toFetch.map(artist =>
+        fetch(
+          `${process.env.REACT_APP_API_URL}backend/getArtistPic.php?artist=${encodeURIComponent(
+            artist.name
+          )}`
+        )
+          .then(res => res.json())
+          .then(data => ({ name: artist.name, url: data.imageUrl || undefined }))
+          .catch(() => ({ name: artist.name, url: undefined }))
       )
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status === "success" && data.imageUrl) {
-            setArtistPics((prev) => ({ ...prev, [artist.name]: data.imageUrl }));
-          }
-        })
-        .catch((err) => console.error(`Couldn't load pic for ${artist.name}`, err));
+    ).then(results => {
+      const newPics: Record<string, string> = {};
+      results.forEach(r => {
+        if (r.url) newPics[r.name] = r.url;
+      });
+      setArtistPics(prev => ({ ...prev, ...newPics }));
     });
-  }, [topArtists, artistPics]);
+  }, [topArtists]);  // only re-run when artist list changes
 
 
   // Fetch top songs.
@@ -77,19 +86,18 @@ const Explore: React.FC = () => {
       .catch((error) => console.error("Error fetching top songs:", error));
   }, []);
 
-
-  {/* fetch my events*/ }
+  // Fetch events
   useEffect(() => {
     const myEvent = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/exploreEvents.php`, {
-          method: "GET",
-          headers:
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}backend/events/exploreEvents.php`,
           {
-            "Content-Type": "application/json"
-          },
-          credentials: "include"
-        });
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
         const result = await response.json();
         if (result.status === "success") {
           setMyEvents(result.data);
@@ -113,24 +121,21 @@ const Explore: React.FC = () => {
       .catch((error) => console.error("Error fetching top Genres:", error));
   }, []);
 
+  // Fetch communities
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getAllCommunities.php`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include"
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     })
-
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.status === "success") {
-
           const shuffled = data.communities.sort(() => 0.5 - Math.random());
           setRandomCommunities(shuffled.slice(0, 6));
         }
       })
-      .catch(err => console.error("Error loading communities:", err));
+      .catch((err) => console.error("Error loading communities:", err));
   }, []);
 
   const handleGenreClick = (genre: string) => {
@@ -142,16 +147,14 @@ const Explore: React.FC = () => {
   const handleSongClick = async (song: string, artist: string) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ song_name: song, artist_name: artist })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ song_name: song, artist_name: artist }),
       });
-
       const result = await response.json();
-      if (result.status === 'success') {
-        // Save track URL along with song title and artist name
-        setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
+      if (result.status === "success") {
+        setActiveTrack({ url: result.trackUrl, title: song, artist });
       } else {
         console.error(result.message);
       }
@@ -160,6 +163,7 @@ const Explore: React.FC = () => {
     }
   };
 
+  // Determine user type (Spotify vs non-Spotify)
   useEffect(() => {
     const checkUserType = async () => {
       try {
@@ -167,23 +171,17 @@ const Explore: React.FC = () => {
           credentials: "include",
         });
         const data = await res.json();
-        if (data.status === "success") {
-          setUserType(data.is_spotify_user ? "spotify" : "nonspotify");
-        } else {
-          setUserType("nonspotify");
-        }
+        setUserType(data.status === "success" && data.is_spotify_user ? "spotify" : "nonspotify");
       } catch (error) {
         console.error("Error checking login type:", error);
         setUserType("nonspotify");
       }
     };
-
     checkUserType();
   }, []);
 
-  const capitalize = (str: string): string => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
+  const capitalize = (str: string): string =>
+    str.charAt(0).toUpperCase() + str.slice(1);
 
   return (
     <MainContent>
@@ -211,16 +209,27 @@ const Explore: React.FC = () => {
               </h3>
               {topTracks.length > 0 ? (
                 topTracks.slice(0, 5).map((track, index) => (
-                  <div className="ep-list-item" key={track.name + index} onClick={() => handleSongClick(track.name, track.artist.name)}
-                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <img src={track.image_url} alt={track.name} style={{ width: "40px", height: "40px", borderRadius: "5px" }} />
-                    <span>{track.name} - {track.artist.name}</span>
+                  <div
+                    className="ep-list-item"
+                    key={track.name + index}
+                    onClick={() => handleSongClick(track.name, track.artist.name)}
+                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                  >
+                    <img
+                      src={track.image_url}
+                      alt={track.name}
+                      style={{ width: "40px", height: "40px", borderRadius: "5px" }}
+                    />
+                    <span>
+                      {track.name} - {track.artist.name}
+                    </span>
                   </div>
                 ))
               ) : (
                 <p>Loading top songs...</p>
               )}
             </div>
+
             {/* Top Artists */}
             <div className="ep-listening-column">
               <h3>
@@ -232,8 +241,8 @@ const Explore: React.FC = () => {
                     className="ep-list-item"
                     key={artist.name + index}
                     onClick={() => handleArtistClick(artist.name)}
-                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px"}}>
-
+                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                  >
                     {artistPics[artist.name] ? (
                       <img
                         src={artistPics[artist.name]}
@@ -262,6 +271,7 @@ const Explore: React.FC = () => {
                 <p>Loading top artists...</p>
               )}
             </div>
+
             {/* Top Genres */}
             <div className="ep-listening-column">
               <h3>
@@ -274,8 +284,8 @@ const Explore: React.FC = () => {
                     key={genre.name + index}
                     style={{
                       cursor: "pointer",
-                      backgroundColor: `hsl(${(index * 72) % 360}, ${((index * 10) % 40) + 60}%, ${((index * 5) % 20) + 30}%)`
-                    }}                      
+                      backgroundColor: `hsl(${(index * 72) % 360}, ${((index * 10) % 40) + 60}%, ${((index * 5) % 20) + 30}%)`,
+                    }}
                     onClick={() => handleGenreClick(genre.name)}
                   >
                     {capitalize(genre.name)}
@@ -291,13 +301,16 @@ const Explore: React.FC = () => {
           <h2 className="ep-section-title">Communities</h2>
           <div className="ep-community-circle-row">
             {randomCommunities.map((community) => (
-              <div key={community.id} className="ep-community-wrapper" onClick={() => navigate(`/community/${community.name}`)}>
+              <div
+                key={community.id}
+                className="ep-community-wrapper"
+                onClick={() => navigate(`/community/${community.name}`)}
+              >
                 <img
                   src={community.background_image}
                   className="community-circle-image"
                   alt={community.name}
                 />
-
                 <p className="ep-community-name">{community.name}</p>
               </div>
             ))}
@@ -308,7 +321,7 @@ const Explore: React.FC = () => {
             <span>Upcoming Events</span>
             <button
               className="ep-create-event-button"
-              onClick={() => navigate("/event-creation")} // Adjust the navigation to your desired page
+              onClick={() => navigate("/event-creation")}
             >
               Create Event
             </button>
@@ -357,8 +370,8 @@ const Explore: React.FC = () => {
               <p>Loading recommendations...</p>
             )}
           </div>
-
         </div>
+
         {activeTrack && (
           <SpotifyPlayer
             trackUrl={activeTrack.url}
@@ -371,6 +384,5 @@ const Explore: React.FC = () => {
     </MainContent>
   );
 };
-
 
 export default Explore;

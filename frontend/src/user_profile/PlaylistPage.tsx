@@ -56,7 +56,8 @@ const PlaylistPage: React.FC = () => {
             if (result.status === 'success') {
                 setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
             } else {
-                console.error("Error playing track:", result.message);
+                setNotification(result.message);
+                setTimeout(() => setNotification(null), 3000);
             }
         } catch (error) {
             console.error("Error playing track:", error);

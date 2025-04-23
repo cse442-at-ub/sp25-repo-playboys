@@ -26,13 +26,5 @@ curl_close($ch);
 
 // Decode the JSON response
 $result = json_decode($response, true);
-
-if (isset($result['access_token'])) {
-    setcookie('spotify_access_token', $result['access_token'], [
-        'expires' => time() + 3600,
-        'path' => '/'
-    ]);
-} else {
-    throw new Exception('Failed to obtain access token: ' . $response);
-}
-?>
+$spotify_access_token = $result['access_token'];
+setcookie("spotify_access_token", $spotify_access_token, time() + 600, "/");
