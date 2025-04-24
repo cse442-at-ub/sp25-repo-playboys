@@ -1,8 +1,9 @@
 <?php
 // Allow requests from any origin and check if user is logged in
-require __DIR__ . "/headers.php";
-require __DIR__ . "/cookieAuthHeader.php";
-require __DIR__ . "/userDatabaseGrabber.php";
+require __DIR__ . "/../headers.php";
+require __DIR__ . "/../cookieAuthHeader.php";
+require __DIR__ . "/../userDatabaseGrabber.php";
+
 
 $user = $result->fetch_assoc();
 $username = $user["username"];
@@ -109,23 +110,81 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE user_login_data SET email = ?, username = ? WHERE username = ?");
         $stmt->bind_param("sss", $newEmail, $newUsername, $username);
         $stmt->execute();
-        //updated username in cookie auth
+
+        // Update in post_likes
+        $stmt = $conn->prepare("UPDATE post_likes SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+
+        // Update in post_comments
+        $stmt = $conn->prepare("UPDATE post_comments SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+
+        // Update in posts
+        $stmt = $conn->prepare("UPDATE posts SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+
+        // Update in user_playlists
+        $stmt = $conn->prepare("UPDATE user_playlists SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+
+        // Update in cookie_authentication
         $stmt = $conn->prepare("UPDATE cookie_authentication SET username = ? WHERE username = ?");
         $stmt->bind_param("ss", $newUsername, $username);
         $stmt->execute();
-        //update username in friend pairs database
+
+        // Update in event_participants
+        $stmt = $conn->prepare("UPDATE event_participants SET username = ? WHERE username = ?");
+        $stmt->bind_param("ss", $newUsername, $username);
+        $stmt->execute();
+
+        // Update in friend_pairs (as username)
         $stmt = $conn->prepare("UPDATE friend_pairs SET username = ? WHERE username = ?");
         $stmt->bind_param("ss", $newUsername, $username);
         $stmt->execute();
+
+        // Update in friend_pairs (as friend)
         $stmt = $conn->prepare("UPDATE friend_pairs SET friend = ? WHERE friend = ?");
         $stmt->bind_param("ss", $newUsername, $username);
         $stmt->execute();
+
+        // Update in friend_pairs (as requester)
         $stmt = $conn->prepare("UPDATE friend_pairs SET requester = ? WHERE requester = ?");
         $stmt->bind_param("ss", $newUsername, $username);
         $stmt->execute();
-        $stmt->close();
-        $conn->close();
+
+        $stmt = $conn->prepare("SELECT community_name, members FROM communities");
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($community_name, $members);
+    
+        while ($stmt->fetch()) {
+            $membersArray = json_decode($members, true); // Decode JSON to PHP array
+    
+            if (!is_array($membersArray)) continue; // Just in case something is wrong with the JSON
+    
+            $updated = false;
+            foreach ($membersArray as $key => $member) {
+                if ($member === $username) {
+                    $membersArray[$key] = $newUsername;
+                    $updated = true;
+                }
+            }
+    
+            if ($updated) {
+                $updatedMembersJSON = json_encode(array_values($membersArray)); // Re-encode with updated username
+                $updateStmt = $conn->prepare("UPDATE communities SET members = ? WHERE community_name = ?");
+                $updateStmt->bind_param("ss", $updatedMembersJSON, $community_name);
+                $updateStmt->execute();
+            }
+        }
+
         echo json_encode(["status" => "success", "message" => "Profile updated successfully"]);
+        // echo json_encode(["status" => "success", "message" => "KILL YOURSELF DUDE"]);
+
         exit();
     }
     catch (Exception $e) {
