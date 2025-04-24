@@ -307,6 +307,35 @@ function removeUserFromAllCommunities($conn, $user) {
             $updateStmt->execute();
         }
     }
+    
+    function updateUsernameInAllCommunities($conn, $oldUsername, $newUsername) {
+        // Get all communities
+        $stmt = $conn->prepare("SELECT community_name, members FROM communities");
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($community_name, $members);
+    
+        while ($stmt->fetch()) {
+            $membersArray = json_decode($members, true); // Decode JSON to PHP array
+    
+            if (!is_array($membersArray)) continue; // Just in case something is wrong with the JSON
+    
+            $updated = false;
+            foreach ($membersArray as $key => $member) {
+                if ($member === $oldUsername) {
+                    $membersArray[$key] = $newUsername;
+                    $updated = true;
+                }
+            }
+    
+            if ($updated) {
+                $updatedMembersJSON = json_encode(array_values($membersArray)); // Re-encode with updated username
+                $updateStmt = $conn->prepare("UPDATE communities SET members = ? WHERE community_name = ?");
+                $updateStmt->bind_param("ss", $updatedMembersJSON, $community_name);
+                $updateStmt->execute();
+            }
+        }
+    }
 }
 
 

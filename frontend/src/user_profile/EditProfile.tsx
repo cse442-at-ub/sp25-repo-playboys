@@ -16,7 +16,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/updateProfile.php`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}backend/account_functions/updateProfile.php`, {
           method: "GET",
           credentials: "include",
           headers: {
@@ -50,7 +50,7 @@ const EditProfile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/updateProfile.php`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}backend/account_functions/updateProfile.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "CSRF-Token": csrfToken },
         body: JSON.stringify({ username, email }),

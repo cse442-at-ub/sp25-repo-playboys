@@ -24,7 +24,7 @@ function Sidebar() {
   const [searchParams] = useSearchParams();
   const user = searchParams.get("user");
   const navigate = useNavigate();
-  const { isOpen, toggleSidebar  } = useSidebar();
+  const { isOpen, toggleSidebar } = useSidebar();
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("Explore");
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -47,16 +47,16 @@ function Sidebar() {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/events/joinedEvents.php`, {
           method: "GET",
           credentials: "include",
-          headers: {"page-source": "sidebar", 'CSRF-Token': csrfToken },
+          headers: { "page-source": "sidebar", 'CSRF-Token': csrfToken },
 
         });
         const result = await response.json();
-        if(result.status === "success"){
+        if (result.status === "success") {
           setEvents(result.data);
         } else {
           console.log("no events found for you");
         }
-      } catch (error){
+      } catch (error) {
         console.error("Error fetching events");
       }
     }
@@ -165,12 +165,39 @@ function Sidebar() {
 
   }, [csrfToken]);
 
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}backend/logout.php`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken
+          }
+        }
+      );
+      const data = await res.json();
+      // clear cookie & redirect regardless of success
+      document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      window.location.href = '#/login';
+    } catch (err) {
+      console.error('Logout failed', err);
+      // still force redirect
+      document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      window.location.href = '#/login';
+    }
+  };
+
   const menuItems = [
     { icon: "./static/ExploreIcon.png", text: "Explore", handleClick: () => navigate('/explore') },
     { icon: "./static/StatisticIcon.png", text: "My Stat", handleClick: () => navigate('/statistics') },
     { icon: "./static/ProfileIcon.png", text: "My Profile", handleClick: () => window.location.href = "#/userprofile" },
     { icon: "./static/FriendRequest.png", text: "Friends", handleClick: () => window.location.href = "#/friendlist" },
     { icon: "./static/SettingIcon.png", text: "Setting", handleClick: () => window.location.href = "#/settings" },
+    { icon: "./static/LogoutIcon.png", text: "Logout", handleClick: handleLogout },
   ];
 
   if (isMobile) {

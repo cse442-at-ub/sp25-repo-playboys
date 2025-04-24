@@ -99,8 +99,6 @@ if (password_verify($password, $storedHash)) {
     $stmt8->bind_param("s", $username);
     $stmt8->execute();
 
-
-
     //Delete the user from all communities
     removeUserFromAllCommunities($conn, $username);
 
