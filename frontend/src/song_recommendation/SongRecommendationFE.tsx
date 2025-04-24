@@ -258,15 +258,23 @@ const SongRecommendation: React.FC = () => {
     setSwipeDirection("left");
     setLiked(true);
   
-    // Send liked song URI to back-end
-    await fetch(`${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?title=${encodeURIComponent(currentTrack.song_name)}&artist=${encodeURIComponent(currentTrack.artist_name)}`, {
-      method: "GET",
+    await fetch(`${process.env.REACT_APP_API_URL}backend/addToPlaylist.php`, {
+      method: "POST",
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        playlist: "Liked Songs",
+        song_title: currentTrack.name,
+        artist_name: currentTrack.artists.map((a: any) => a.name).join(", ")
+      })
     });
   
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
     await resetState();
   };
+  
 
   const handleSkipSong = async () => {
     setSwipeDirection("right");

@@ -61,25 +61,6 @@ curl_setopt_array( $ch, [
 
 $response = curl_exec( $ch );
 
-// // Did the cURL request succeed?
-// if ( curl_errno( $ch ) ) 
-// {
-//     echo 'cURL error: ' . curl_error($ch);
-// } 
-// else 
-// {
-//     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    
-//     if ( $httpCode !== 200 ) 
-//     {
-//         echo json_encode( [
-//             "status" => "error", 
-//             "message" => "$httpCode: Failed to fetch data from Spotify. Please try again.",
-//         ]);
-//         exit();
-//     }
-// }
-
 curl_close( $ch );
 
 // It did! We've got the users listening data! Make it a dictionary.
@@ -90,27 +71,26 @@ if( isset( $page[ "error" ] ) ){
     exit();
 }
 
-// Check to see if the user has ever even listened to music before lol
-// if( $page[ "total" ] <= 0 ) 
-// {
-//     echo json_encode( [
-//         "status" => "error", 
-//         "message" => "Fetched user data from Spotify, but there is none. User literally does not listen to music.",
-//     ]);
-//     exit();
-// }
-
-// User has listened to music before. Cool. Take everything we need and hand it back to frontend.
 $data = [];
 $index = 1;
+
 foreach ( $page[ "items" ] as $item )
 {
+    $image = "";
+    if ($type === "tracks") {
+        $image = $item['album']['images'][0]['url'] ?? "";
+    } else if ($type === "artists") {
+        $image = $item['images'][0]['url'] ?? "";
+    }
+
     $data[] = [ 
         "rank" => $index,
-        "image" => $item[ "images" ][ 0 ][ "url" ],
+        "image" => $image,
         "name" => $item[ "name" ], 
-        "popularity" => $item[ "popularity" ]];
+        "popularity" => $item[ "popularity" ]
+    ];
     $index++;
 }
+
 
 echo json_encode( $data );
