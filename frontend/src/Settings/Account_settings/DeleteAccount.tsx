@@ -59,22 +59,22 @@ const DeleteAccount: React.FC = () => {
 
     const handleModalClose = () => {
         setShowSuccessModal(false);
-        navigate("/");
+        navigate("/login");
     };
 
     return (
         <MainContent>
             <Sidebar />
             <div className="settings-page">
-                <div className="settings-auth-container">
+                <div className="auth-container">
                     <div className="settings-header">
                         <div className="settings-header-text">
                             <button className="settings-back-button btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
                         </div>
                     </div>
-                    <div className="settings-login-box">
+                    <div className="login-box">
                         <h2>Account Deletion</h2>
-                        <h4>To delete your account please enter all the information correctly</h4>
+                        <h4 style={{fontSize:16}}>To delete your account please enter all the information correctly</h4>
                         <form onSubmit={handleSubmit}>
                             <label>Username</label>
                             <input type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -89,22 +89,58 @@ const DeleteAccount: React.FC = () => {
                             <input type="text" value={delete_account} onChange={(e) => setDelete_account(e.target.value)} />
 
                             <button className="settings-delete-button" type="submit">Delete Account</button>
-                            {error && <p className="settings-error-message">{error}</p>}
+                            {error && <p className="error-message">{error}</p>}
                         </form>
                     </div>
                 </div>
-
-                {/* Success Modal */}
-                {showSuccessModal && (
-                    <div className="settings-modal-overlay">
-                        <div className="settings-modal-box">
-                            <h3>Account Deleted</h3>
-                            <p>Your account has been successfully deleted.</p>
-                            <button onClick={handleModalClose}>OK</button>
-                        </div>
-                    </div>
-                )}
             </div>
+            {showSuccessModal && (
+            <div
+                style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 9999,
+                }}
+            >
+                <div
+                style={{
+                    backgroundColor: "#fff",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                    width: "300px",
+                    maxWidth: "90%",
+                    textAlign: "center",
+                }}
+                >
+                <h3 style={{ margin: "0 0 1rem" }}>Account Deleted</h3>
+                <p style={{ margin: "0 0 1.5rem" }}>
+                    Your Account has been successfully deleted.
+                </p>
+                <button
+                    onClick={handleModalClose}
+                    style={{
+                    padding: "0.6rem 1.2rem",
+                    fontSize: "1rem",
+                    backgroundColor: "#32cd32",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    }}
+                >
+                    OK
+                </button>
+                </div>
+            </div>
+            )}
         </MainContent>
     );
 };
