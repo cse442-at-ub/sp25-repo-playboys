@@ -21,48 +21,51 @@ if (!isset($input['song_name']) || !isset($input['artist_name'])) {
 }
 
 $song = $input['song_name'];
-$artist = $input['artist_name'];
+// Split comma-separated artist names and trim whitespace
+$artists = array_map('trim', explode(',', $input['artist_name']));
 
-// Build query for Deezer: search by track title and artist name
-$query = urlencode("track:\"$song\" artist:\"$artist\"");
-$searchUrl = "https://api.deezer.com/search?q={$query}";
+// Try each artist until a match is found
+foreach ($artists as $artist) {
+    // Build query for Deezer: search by track title and current artist name
+    $query = urlencode("track:\"$song\" artist:\"$artist\"");
+    $searchUrl = "https://api.deezer.com/search?q={$query}";
 
-// Initialize cURL request to Deezer API
-$ch = curl_init($searchUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Initialize cURL request to Deezer API
+    $ch = curl_init($searchUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 
-// Handle Deezer response errors
-if ($httpCode !== 200) {
-    http_response_code($httpCode);
-    echo json_encode(['status' => 'error', 'message' => 'Deezer API error', 'code' => $httpCode]);
-    exit;
-}
+    // If API error, skip to next artist
+    if ($httpCode !== 200) {
+        continue;
+    }
 
-$data = json_decode($response, true);
-$tracks = $data['data'] ?? [];
+    $data = json_decode($response, true);
+    $tracks = $data['data'] ?? [];
 
-// Loop through returned tracks to find an exact match
-foreach ($tracks as $track) {
-    if (strcasecmp($track['title'], $song) === 0 && strcasecmp($track['artist']['name'], $artist) === 0) {
-        $previewUrl = $track['preview']; // Deezer preview URL
-        if ($previewUrl) {
-            echo json_encode([
-                'status' => 'success',
-                'trackUrl' => $previewUrl
-            ]);
-            exit;
-        } else {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Preview URL not available for this track'
-            ]);
-            exit;
+    // Loop through returned tracks to find an exact match
+    foreach ($tracks as $track) {
+        if (strcasecmp($track['title'], $song) === 0 && strcasecmp($track['artist']['name'], $artist) === 0) {
+            $previewUrl = $track['preview']; // Deezer preview URL
+            if ($previewUrl) {
+                echo json_encode([
+                    'status' => 'success',
+                    'trackUrl' => $previewUrl
+                ]);
+                exit;
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Preview URL not available for this track'
+                ]);
+                exit;
+            }
         }
     }
 }
 
+// No matching track found for any artist
 echo json_encode(['status' => 'error', 'message' => 'No matching track found']);
