@@ -37,10 +37,18 @@ const SongRecommendationNonSpotify: React.FC = () => {
     setSwipeDirection("left");
     setLiked(true);
   
-    await fetch(`${process.env.REACT_APP_API_URL}backend/addToLikePlaylist.php?title=${encodeURIComponent(currentSong.song_name)}&artist=${encodeURIComponent(currentSong.artist_name)}`, {
-      method: "GET",
-      credentials: "include"
-    });
+    await fetch(`${process.env.REACT_APP_API_URL}backend/addToPlaylist.php`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        playlist: "Liked Songs",
+        song_title: currentSong.song_name,
+        artist_name: currentSong.artist_name
+      })
+    });    
   
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
     await resetState();
