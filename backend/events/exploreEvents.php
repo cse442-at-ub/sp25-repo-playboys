@@ -25,6 +25,7 @@
             break;
         }
     }
+    //requery events but only the top 3
     $events = array_slice($events, 0, 3);
     foreach($events as &$e){
         $e["date"] = convertToShortDate($e["date"]);

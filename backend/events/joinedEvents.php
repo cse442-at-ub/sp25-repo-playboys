@@ -75,6 +75,7 @@
             }
 
         }
+        //return success to frontend
         echo json_encode(["status" => "success", "data" => $data]);
         exit();
     }
