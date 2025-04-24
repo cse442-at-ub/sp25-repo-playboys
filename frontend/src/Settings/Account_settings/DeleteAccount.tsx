@@ -16,7 +16,8 @@ const DeleteAccount: React.FC = () => {
     const csrfToken = useCSRFToken().csrfToken;
     
     const navigate = useNavigate();
-
+    
+    // function to make backend call to delete account
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
