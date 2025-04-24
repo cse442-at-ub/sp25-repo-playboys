@@ -92,7 +92,12 @@ const SettingsPrivacy: React.FC = () => {
 
                         <label>Password</label>
                         <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
+                        <ul>
+                            Password must meet the following requirements:
+                            Have at least 8 characters
+                            Have at least 1 uppercase characters
+                            Have at least 1 special character (!@#$%^&*)
+                        </ul>
                         <label>New Password</label>
                         <input type="password" placeholder="Enter your new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                         <label>Confirm Password</label>
