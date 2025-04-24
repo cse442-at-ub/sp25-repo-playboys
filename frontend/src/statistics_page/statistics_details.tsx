@@ -108,7 +108,21 @@ const StatisticsDetails: React.FC = () => {
                 </div>
             ) : (
                 <div className="detailed-leaderboard">
-                    Top {displayData.length} {itemType === "artists" ? "Artists" : "Songs"} - {timeRange === "short_term" ? "Last Month" : timeRange === "medium_term" ? "Last 90 Days" : "Last Year"}
+                    <div style={{ textAlign: "center", marginBottom: "12px" }}>
+                        <div style={{ fontWeight: 600, fontSize: "18px", marginBottom: "4px" }}>
+                            Top {displayData.length} {itemType === "artists" ? "Artists" : "Songs"} - {timeRange === "short_term" ? "Last Month" : timeRange === "medium_term" ? "Last 90 Days" : "Last Year"}
+                        </div>
+                            <select
+                                className="statistics-select"
+                                value={timeRange}
+                                onChange={(e) => setTimeRange(e.target.value as TimeRange)}
+                            >
+                                <option value="short_term">Last Month</option>
+                                <option value="medium_term">Last 90 Days</option>
+                                <option value="long_term">Last Year</option>
+                            </select>
+                        </div>
+
                     <div className="detailed-grid">
                         {displayData.map((item) => (
                             <div key={item.rank} className="detailed-item">
