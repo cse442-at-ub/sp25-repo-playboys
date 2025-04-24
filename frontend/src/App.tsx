@@ -1,6 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
+import { SidebarProvider } from "./SidebarContext";
+
 
 //landing pages
 import LandingPage from "./landing_page/landingPage";
@@ -10,6 +12,8 @@ import UserProfile from "./user_profile/userProfile";
 import TopArtistsView from "./user_profile/TopArtistsView";
 import EditProfile from "./user_profile/EditProfile";
 import PlaylistsView from "./user_profile/PlaylistsView";
+import PlaylistPage from "./user_profile/PlaylistPage";
+
 // Import mobile Profile
 
 // Import mobile Login and Sign Up
@@ -24,13 +28,14 @@ import StyleGuide from "./style_guide";
 import Settings from "./Settings/Settings";
 import SettingsAccount from "./Settings/Account";
 import SettingsApplicaton from "./Settings/Applicaton";
-import SettingsCommunity from "./Settings/Community";
-import SettingsNotifications from "./Settings/Notifications";
+// import SettingsCommunity from "./Settings/Community";
+// import SettingsNotifications from "./Settings/Notifications";
 import SettingsPlayback from "./Settings/Playback";
-import SettingsPrivacy from "./Settings/Privacy";
+// import SettingsPrivacy from "./Settings/Privacy";
 import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
 import FriendRequest from "./Settings/community_settings/friendRequest";
+import UpdatePassword from "./Settings/Account_settings/UpdatePassword";
 // Coummunity Components
 // import CommunityPage from "./communities/comunity_page";
 
@@ -65,11 +70,18 @@ import useMediaQuery from './useMediaQuery';
 // csrf wrap protection
 import { CSRFProvider } from "./csrfContent";
 
+//event creation page
+import EventCreationPage from "./artistEventCreation/makeEvent";
+
+//event page
+import EventPage from "./artistEventCreation/artistEvent";
+
 function App() {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
 
   return (
+    <SidebarProvider>
     <CSRFProvider>
     <Router>
       <Routes>
@@ -92,19 +104,23 @@ function App() {
         <Route path="/settings" element={<ProtectedRoute element={ <Settings />} />} />
         <Route path="/settings/account" element={<ProtectedRoute element={ <SettingsAccount />} />} />
         <Route path="/settings/app" element={<ProtectedRoute element={<SettingsApplicaton />} />} />
-        <Route path="/settings/community" element={<ProtectedRoute element={<SettingsCommunity />} />} />
-        <Route path="/settings/notifications" element={<ProtectedRoute element={ <SettingsNotifications />} />} />
+        {/* <Route path="/settings/community" element={<ProtectedRoute element={<SettingsCommunity />} />} />
+        <Route path="/settings/notifications" element={<ProtectedRoute element={ <SettingsNotifications />} />} /> */}
         <Route path="/settings/playback" element={<ProtectedRoute element={<SettingsPlayback />} />} />
-        <Route path="/settings/privacy" element={<ProtectedRoute element={ <SettingsPrivacy />} />} />
+        {/* <Route path="/settings/privacy" element={<ProtectedRoute element={ <SettingsPrivacy />} />} /> */}
         <Route path="/settings/account/delete_account" element={<ProtectedRoute element={ <DeleteAccount />} />} />
+        <Route path="/settings/account/update_password" element={<ProtectedRoute element={ <UpdatePassword />} />} />
         <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
         <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
         <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
-        <Route path="/community/:id" element={<CommunityPage />} />
+        <Route path="/community/:name" element={<ProtectedRoute element={<CommunityPage />} />} />
         <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
         <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
         <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/event-creation" element={<ProtectedRoute element={<EventCreationPage />} />} />
+        <Route path="/event" element={<ProtectedRoute element={<EventPage />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
+        <Route path="/playlist/:playlistName" element={<ProtectedRoute element={<PlaylistPage />} />} />
         
       
         <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
@@ -116,6 +132,7 @@ function App() {
       </Routes>
     </Router>
     </CSRFProvider>
+    </SidebarProvider>
   );
 }
 

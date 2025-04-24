@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
 import { useParams } from 'react-router-dom';
-
 import Sidebar from '../user_profile/Sidebar';
-
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer";
-
 import './artistPage.css';
 
 
@@ -15,7 +11,7 @@ const ArtistPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTrack, setActiveTrack] = useState<{ url: string; title: string; artist: string } | null>(null);
   const [artistImage, setArtistImage] = useState<string | null>(null);
-
+  const [notification, setNotification] = useState<string | null>(null);
 
   useEffect(() => {
     if (artist) { // Fetch top songs
@@ -67,14 +63,15 @@ const ArtistPage: React.FC = () => {
         credentials: 'include',
         body: JSON.stringify({ song_name: song, artist_name: artist })
       });
-  
+
       const result = await response.json();
       if (result.status === 'success') {
         console.log(result)
         // Save track URL along with song title and artist name
         setActiveTrack({ url: result.trackUrl, title: song, artist: artist });
       } else {
-        console.error(result.message);
+        setNotification("Song not available");
+        setTimeout(() => setNotification(null), 3000);
       }
     } catch (error) {
       console.error("Error playing song:", error);
@@ -83,9 +80,14 @@ const ArtistPage: React.FC = () => {
 
 
   return (
-    <div className="ap-ap-artist-page"> <Sidebar />
-      <div className="ap-ap-artist-content">
-        <div className="ap-ap-artist-header">
+    <div className="ap-artist-page"> <Sidebar />
+      {notification && (
+        <div className="ap-notification">
+          {notification}
+        </div>
+      )}
+      <div className="ap-artist-content">
+        <div className="ap-artist-header">
           {artistImage && (<img src={artistImage}
             alt={`${artist} image`} className="ap-artist-picture" />)}
           <h1 className="ap-artist-title">

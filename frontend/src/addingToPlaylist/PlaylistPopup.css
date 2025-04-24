@@ -1,0 +1,55 @@
+/* AddToPlaylistPopup.css */
+.add-to-playlist-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .add-to-playlist-popup {
+    position: relative;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    width: 240px;
+  }
+  
+  .add-to-playlist-popup h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+  }
+  
+  .add-to-playlist-popup ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .add-to-playlist-popup li {
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .add-to-playlist-popup li:hover {
+    background: #f0f0f0;
+  }
+  
+  .close-popup {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  

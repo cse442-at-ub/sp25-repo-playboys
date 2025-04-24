@@ -1,59 +1,49 @@
 <?php
-
-//For local testing
-$allowedOrigins = [
-    "http://localhost:3000",
-    "https://se-dev.cse.buffalo.edu",
-     "http://localhost",
-     "https://se-prod.cse.buffalo.edu", 
-];
-
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowedOrigins)) {
-    header("Access-Control-Allow-Origin: $origin");
-}
-
-header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
-/////////////////////////////////////////////////////////////
+require __DIR__ . "/headers.php";
+require __DIR__ . "/cookieAuthHeader.php";
 
-session_start();
-if (!isset($_SESSION['username'])) {
-    echo json_encode(["error" => "Unauthorized"]);
-    exit();
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
+    exit;
 }
 
-//Get top global tracks from Deezer
-$chartUrl = "https://api.deezer.com/chart";
-$chartResponse = file_get_contents($chartUrl);
-$chartData = json_decode($chartResponse, true);
+$letters = range('a', 'z');
+$randomLetter = $letters[array_rand($letters)];
+$searchTerm = $randomLetter;
+$searchTerm = chr(rand(97,122)) . chr(rand(97,122)); // random 2-letter combo
 
-//Shuffle and find a track with a preview
-$tracks = $chartData['tracks']['data'] ?? [];
-shuffle($tracks);
+$searchUrl = "https://api.deezer.com/search?q=" . urlencode($searchTerm);
 
-$selectedTrack = null;
-foreach ($tracks as $track) {
-    if (!empty($track['preview'])) {
-        $selectedTrack = $track;
-        break;
-    }
+$ch = curl_init($searchUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($response, true);
+$tracks = $data['data'] ?? [];
+
+if (empty($tracks)) {
+    echo json_encode(['status' => 'error', 'message' => 'No tracks found']);
+    exit;
 }
 
-if (!$selectedTrack) {
-    echo json_encode(["error" => "No preview available"]);
-    exit();
+$track = $tracks[array_rand($tracks)];
+$previewUrl = $track['preview'] ?? null;
+$coverUrl = $track['album']['cover_medium'] ?? null;
+
+if (!$previewUrl) {
+    echo json_encode(['status' => 'error', 'message' => 'Preview URL not available']);
+    exit;
 }
 
-//Return the selected track
 echo json_encode([
-    "name" => $selectedTrack['title'],
-    "artist" => $selectedTrack['artist']['name'],
-    "album" => $selectedTrack['album']['title'],
-    "preview_url" => $selectedTrack['preview'], // 30s MP3
-    "image" => $selectedTrack['album']['cover_big'],
-    "genre" => "Top Chart",
-    "backgroundStory" => "A Track from {$selectedTrack['artist']['name']} on Top Global Tracks",
-    "deezer_link" => $selectedTrack['link']
+    'status' => 'success',
+    'trackUrl' => $previewUrl,
+    'song' => [
+        'song_name' => $track['title'],
+        'artist_name' => $track['artist']['name'],
+        'cover_url' => $coverUrl
+    ]
 ]);
-?>

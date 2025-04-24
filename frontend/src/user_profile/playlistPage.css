@@ -1,0 +1,97 @@
+.pp-playlist-page {
+    display: flex;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.pp-playlist-content {
+    flex: 1;
+    margin-left: 20px;
+    margin-right: 20%;
+}
+
+.pp-playlist-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pp-playlist-picture {
+    width: 10%;
+    height: 10%;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.pp-playlist-title {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.pp-top-tracks-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.pp-tracks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pp-track-item {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pp-track-item:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.pp-track-info {
+    display: flex;
+    align-items: center;
+}
+
+.pp-track-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.pp-track-duration {
+    font-size: 14px;
+    color: #777;
+    margin-left: 8px;
+}
+
+.pp-track-delete {
+    margin-left: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.pp-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    font-size: 14px;
+}
