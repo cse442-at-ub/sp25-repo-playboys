@@ -1,0 +1,34 @@
+.ep-community-circle-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  .ep-community-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    width: 100px;
+  }
+  
+  .ep-community-name {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    text-align: center;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .community-circle-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+  }
+  

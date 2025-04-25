@@ -1,6 +1,11 @@
 <?php
 // Allow requests from any origin
 //this file should not be called since it has an response use cookieAuth.php instead
+
+header("Access-Control-Allow-Origin: http://localhost:3000"); // Just for local testing (NOT production)
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
+
 require __DIR__ . "/headers.php";
 
 

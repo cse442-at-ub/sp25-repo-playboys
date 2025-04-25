@@ -1,0 +1,170 @@
+/* Container for the entire friend list */
+.friendlist-container {
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Header section with the back button and page title */
+.friendlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items to the left */
+  gap: 10px; /* Smaller gap between the back button and title */
+  font-size: 24px;
+  font-weight: bold;
+  background-color: white;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px 30px; /* Maintain padding for a clean look */
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.friendlist-search-bar-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.friendlist-title {
+  margin: 0;
+}
+
+.friendlist-back-button {
+  border: none;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.friendlist-back-button:hover {
+  transform: scale(1.05);
+}
+
+.friendlist-title {
+  margin: 0;
+  font-size: 24px; /* Ensure the font size matches */
+  white-space: nowrap; /* Prevent the title from wrapping to a new line */
+}
+
+/* List of friends */
+.friendlist {
+  margin-top: 80px; /* Ensure space below the fixed header */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 90%; /* Limit the width of the friend list */
+  max-width: 600px; /* Optional: Set a max-width to make the list more compact */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Each friend item */
+.friend-item {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Friend avatar */
+.friend-avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Friend name */
+.friend-name {
+  font-size: 18px;
+  margin-left: 10px;
+  flex-grow: 1;
+}
+
+/* Remove friend button */
+.remove-friend-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.remove-friend-btn:hover {
+  background-color: #d32f2f;
+}
+
+
+/* Apply styles for mobile view */
+@media only screen and (max-width: 768px) {
+  .friendlist-header {
+    flex-direction: row; /* Arrange items in a single row */
+    align-items: center;
+    justify-content: space-between; /* Distribute space between items */
+    padding: 10px 15px; /* Adjust padding for a tighter look */
+    gap: 5px; /* Reduce spacing between elements */
+  }
+
+  .friendlist-back-button {
+    padding: 6px 10px; /* Adjust padding to make the button smaller */
+    font-size: 12px; /* Reduce font size */
+  }
+
+  .friendlist-title {
+    font-size: 16px; /* Reduce font size to save space */
+    white-space: nowrap; /* Ensure the title doesn't wrap */
+    overflow: hidden; /* Hide overflow text */
+    text-overflow: ellipsis; /* Add ellipsis for long titles */
+  }
+
+  .friendlist-search-bar-container {
+    position: static; /* Remove absolute positioning */
+    margin-left: auto; /* Push it to the right */
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+
+  .friendlist-container {
+    padding: 10px 0; /* Reduce padding for mobile */
+  }
+
+  .friendlist {
+    margin-top: 60px; /* Adjust spacing for the header */
+    padding: 10px; /* Tighten padding */
+  }
+
+  .friend-item {
+    padding: 8px; /* Make items more compact */
+    gap: 10px; /* Adjust spacing between avatar and name */
+  }
+
+  .friend-avatar {
+    width: 40px; /* Reduce size */
+    height: 40px; /* Reduce size */
+  }
+
+  .friend-name {
+    font-size: 14px; /* Smaller font size */
+  }
+
+  .remove-friend-btn {
+    padding: 4px 8px; /* Adjust size */
+    font-size: 12px; /* Reduce font size */
+  }
+}

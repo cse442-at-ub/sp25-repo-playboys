@@ -1,22 +1,31 @@
 import React from "react";
 import "./Settings.css"; // Import the CSS file
-
+import { useNavigate } from 'react-router-dom';
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
 const options = [
   { name: "Account", imageUrl: "./static/AccountIcon.png" },
-  { name: "Privacy", imageUrl: "./static/LockIcon.png" },
-  { name: "Notifications", imageUrl: "./static/BellIcon.png" },
+  // { name: "Privacy", imageUrl: "./static/LockIcon.png" },
+  // { name: "Notifications", imageUrl: "./static/BellIcon.png" },
   { name: "Playback & Data", imageUrl: "./static/RewindIcon.png" },
-  { name: "Community & Social", imageUrl: "./static/CommunityIcon.png" },
+  // { name: "Community & Social", imageUrl: "./static/CommunityIcon.png" },
   { name: "App & Support", imageUrl: "./static/ClogIcon.png" },
 ];
 
 const Settings = () => {
+  const navigate = useNavigate();
+  const handleBackButton = () => {
+    navigate("/userprofile");
+    //navigate('/userProfile');
+  };
   return (
+    <MainContent>
+            <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
           <div className="header-text">
-            <span className="menu-icon">☰</span>
+          <button className="btn btn-light btn-lg fs-3 p-10" aria-label="Go back" onClick={handleBackButton}>←</button>
             <span>Settings</span>
           </div>
         </div>
@@ -36,6 +45,7 @@ const Settings = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 

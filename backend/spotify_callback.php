@@ -1,37 +1,37 @@
 <?php
-// spotify_callback.php
 require __DIR__ . "/headers.php";
-
+require __DIR__ . '/data_base.php';
 $config = include __DIR__ . '/config.php';
 $client_id     = $config['spotify_client_id'];
 $client_secret = $config['spotify_client_secret'];
 $redirect_uri  = $config['spotify_redirect_uri'];
 
 session_start();
+echo "DEBUG: Starting Spotify callback process<br>";
 
-// 1. Check if an authorization code is provided
+// Step 1: Check for authorization code
 if (!isset($_GET['code'])) {
+    echo "DEBUG: Authorization code not provided.<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
     echo json_encode(["status" => "Error", "message" => "Error retrieving authorization code."]);
-    // exit('No authorization code provided.');
     exit();
 }
-
 $code = $_GET['code'];
+echo "DEBUG: Received authorization code: $code<br>";
 
-
-// 3. Exchange the authorization code for an access token
+// Step 2: Exchange code for access token
 $token_url = "https://accounts.spotify.com/api/token";
 $post_fields = http_build_query([
     'grant_type'   => 'authorization_code',
     'code'         => $code,
     'redirect_uri' => $redirect_uri
 ]);
-
 $headers = [
     'Authorization: Basic ' . base64_encode($client_id . ':' . $client_secret),
     'Content-Type: application/x-www-form-urlencoded'
 ];
 
+echo "DEBUG: Requesting access token from Spotify<br>";
 $ch = curl_init();
 curl_setopt_array($ch, [
     CURLOPT_URL            => $token_url,
@@ -41,59 +41,91 @@ curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true
 ]);
 $response = curl_exec($ch);
+if (curl_errno($ch)) {
+    echo "DEBUG: cURL error during token exchange: " . curl_error($ch) . "<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
+    exit("DEBUG: cURL error during token exchange.");
+}
 curl_close($ch);
 
+echo "DEBUG: Spotify token response: $response<br>";
 $token_data = json_decode($response, true);
-
 if (!isset($token_data['access_token'])) {
+    echo "DEBUG: Access token not received. Response: $response<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
     echo json_encode(["status" => "Error", "message" => "Error retrieving access token"]);
     exit();
 }
 
 $access_token = $token_data['access_token'];
-// Optionally handle refresh token and expiration if needed
+setcookie('spotify_access_token', $access_token, [
+    'expires' => time() + 3600,
+    'path' => '/'
+]);
+$refresh_token = $token_data['refresh_token'] ?? null;
+echo "DEBUG: Received access token: $access_token<br>";
 
-// 4. Use the access token to fetch the user's profile data from Spotify
+// Step 3: Get Spotify user info
 $user_profile_url = "https://api.spotify.com/v1/me";
+echo "DEBUG: Requesting user profile from Spotify<br>";
 $ch = curl_init();
 curl_setopt_array($ch, [
     CURLOPT_URL            => $user_profile_url,
-    CURLOPT_HTTPHEADER     => [ 'Authorization: Bearer ' . $access_token ],
+    CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $access_token],
     CURLOPT_RETURNTRANSFER => true
 ]);
 $user_response = curl_exec($ch);
+if (curl_errno($ch)) {
+    echo "DEBUG: cURL error during user info retrieval: " . curl_error($ch) . "<br>";
+    exit("DEBUG: cURL error during user info retrieval.");
+}
 curl_close($ch);
+echo "DEBUG: Spotify user profile response: $user_response<br>";
 
 $user_info = json_decode($user_response, true);
-// Check required fields exist
 if (!isset($user_info['id'])) {
-     exit('Error retrieving user information.');
+    echo "DEBUG: User ID not found in response. Response: $user_response<br>";
+    header('Location: ' . $config['frontend_url'] . '#/login');
+    exit("DEBUG: Error retrieving user information.");
+    
 }
 
 $spotify_id   = $user_info['id'];
-$display_name = isset($user_info['display_name']) ? $user_info['display_name'] : '';
-$email        = isset($user_info['email']) ? $user_info['email'] : '';
+$display_name = $user_info['display_name'] ?? '';
+$email        = $user_info['email'] ?? '';
+echo "DEBUG: User info retrieved - ID: $spotify_id, Display Name: $display_name, Email: $email<br>";
 
-
-
-// // check if user exists in database
-$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE username = ?");
-$login_user->bind_param("s", $display_name);
+// Step 4: Check if user exists in DB
+echo "DEBUG: Checking if user exists in database<br>";
+$login_user = $conn->prepare("SELECT * FROM user_login_data WHERE spotify_id = ?");
+$login_user->bind_param("s", $spotify_id);
 $login_user->execute();
 $result = $login_user->get_result();
+if ($result->num_rows > 0) {
+    $update = $conn->prepare("
+        UPDATE user_login_data
+        SET access_token = ?, refresh_token = ?, email = ?, username = ?
+        WHERE spotify_id = ?
+  ");
+  
+  $update->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
+  $update->execute();
+  echo "DEBUG: New user updated into user_login_data<br>";
 
-
-// // if user doesnt exist we register them
+}
 if ($result->num_rows === 0) {
-    //prepare sql statement and bind parameters
-    $insert_new_user = $conn->prepare("INSERT INTO user_login_data (access_token, email, username, spotify_id) VALUES (?, ?, ?, ?)");
-    $insert_new_user->bind_param("ssss",$access_token, $email, $display_name, $spotify_id);
+    echo "DEBUG: User not found in database. Registering new user.<br>";
 
-    //insert newly registered user into database
+    $insert_new_user = $conn->prepare("INSERT INTO user_login_data (access_token, refresh_token, email, username, spotify_id) VALUES (?, ?, ?, ?, ?)");
+    if (!$insert_new_user) {
+        echo "DEBUG: Database prepare error (insert_new_user): " . $conn->error . "<br>";
+        exit("DEBUG: Database error during prepare (insert_new_user).");
+    }
+    $insert_new_user->bind_param("sssss", $access_token, $refresh_token, $email, $display_name, $spotify_id);
     $insert_new_user->execute();
+    echo "DEBUG: New user inserted into user_login_data<br>";
 
-
-    //trim and grab data sent from json object from router.php
+    // Profile setup
     $username = $display_name;
     $followers = 0;
     $followings = 0;
@@ -101,59 +133,52 @@ if ($result->num_rows === 0) {
     $top_songs = "";
     $top_artists = "";
     $recent_activity = "";
+    $profile_pic = "";
+    $Communities = json_encode([]); // Store as an empty JSON array instead of ""
 
-  
-    //make new user profile table for new user
-    $insert_new_profile = $conn->prepare("INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity) VALUES (?, ?, ? , ? , ? , ? , ? , ?)");
-    $insert_new_profile->bind_param("ssssssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity);
+    //insert newly registered user into database
+
+    // Get the last inserted user ID
+    $user_id = $conn->insert_id;
+    echo "DEBUG: TRYING TO INSERT INTO PROFILE DB";
+    // Insert new user profile into `user_profiles`
+    $insert_new_profile = $conn->prepare("
+        INSERT INTO user_profiles (username, email, friends, followers, followings, top_songs, top_artists, recent_activity, profile_pic, Communities) 
+        VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $insert_new_profile->bind_param("ssiiisssss", $username, $email, $friends, $followers, $followings, $top_songs, $top_artists, $recent_activity, $profile_pic, $Communities);
     $insert_new_profile->execute();
-
-
-    //generate random token
-    $token = bin2hex(random_bytes(32));
-    //add auth_key: will act as a token for user confirmation
-    $delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
-    $delete_old_keys->bind_param("s", $display_name);
-    $delete_old_keys->execute();
-    $delete_old_keys->close();
-    
-    $insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key) VALUES (?, ?)");
-    $insert_key->bind_param("ss", $display_name, $token);
-    $insert_key->execute();
-    $insert_key->close();
-    setcookie('auth_token', $token, [
-        'expires' => time() + 3600,
-        'path' => '/'
-    ]);
-    header('Location: ' . $config['frontend_url'] . '#/userprofile');
-
-    //garbage collection
-    $insert_new_user->close();
     $insert_new_profile->close();
-    $conn->close();
+    echo "DEBUG: New user inserted into user_profiles<br>";
 }
-// they were already registered so we log them in
-else{
-    //generate random token
-    $token = bin2hex(random_bytes(32));
-    //add auth_key: will act as a token for user confirmation
-    $delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
-    $delete_old_keys->bind_param("s", $display_name);
-    $delete_old_keys->execute();
-    $delete_old_keys->close();
-    
-    $insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key) VALUES (?, ?)");
-    $insert_key->bind_param("ss", $display_name, $token);
-    $insert_key->execute();
-    $insert_key->close();
-    setcookie('auth_token', $token, [
-        'expires' => time() + 3600,
-        'path' => '/'
-    ]);
-    header('Location: ' . $config['frontend_url'] . '#/userprofile');
 
-    // echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
-}
-// Redirect the user to a protected area or dashboard
-exit;
+// Step 5: Handle session + cookies for all users
+$token = bin2hex(random_bytes(32));
+$csrf_token = bin2hex(random_bytes(32));
+echo "DEBUG: Generated new auth token: $token<br>";
+
+$delete_old_keys = $conn->prepare("DELETE FROM cookie_authentication WHERE username = ?");
+$delete_old_keys->bind_param("s", $display_name);
+$delete_old_keys->execute();
+$delete_old_keys->close();
+echo "DEBUG: Old auth tokens deleted<br>";
+
+$insert_key = $conn->prepare("INSERT INTO cookie_authentication (username, auth_key, csrf_token) VALUES (?, ?, ?)");
+$insert_key->bind_param("sss", $display_name, $token, $csrf_token);
+$insert_key->execute();
+$insert_key->close();
+echo "DEBUG: New auth token inserted<br>";
+
+setcookie('auth_token', $token, [
+    'expires' => time() + 3600,
+    'path' => '/'
+]);
+echo "DEBUG: Auth token cookie set<br>";
+
+$_SESSION['username'] = $display_name;
+$_SESSION['spotify_id'] = $spotify_id;
+
+echo "DEBUG: Redirecting user to profile page<br>";
+header('Location: ' . $config['frontend_url'] . '#/userprofile');
+exit();
 ?>

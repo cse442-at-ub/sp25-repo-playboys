@@ -1,117 +1,138 @@
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import ProtectedRoute from './ProtectedRoute'; // Import the protected route component
+import ProtectedRoute from "./ProtectedRoute"; // Import the protected route component
+import { SidebarProvider } from "./SidebarContext";
+
 
 //landing pages
-import MobileLandingPage from './mobile_landing_page/mobile_landing_page'
-import LandingPage from './landing_page/landingPage';
+import LandingPage from "./landing_page/landingPage";
 
 //Profile Components
-import UserProfile from './user_profile/userProfile';
-import TopArtistsView from './user_profile/TopArtistsView';
-import EditProfile from './user_profile/EditProfile';
-import PlaylistsView from './user_profile/PlaylistsView';
+import UserProfile from "./user_profile/userProfile";
+import TopArtistsView from "./user_profile/TopArtistsView";
+import EditProfile from "./user_profile/EditProfile";
+import PlaylistsView from "./user_profile/PlaylistsView";
+import PlaylistPage from "./user_profile/PlaylistPage";
+
 // Import mobile Profile
-import MobileProfile from './mobile_profile/MobileProfile';
-import MobileEditProfile from './mobile_profile/MobileEditProfile';
-import MobileTopArtistsPage from './mobile_profile/MobileTopArtistsView';
-import MobilePlaylistsView from './mobile_profile/MobilePlaylistsView';
 
-// Login and Sign Up Components
-import Register from './login_screens/register/register';
-import Login from './login_screens/login/login';
-import Forgot from './login_screens/forgot/forgot';
-import ResetPassword from './login_screens/forgot/new_password';
 // Import mobile Login and Sign Up
-import MobileLogin from './mobile_login_views/mobile_login/mobile_login';
-import MobileRegister from './mobile_login_views/mobile_register/mobile_register';
+import Register from "./login_screens/register/register";
+import Login from "./login_screens/login/login";
+import Forgot from "./login_screens/forgot/forgot";
+import Reset from './login_screens/forgot/reset';
+// Import mobile Login and Sign Up
 
+import StyleGuide from "./style_guide";
 //Settings Components
-import Settings from './Settings/Settings';
-import SettingsAccount from './Settings/Account';
-import SettingsApplicaton from './Settings/Applicaton';
-import SettingsCommunity from './Settings/Community';
-import SettingsNotifications from './Settings/Notifications';
-import SettingsPlayback from './Settings/Playback';
-import SettingsPrivacy from './Settings/Privacy';
-import DeleteAccount from './Settings/Account_settings/DeleteAccount';
+import Settings from "./Settings/Settings";
+import SettingsAccount from "./Settings/Account";
+import SettingsApplicaton from "./Settings/Applicaton";
+// import SettingsCommunity from "./Settings/Community";
+// import SettingsNotifications from "./Settings/Notifications";
+import SettingsPlayback from "./Settings/Playback";
+// import SettingsPrivacy from "./Settings/Privacy";
+import DeleteAccount from "./Settings/Account_settings/DeleteAccount";
 import ProfileVisibility from './Settings/Privacy_settings/ProfileVisibilityOptions'
-import FriendRequest from './Settings/community_settings/friendRequest';
-//import all mobile views for setting
-import MobileSettings from './mobile_setting/MobileSettings';
-import MobileSettingsAccount from './mobile_setting/MobileAccount';
-import MobileSettingsApplication from './mobile_setting/MobileApplicaton';
-import MobileSettingsCommunity from './mobile_setting/MobileCommunity';
-import MobileSettingsNotifications from './mobile_setting/MobileNotifications';
-import MobileSettingsPlayback from './mobile_setting/MobilePlayback';
-import MobileSettingsPrivacy from './mobile_setting/MobilePrivacy';
-import MobileDeleteAccount from './mobile_setting/Mobile_Account_settings/MobileDeleteAccount';
+import FriendRequest from "./Settings/community_settings/friendRequest";
+import UpdatePassword from "./Settings/Account_settings/UpdatePassword";
+// Coummunity Components
+// import CommunityPage from "./communities/comunity_page";
 
-// import all statistics views
-import { StatisticsOverview } from "./statistics_page/statistics_overview";
-import { StatisticsDetails } from "./statistics_page/statistics_details";
-import { SampleStatistics } from "./statistics_page/sample_statistics";
+// Feed Compnents
+import Feed from "./feed/feed";
+import PostPage from "./feed/post";
+import SearchPage from "./search_result_page/searchResultPage";
+import SpotifyPlayer from "./spotify_player/SpotifyPlayer";
+
+
+//import Community Page
+import CommunityPage from "./communities/CommunityPage";
+import CreateCommunityPage from "./communities/CreateCommunityPage";
+
+//Import SongRecommendation
+import SongRecommendation from "./song_recommendation/SongRecommendationFE";
+
+// Explore Page
+import Explore from "./explore/explore";
+import GenrePage from "./explore/genre";
+import ArtistPage from "./explore/artistPage";
+
+// Statistics
+import StatisticsOverview from "./statistics_page/statistics_overview";
+import StatisticsDetails from "./statistics_page/statistics_details";
+//friendlist page 
+import FriendList from "./friend_list/friendList";
 
 // Hook for detecting screen size
 import useMediaQuery from './useMediaQuery';
+
+// csrf wrap protection
+import { CSRFProvider } from "./csrfContent";
+
+//event creation page
+import EventCreationPage from "./artistEventCreation/makeEvent";
+
+//event page
+import EventPage from "./artistEventCreation/artistEvent";
 
 function App() {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); // Detect mobile devices
 
   return (
+    <SidebarProvider>
+    <CSRFProvider>
     <Router>
       <Routes>
-        <Route path="/" element={isMobile ? <MobileLandingPage/> : <LandingPage />} />``
-        <Route path="/register" element={isMobile ? <MobileRegister/> : <Register />} />
-        <Route path="/login" element={isMobile ? <MobileLogin /> : <Login />} />
+      <Route path="/style_guide" element={<StyleGuide />}></Route>
+        <Route path="/" element={ <LandingPage />} />
+        <Route path="/register" element={ <Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
-        <Route path="/forgot/reset" element={<ResetPassword />} />
-        <Route path="/statistics" element={<StatisticsOverview 
-                                            topX={3}
-                                            topArtistsLastMonth={SampleStatistics.topArtistsLastMonth} 
-                                            topArtistsLast90Days={SampleStatistics.topArtistsLast90Days} 
-                                            topArtistsLastYear={SampleStatistics.topArtistsLastYear} 
-                                            topSongsLastMonth={SampleStatistics.topSongsLastMonth} 
-                                            topSongsLast90Days={SampleStatistics.topSongsLast90Days} 
-                                            topSongsLastYear={SampleStatistics.topSongsLastYear} 
-                                            topAlbumsLastMonth={SampleStatistics.topAlbumsLastMonth} 
-                                            topAlbumsLast90Days={SampleStatistics.topAlbumsLast90Days} 
-                                            topAlbumsLastYear={SampleStatistics.topAlbumsLastYear}/>} />
-        <Route path="/statistics/details" element={<StatisticsDetails 
-                                            topX={8}
-                                            topArtistsLastMonth={SampleStatistics.topArtistsLastMonth} 
-                                            topArtistsLast90Days={SampleStatistics.topArtistsLast90Days} 
-                                            topArtistsLastYear={SampleStatistics.topArtistsLastYear} 
-                                            topSongsLastMonth={SampleStatistics.topSongsLastMonth} 
-                                            topSongsLast90Days={SampleStatistics.topSongsLast90Days} 
-                                            topSongsLastYear={SampleStatistics.topSongsLastYear} 
-                                            topAlbumsLastMonth={SampleStatistics.topAlbumsLastMonth} 
-                                            topAlbumsLast90Days={SampleStatistics.topAlbumsLast90Days} 
-                                            topAlbumsLastYear={SampleStatistics.topAlbumsLastYear}/>} />
+        <Route path="/forgot/reset/:email" element={<Reset />}/>
+        <Route path="/explore" element={<ProtectedRoute element={<Explore />} />} />
+        <Route path="/explore/genre/:genre" element={<ProtectedRoute element={<GenrePage />} />} />
+        <Route path="/explore/artist/:artist" element={<ProtectedRoute element={<ArtistPage />} />} />
+        <Route path="/forgot/reset" element={<Reset />} />
+        <Route path="/statistics" element={<StatisticsOverview />} />
+        <Route path="/statistics/details" element={<StatisticsDetails />} />
       
-
-
-
         {/* 1. Protected Routes: All of these paths need login to access (can still be bypassed but no senstive information will be on it).
             2. Still have to make sure to check auth tokencookie everytime a user wants to check or access their information in the backend for the different pages 
         */}
-        <Route path="/settings" element={<ProtectedRoute element={isMobile ? <MobileSettings/> : <Settings />} />} />
-        <Route path="/settings/account" element={<ProtectedRoute element={isMobile ? <MobileSettingsAccount/> : <SettingsAccount />} />} />
-        <Route path="/settings/app" element={<ProtectedRoute element={isMobile ? <MobileSettingsApplication/> : <SettingsApplicaton />} />} />
-        <Route path="/settings/community" element={<ProtectedRoute element={isMobile ? <MobileSettingsCommunity/> : <SettingsCommunity />} />} />
-        <Route path="/settings/notifications" element={<ProtectedRoute element={isMobile ? <MobileSettingsNotifications/> : <SettingsNotifications />} />} />
-        <Route path="/settings/playback" element={<ProtectedRoute element={isMobile ? <MobileSettingsPlayback/> : <SettingsPlayback />} />} />
-        <Route path="/settings/privacy" element={<ProtectedRoute element={isMobile ? <MobileSettingsPrivacy/> : <SettingsPrivacy />} />} />
-        <Route path="/settings/account/delete_account" element={<ProtectedRoute element={isMobile ? <MobileDeleteAccount/> : <DeleteAccount />} />} />
-        <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={isMobile ? <ProfileVisibility/> : <ProfileVisibility />} />} />
-        <Route path="/userprofile" element={<ProtectedRoute element={isMobile ? <MobileProfile /> : <UserProfile />} />} />
-        <Route path="/top-artists" element={<ProtectedRoute element={isMobile ? <MobileTopArtistsPage /> : <TopArtistsView />} />} />
-        <Route path="/playlist-view" element={<ProtectedRoute element={isMobile ? <MobilePlaylistsView /> : <PlaylistsView />} />} />
-        <Route path="/edit-profile" element={<ProtectedRoute element={isMobile ? <MobileEditProfile /> : <EditProfile />} />} />
+        <Route path="/settings" element={<ProtectedRoute element={ <Settings />} />} />
+        <Route path="/settings/account" element={<ProtectedRoute element={ <SettingsAccount />} />} />
+        <Route path="/settings/app" element={<ProtectedRoute element={<SettingsApplicaton />} />} />
+        {/* <Route path="/settings/community" element={<ProtectedRoute element={<SettingsCommunity />} />} />
+        <Route path="/settings/notifications" element={<ProtectedRoute element={ <SettingsNotifications />} />} /> */}
+        <Route path="/settings/playback" element={<ProtectedRoute element={<SettingsPlayback />} />} />
+        {/* <Route path="/settings/privacy" element={<ProtectedRoute element={ <SettingsPrivacy />} />} /> */}
+        <Route path="/settings/account/delete_account" element={<ProtectedRoute element={ <DeleteAccount />} />} />
+        <Route path="/settings/account/update_password" element={<ProtectedRoute element={ <UpdatePassword />} />} />
+        <Route path="/settings/privacy/profile_visibility" element={<ProtectedRoute element={<ProfileVisibility />} />} />
+        <Route path="/userprofile" element={<ProtectedRoute element={ <UserProfile />} />} />
+        <Route path="/create-community" element={<ProtectedRoute element={<CreateCommunityPage />} />} />
+        <Route path="/community/:name" element={<ProtectedRoute element={<CommunityPage />} />} />
+        <Route path="/top-artists" element={<ProtectedRoute element={ <TopArtistsView />} />} />
+        <Route path="/playlist-view" element={<ProtectedRoute element={<PlaylistsView />} />} />
+        <Route path="/edit-profile" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/event-creation" element={<ProtectedRoute element={<EventCreationPage />} />} />
+        <Route path="/event" element={<ProtectedRoute element={<EventPage />} />} />
         <Route path="/settings/community/friend_requests" element={<ProtectedRoute element={<FriendRequest />} />} />
-        </Routes>
+        <Route path="/playlist/:playlistName" element={<ProtectedRoute element={<PlaylistPage />} />} />
+        
+      
+        <Route path="/friendlist" element={<ProtectedRoute element={<FriendList />}/>} />
+        
+        <Route path="/search_results" element={<ProtectedRoute element= {<SearchPage />} />} />
+  
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/feed/post" element={<PostPage />} />
+      </Routes>
     </Router>
+    </CSRFProvider>
+    </SidebarProvider>
   );
 }
 

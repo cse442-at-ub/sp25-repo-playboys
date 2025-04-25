@@ -1,11 +1,13 @@
 import React from "react";
 import "./Settings.css";
 import { useNavigate } from 'react-router-dom';
+import MainContent from "../MainContent";
+import Sidebar from "../user_profile/Sidebar";
 
 const options = [
-    { name: "Music Source", icon: "./static/MusicIcon.png", path: "settings/playback/default_music_source" },
-    { name: "Auto-Scrobble", icon: "./static/AutoScrobbleIcon.png", path: "settings/playback/auto_scrobble" },
-    { name: "Playback Quality", icon: "./static/AudioIcon.png", path: "settings/playback/playback_quality" },
+    { name: "Music Source", icon: "./static/MusicIcon.png", path: "settings/playback" },
+    { name: "Auto-Scrobble", icon: "./static/AutoScrobbleIcon.png", path: "settings/playback" },
+    { name: "Playback Quality", icon: "./static/AudioIcon.png", path: "settings/playback"},
   ];
   
 
@@ -19,6 +21,8 @@ const SettingsPlayback = () => {
     };
 
   return (
+    <MainContent>
+      <Sidebar />
     <div className="settings-page">
       <div className="settings-container">
         <div className="settings-header">
@@ -40,6 +44,7 @@ const SettingsPlayback = () => {
         </div>
       </div>
     </div>
+    </MainContent>
   );
 };
 

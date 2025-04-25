@@ -1,0 +1,251 @@
+.ep-explore-page {
+  padding: 20px;
+  
+}
+
+/* Search Bar */
+.ep-search-bar-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.ep-search-bar {
+  width: 75%;
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 2px solid #000000;
+}
+
+/* Section Title */
+.ep-section-title {
+  margin: 20px 0 10px;
+  font-size: 20px;
+  text-align: center;
+  font-weight: bolder;
+  text-decoration: underline;
+}
+
+/* Listening Container (Top Song, Artist, Album, Genre) */
+.ep-listening-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.ep-listening-column {
+  flex: 1;
+  min-width: 150px;
+}
+
+.ep-listening-column h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.ep-list-item:hover,
+.ep-genre-box:hover {
+  filter: brightness(125%);
+}
+
+.ep-list-item {
+  text-align: center;
+  background-color: #a3a3a3;
+  padding: 5%;
+  margin: 5% 0;
+  border-radius: 25px;
+}
+
+/* Genre Section */
+.ep-genre-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.ep-genre-box {
+  flex: 1;
+  min-width: 100px;
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+/* Upcoming Events */
+.ep-event-section-title {
+  display: flex;
+  justify-content: space-between; /* Ensures space between title and button */
+  align-items: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bolder;
+}
+.ep-event-section-title span {
+  text-decoration: underline; /* Apply underline only to the title text */
+}
+
+.ep-create-event-button {
+  background-color: #4CAF50; /* Green color for the button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.ep-create-event-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+.ep-events-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 50px;
+}
+
+.ep-event-circle {
+  width: 120px;
+  height: 120px;
+  background-color: #ddd;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; /* Makes it clickable */
+  border: 2px solid #ccc; /* Added black outline */
+  transition: transform 0.5s ease-in-out; /* Slower transition for scaling */
+}
+.ep-event-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ep-event-title {
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  margin-top: 5px;
+}
+.ep-event-circle:hover {
+  transform: scale(1.05); /* Scale up on hover */
+}
+.ep-event-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 1; /* Ensure overlay is above the background image */
+  border-radius: 50%; /* Ensure overlay fits inside the circle */
+}
+
+.ep-event-date,
+.ep-event-location {
+  color: white; /* Text color */
+  z-index: 2; /* Ensure text appears above the overlay */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Text shadow for better readability */
+  
+}
+
+.ep-event-date {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.ep-event-location {
+  width: 100px;
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+  white-space: nowrap; /* Prevent text from wrapping */
+
+}
+
+.explore-content {
+  margin-right: 10%;
+  margin-left: 10%;
+  margin-bottom: 120px;
+}
+
+.ep-genre-box,
+.ep-artist-button {
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  text-transform: capitalize;
+}
+
+.ep-genre-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ep-songrecommend {
+  margin-bottom: 120px;
+}
+
+
+.ep-community-circle-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  margin: 30px 0;
+}
+
+.ep-community-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  width: 100px;
+}
+
+.ep-community-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #ccc;
+  transition: transform 0.2s ease;
+}
+
+.ep-community-circle:hover {
+  transform: scale(1.05);
+}
+
+.ep-community-name {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
