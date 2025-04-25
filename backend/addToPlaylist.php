@@ -7,9 +7,6 @@ require __DIR__ . "/cookieAuthHeader.php";
 include "./userDatabaseGrabber.php";
 
 header('Content-Type: application/json');
-
-
-
 $input = json_decode(file_get_contents('php://input'), true);
 if (
     !is_array($input) ||
