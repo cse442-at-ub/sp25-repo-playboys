@@ -69,7 +69,7 @@
     if (!empty($missingFields)) {
         echo json_encode([
             "status" => "error",
-            "message" => "Password must contain: " . implode(", ", $missingFields)
+            "message" => "Password is missing: " . implode(", ", $missingFields)
         ]);
         exit();
     }
@@ -146,8 +146,7 @@
     catch(Exception $e) {
         if($e->getCode() === 1062) {
             echo json_encode(["status" => "error", "message" => "User already exists."]);
-        }
-        else {
+        } else {
             echo json_encode(["status" => "error", "message" => "An error occurred. Please try again."]);
         }
     }

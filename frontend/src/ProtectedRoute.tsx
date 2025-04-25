@@ -3,19 +3,21 @@ import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ element }: { element: React.ReactElement }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userType, setUserType] = useState<"spotify" | "nonspotify" | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}backend/independentCookieAuth.php`, {
           method: "GET",
-          credentials: "include", // Sends cookies with request
+          credentials: "include",
         });
 
         const result = await response.json();
 
         if (result.status === "success") {
           setIsAuthenticated(true);
+          setUserType(result.spotify_id ? "spotify" : "nonspotify");
         } else {
           setIsAuthenticated(false);
         }
@@ -29,10 +31,21 @@ const ProtectedRoute = ({ element }: { element: React.ReactElement }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>; // Show a loading state while checking auth
+    return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? element : <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  // Redirect based on user type if accessing the base /song route
+  if (window.location.hash.includes("#/song")) {
+    return userType === "spotify"
+      ? <Navigate to="/song" />
+      : <Navigate to="/song-nonspotify" />;
+  }
+
+  return element;
 };
 
 export default ProtectedRoute;

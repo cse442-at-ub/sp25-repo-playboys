@@ -56,8 +56,10 @@ const SearchResultPage = () => {
     const [songs, setSongs] = React.useState<Song[]>([]);
     const [artists, setArtists] = React.useState<Artist[]>([]);
     const [events, setEvents] = React.useState<Event[]>([]);
+    const [query, setQuery] = React.useState<string>("");
     React.useEffect(() => {
         if(search_query) {
+            setQuery(search_query);
             handleSearch(search_query);
         }
     }, [search_query]);
@@ -122,7 +124,7 @@ const SearchResultPage = () => {
                     <ArtistResults data={artists} />
                 </div>
                 <div className="community-results">
-                    <CommunityResults data={artists}/>
+                    <CommunityResults query={query} />
                 </div>
                 <div className="event-results">
                     <EventResults data={events} />
