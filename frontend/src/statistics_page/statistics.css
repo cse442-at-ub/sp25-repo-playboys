@@ -1,12 +1,25 @@
+/* Main container */
 .statistics-container {
   display: flex;
-  flex-direction: column;
-  padding: 24px;
   background-color: #f9f9f9;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
 }
 
+/* Main content next to sidebar */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  width: 100%;
+  transition: padding-left 0.3s ease;
+}
+
+.sidebar-expanded .main-content {
+  padding-left: 294px; /* 270 sidebar + 24 padding */
+}
+
+/* Header with title and back button */
 .statistics-header {
   display: flex;
   align-items: center;
@@ -39,19 +52,24 @@
   background-color: #ddd;
 }
 
-/* Highlight layout */
+/* Highlight section (Top Artist and Top Song) */
 .highlight-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 160px;
+  margin-top: 96px;
   margin-bottom: 48px;
 }
 
 .highlight-container.reverse {
   flex-direction: row-reverse;
-  margin-right: auto;
-  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.highlight-section,
+.statistics-leaderboard-container {
+  flex: 0 0 auto;
 }
 
 .highlight-section {
@@ -61,8 +79,6 @@
   justify-content: center;
   flex: 0 0 260px;
   text-align: center;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .circle-image {
@@ -88,13 +104,11 @@
 
 /* Leaderboard styling */
 .statistics-leaderboard-container {
-  flex: 1;
   max-width: 600px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  margin-right: auto;
 }
 
 .leaderboard-title {
@@ -223,44 +237,33 @@
   color: #333;
 }
 
-
-/* Responsive layout for mobile */
+/* Mobile responsiveness */
 @media (max-width: 768px) {
-  
+  .statistics-header {
+    font-size: 48px;
+  }
+
   .highlight-container,
   .highlight-container.reverse {
-    flex-direction: column !important;
+    flex-direction: column;
     align-items: center;
     gap: 24px;
-    margin: 0 auto 48px auto !important;
+    margin-top: 48px;
+    margin-bottom: 48px;
   }
 
   .circle-image {
-    width: 280px !important;
-    height: 280px !important;
+    width: 280px;
+    height: 280px;
   }
 
   .highlight-label {
-    font-size: 20px !important;
-    text-align: center;
-  }
-
-  .statistics-title {
-    font-size: 48px;
+    font-size: 20px;
     text-align: center;
   }
 
   .back-button {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 1000;
-    margin-bottom: 0 !important;
-  }
-
-  .statistics-header {
-    padding-top: 64px;
-    flex-direction: column;
+    margin-bottom: 0;
   }
 
   .statistics-content {
@@ -268,4 +271,3 @@
     font-size: 18px;
   }
 }
-

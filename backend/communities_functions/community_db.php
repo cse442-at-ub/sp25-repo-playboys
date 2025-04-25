@@ -219,20 +219,24 @@ function getAllCommunities($conn) {
 }
 
 function getCommInfo($conn, $communityName) {
-    // Fetch community info
-    $stmt = $conn->prepare("SELECT community_name, picture FROM communities WHERE community_name = ?");
+    // Fetch community row including JSON members array
+    $stmt = $conn->prepare("SELECT id, community_name, picture, members FROM communities WHERE community_name = ?");
     $stmt->bind_param("s", $communityName);
     $stmt->execute();
-    $communityResult = $stmt->get_result()->fetch_assoc();
+    $result = $stmt->get_result();
+    $communityRow = $result->fetch_assoc();
 
-    // Fetch members
-    $stmt = $conn->prepare("SELECT user_id FROM pb_community_members WHERE community_id = (SELECT community_id FROM communities WHERE community_name = ?)");
-    $stmt->bind_param("s", $communityName);
-    $stmt->execute();
-    $membersResult = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $members = array_map(fn($m) => $m["user_id"], $membersResult);
+    if (!$communityRow) {
+        return ["status" => "error", "message" => "Community not found"];
+    }
 
-    // Fetch posts and include like counts
+    // Decode the JSON members field
+    $members = json_decode($communityRow["members"], true);
+    if (!is_array($members)) {
+        $members = []; // fallback to empty array if invalid
+    }
+
+    // Fetch posts for this community with like/comment count
     $stmt = $conn->prepare("
         SELECT 
             p.*, 
@@ -257,10 +261,10 @@ function getCommInfo($conn, $communityName) {
     $posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
     return [
-        "community_name" => $communityResult["community_name"],
-        "picture" => $communityResult["picture"],
+        "community_name" => $communityRow["community_name"],
+        "picture" => $communityRow["picture"],
         "members" => $members,
-        "id" => $communityResult["community_name"],
+        "id" => $communityRow["id"],
         "posts" => $posts
     ];
 }
