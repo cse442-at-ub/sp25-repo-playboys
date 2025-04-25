@@ -147,54 +147,57 @@ const CreateCommunityPage: React.FC = () => {
   };
 
   return (
-    <div className="create-community-page">
+    <div className="create-community-page-container">
       <button className="back-button" onClick={() => navigate(-1)}>←</button>
-
-      <h2>Create a New Community</h2>
-
-      <div
-        className="upload-area"
-        onClick={() => document.getElementById("bg-upload")?.click()}
-      >
-        <img
-          src={
-            previewImage || process.env.PUBLIC_URL + '/static/UploadBackgroundPlaceholder.png'
-          }
-          alt="Background Preview"
-          className="upload-preview"
-        />
-        <input
-          type="file"
-          id="bg-upload"
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={handleImageUpload}
-        />
-        <p>Click to upload a background image</p>
-        {imageError && <p className="image-error">{imageError}</p>}
-      </div>
-
-      <input
-        className="community-name-input"
-        type="text"
-        value={communityName}
-        onChange={(e) => setCommunityName(e.target.value)}
-        placeholder="Enter Community Name"
-        maxLength={50}
-      />
-
-      <div className="create-community-buttons">
-        <button className="cancel-btn" onClick={() => navigate(-1)}>Cancel</button>
-        <button
-          className="create-btn"
-          disabled={!communityName || !backgroundFile}
-          onClick={handleCreate}
+  
+      <div className="create-community-page">
+        <h2>Create a New Community</h2>
+  
+        <div
+          className="upload-area"
+          onClick={() => document.getElementById("bg-upload")?.click()}
         >
-          Create
-        </button>
+          <img
+            src={
+              previewImage || process.env.PUBLIC_URL + '/static/UploadBackgroundPlaceholder.png'
+            }
+            alt="Background Preview"
+            className="upload-preview"
+          />
+          <input
+            type="file"
+            id="bg-upload"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
+          <p>Click to upload a background image</p>
+          {imageError && <p className="image-error">{imageError}</p>}
+        </div>
+  
+        <input
+          className="community-name-input"
+          type="text"
+          value={communityName}
+          onChange={(e) => setCommunityName(e.target.value)}
+          placeholder="Enter Community Name"
+          maxLength={50}
+        />
+  
+        <div className="create-community-buttons">
+          <button className="cancel-btn" onClick={() => navigate(-1)}>Cancel</button>
+          <button
+            className="create-btn"
+            disabled={!communityName || !backgroundFile}
+            onClick={handleCreate}
+          >
+            Create
+          </button>
+        </div>
       </div>
     </div>
   );
+  
 };
 
 export default CreateCommunityPage;
