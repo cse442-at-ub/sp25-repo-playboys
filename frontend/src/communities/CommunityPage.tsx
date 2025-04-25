@@ -13,7 +13,6 @@ interface Community {
   picture: string;
   members: string[];
   id: number;
-  member_count: number;
   posts: Post[];
 }
 
@@ -103,9 +102,11 @@ const CommunityPage: React.FC = () => {
         picture: data.picture,
         members: data.members,
         id: data.id,
-        member_count: data.members.length,
         posts,
       });
+      console.log("MEMBER DATAAAAAAAAAA")
+      console.log(data.members)
+      console.log(data.members.length)
 
       posts.forEach((post) => {
         fetchComments(post.post_id, 3);
@@ -379,7 +380,7 @@ const CommunityPage: React.FC = () => {
         </div>
 
         <div className="community-details">
-          <p><strong>Member count:</strong> {communityData?.member_count}</p>
+        <p><strong>Member count:</strong> {communityData?.members.length ?? 0}</p>
         </div>
         <div className="post-filter">
           <label htmlFor="postFilter">Sort Posts By:</label>
