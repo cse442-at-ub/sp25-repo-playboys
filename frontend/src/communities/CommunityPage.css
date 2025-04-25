@@ -113,6 +113,7 @@
   align-items: flex-start;
   gap: 10px;
   margin-bottom: 10px;
+  max-width: 100%;
 }
 
 .comment-profile-pic {
@@ -123,8 +124,14 @@
 
 .comment-content {
   background-color: #e9ecef;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 10px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
+  width: fit-content;
+  font-size: 14px;
+  line-height: 1.4;
   flex: 1;
 }
 
@@ -248,6 +255,29 @@
 .show-more-wrapper button:hover {
   background-color: rgba(0, 123, 255, 0.1);
 }
+
+.comment-content {
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: pre-wrap; /* keeps line breaks and wraps long words */
+  background-color: #f1f1f1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.comment-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: none;
+  margin-top: 5px;
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -462,6 +462,8 @@ const CommunityPage: React.FC = () => {
             {commentsVisible[post.post_id] && (
               <>
                 <input
+                  maxLength={200}
+                  className="comment-input"
                   value={newComments[post.post_id] || ""}
                   onChange={(e) =>
                     setNewComments((prev) => ({ ...prev, [post.post_id]: e.target.value }))

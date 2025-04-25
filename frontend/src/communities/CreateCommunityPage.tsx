@@ -10,6 +10,7 @@ const CreateCommunityPage: React.FC = () => {
   const [communityName, setCommunityName] = useState("");
   const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -40,9 +41,10 @@ const CreateCommunityPage: React.FC = () => {
 
     const uploadResult = await uploadRes.json();
     if (uploadResult.status === 'success') {
-      return uploadResult.filePath; // Assuming the response contains the image path
+      setImageError(null);
+      return uploadResult.filePath;
     } else {
-      console.error("Image upload failed:", uploadResult);
+      setImageError(uploadResult.message || "Image upload failed.");
       return "error"; // Handle error appropriately
     }
   }
@@ -169,6 +171,7 @@ const CreateCommunityPage: React.FC = () => {
           onChange={handleImageUpload}
         />
         <p>Click to upload a background image</p>
+        {imageError && <p className="image-error">{imageError}</p>}
       </div>
 
       <input
