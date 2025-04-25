@@ -17,7 +17,6 @@ if (!$username || !$playlistName || !$songToDel || !$artistToDel) {
     echo json_encode(['status'=>'error','message'=>'Missing parameters']);
     exit();
 }
-
 $stmtCreds = $conn->prepare(
     "SELECT spotify_id, access_token FROM user_login_data WHERE username = ?"
 );
