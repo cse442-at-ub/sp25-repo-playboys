@@ -181,8 +181,6 @@
 /* Button */
 .join-event-button {
   padding: 12px 24px;
-  background-color: #28a745;
-  color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
@@ -191,13 +189,26 @@
   align-self: center;
 }
 
-.join-event-button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
+/* Style for the "Join Event" button */
+.join-event-button:not(.button-joined):not(.button-delete) {
+  background-color: #28a745; /* Green */
+  color: white;
 }
 
-.join-event-button:hover {
+.join-event-button:not(.button-joined):not(.button-delete):hover {
   background-color: #218838;
+}
+
+/* Style for the "Leave Event" and "Delete Event" buttons */
+.join-event-button.button-joined,
+.join-event-button.button-delete {
+  background-color: #dc3545; /* Red */
+  color: white;
+}
+
+.join-event-button.button-joined:hover,
+.join-event-button.button-delete:hover {
+  background-color: #c82333;
 }
 
 .join-event-button:active {
@@ -211,6 +222,18 @@
   color: #555;
   text-align: center;
   font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .join-event-button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .join-message {
+    font-size: 12px;
+  }
 }
 
 /* Responsive */

@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     }
     
     if (!is_uploaded_file($image['tmp_name'])) {
-        $response['message'] = 'Temp file is not a valid uploaded file';
+        $response['message'] = 'The uploaded image is not supported please use another image';
         echo json_encode($response);
         exit;
     }

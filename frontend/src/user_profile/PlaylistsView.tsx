@@ -25,12 +25,9 @@ function PlaylistsView() {
         if (response.ok) {
           const data = await response.json(); // Assuming the response contains the playlist list
           if (data.includes("error")) {
-            console.log("Error fetching playlists or not logged in");
           } else {
             setPlaylists(data);
           }
-        } else {
-          console.error("Error fetching playlists:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching playlists:", error);
@@ -48,12 +45,7 @@ function PlaylistsView() {
           const data = await response.json();
           if (data.login_user) {
             setUsername(data.login_user);
-            console.log("Logged in user:", data.login_user);
-          } else {
-            console.log("Username not found in response");
           }
-        } else {
-          console.error("Failed to fetch username:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching username:", error);
@@ -67,7 +59,6 @@ function PlaylistsView() {
   }, [user]); // Dependency array ensures the fetch runs once when the component mounts
 
   const handleBackButton = () => {
-    console.log("Back button clicked");
     navigate('/userProfile'); // Navigate to user profile
   };
 
@@ -83,14 +74,14 @@ function PlaylistsView() {
         {playlists.length > 0 ? (
           playlists.map((playlist, index) => (
             <div className="col d-flex justify-content-center" key={index}>
-              <PlaylistItem playlist={playlist} onClick={() => console.log(playlist.name)} />
+              <PlaylistItem playlist={playlist} onClick={() => navigate(`/playlist/${playlist.name}?user=${username || user}`)} />
             </div>
           ))
         ) : (
           username === (user) || ((user || "") === "") ? (
-            <p>Please Login in with Spotify</p>
+            <p className="text-muted fst-italic">No Playlist Found</p>
           ) : (
-            <p>{user} has no Playlist</p>
+            <p className="text-muted fst-italic">No Playlist Found</p>
           )
         )}
       </div>

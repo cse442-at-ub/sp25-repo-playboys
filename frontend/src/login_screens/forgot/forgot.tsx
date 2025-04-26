@@ -19,10 +19,9 @@ const ForgotPassword: React.FC = () =>
         e.preventDefault();
         const data = { email };
         console.log( data );
-
         try
         {
-            const response = await fetch( `${process.env.REACT_APP_API_URL}backend/send_forgot_pwd_email.php`, 
+            const response = await fetch( `${process.env.REACT_APP_API_URL}backend/account_functions/SendVerificationCode.php`, 
             {
                 method: "POST",
                 headers: {
@@ -112,6 +111,9 @@ const ForgotPassword: React.FC = () =>
                         codeFieldError && <p className="error-message">{ codeFieldError }</p>
                     ]}
                 </form>
+                <div className="register-link">
+                <a href="#/login"><span>Return to login</span></a>
+            </div>
             </div>
         </div>
     );

@@ -152,7 +152,7 @@ const SongRecommendation: React.FC = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ device_ids: [device_id], play: true }),
+          body: JSON.stringify({ device_ids: [device_id] }),
         });
 
         const randomTrack = await getRandomTrackFromRandomPlaylist();
@@ -258,22 +258,23 @@ const SongRecommendation: React.FC = () => {
     setSwipeDirection("left");
     setLiked(true);
   
-    // Send liked song URI to back-end
-    await fetch(`${process.env.REACT_APP_API_URL}backend/likeSong.php`, {
+    await fetch(`${process.env.REACT_APP_API_URL}backend/addToPlaylist.php`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
-        uri: currentTrack.uri,
-        name: currentTrack.name,
-        artist: currentTrack.artists.map((a: any) => a.name).join(", "),
-        album: currentTrack.album.name,
-      }),
+        playlist: "Liked Songs",
+        song_title: currentTrack.name,
+        artist_name: currentTrack.artists.map((a: any) => a.name).join(", ")
+      })
     });
   
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
     await resetState();
   };
+  
 
   const handleSkipSong = async () => {
     setSwipeDirection("right");
