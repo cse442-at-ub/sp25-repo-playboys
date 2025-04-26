@@ -8,8 +8,6 @@ type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 type ItemType = 'artists' | 'tracks';
 type Limit = 1 | 3 | 5 | 10 | 15 | 20 | 25 | 50 | 100;
 
-const COLORS = [ '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC926', '#1982C4', '#6A4C93', '#FFC5C5', '#FF7700', '#5F4B8B', '#F15BB5', '#00BBF9', '#00F5D4' ];
-
 interface ListeningItem {
     rank: number;
     name: string;
