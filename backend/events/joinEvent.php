@@ -9,11 +9,13 @@
     if ($id === null) {
         http_response_code(400);
         echo json_encode(['error' => 'Missing eventId']);
-        exit;
+        exit();
     }
+    $power = "joined";
+
     //check if user already in event
     if(checkUserinEvents($conn, $login_username, $id)){
-        echo json_encode(["status" => "joined", "message" => "Already joined the event"]);
+        echo json_encode(["status" => "error", "power" => "joined", "message" => "Already joined the event"]);
         exit();
     }
 
@@ -21,7 +23,10 @@
     $stmt->bind_param("ss", $login_username, $id);
     $stmt->execute();
     $stmt->close();
-    echo json_encode(["status" => "success", "message" => "Joined the event successfully", "newParticipant" => [
+    if(eventCreatorFetch($conn, $id) == $login_username){
+        $power = "creator";
+    }
+    echo json_encode(["status" => "success", "power" => $power, "message" => "Joined the event successfully", "newParticipant" => [
         "eventId" => $id,
         "username" => $login_username
     ]]);

@@ -4,12 +4,10 @@ import Sidebar from "../user_profile/Sidebar";
 import { useNavigate } from "react-router-dom";
 import SpotifyPlayer from "../spotify_player/SpotifyPlayer";
 import "./genre.css";
-
 interface Song {
   name: string;
   artist: string;
 }
-
 const GenrePage: React.FC = () => {
   const { genre } = useParams<{ genre: string }>();
   const [songs, setSongs] = useState<Song[]>([]);
@@ -40,7 +38,6 @@ const GenrePage: React.FC = () => {
       console.error("Error playing song:", error);
     }
   };
-
   useEffect(() => {
     const fetchGenreData = async () => {
       try {

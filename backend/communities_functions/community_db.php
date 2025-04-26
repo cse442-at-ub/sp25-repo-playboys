@@ -218,26 +218,57 @@ function getAllCommunities($conn) {
     return $communities;
 }
 
-function getCommInfo($conn, $community) {
-    // Prepare the SQL query to get the community data
-    $stmt = $conn->prepare("SELECT id, community_name, picture, members FROM communities WHERE community_name = ? LIMIT 1");
-    $stmt->bind_param("s", $community);
+function getCommInfo($conn, $communityName) {
+    // Fetch community row including JSON members array
+    $stmt = $conn->prepare("SELECT id, community_name, picture, members FROM communities WHERE community_name = ?");
+    $stmt->bind_param("s", $communityName);
     $stmt->execute();
-    $stmt->store_result();
+    $result = $stmt->get_result();
+    $communityRow = $result->fetch_assoc();
 
-    // Bind the result to variables
-    $stmt->bind_result($id, $community_name, $picture, $members);
-    $stmt->fetch(); // Fetch the result
-    
-    $posts = getPostsInCommunity($conn, $community_name); // Fetch posts for the community
+    if (!$communityRow) {
+        return ["status" => "error", "message" => "Community not found"];
+    }
+
+    // Decode the JSON members field
+    $members = json_decode($communityRow["members"], true);
+    if (!is_array($members)) {
+        $members = []; // fallback to empty array if invalid
+    }
+
+    // Fetch posts for this community with like/comment count
+    $stmt = $conn->prepare("
+        SELECT 
+            p.*, 
+            COALESCE(l.like_count, 0) AS like_count,
+            COALESCE(c.comment_count, 0) AS comment_count
+        FROM posts p
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) AS like_count
+            FROM post_likes
+            GROUP BY post_id
+        ) l ON p.post_id = l.post_id
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) AS comment_count
+            FROM post_comments
+            GROUP BY post_id
+        ) c ON p.post_id = c.post_id
+        WHERE p.community = ?
+        ORDER BY p.created_at DESC
+    ");
+    $stmt->bind_param("s", $communityName);
+    $stmt->execute();
+    $posts = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
     return [
-        "id" => $id,
-        "community_name" => $community_name,
-        "picture" => $picture,
-        "members" => json_decode($members), // Decoding the members if it's a JSON array
+        "community_name" => $communityRow["community_name"],
+        "picture" => $communityRow["picture"],
+        "members" => $members,
+        "id" => $communityRow["id"],
         "posts" => $posts
     ];
 }
+
 
 function getPostsInCommunity($conn, $community) {
     // Prepare the SQL query to fetch all posts for the given community
@@ -258,7 +289,58 @@ function getPostsInCommunity($conn, $community) {
 }
     
     
+function removeUserFromAllCommunities($conn, $user) {
+    // Prepare the SQL query to get all communities
+    $stmt = $conn->prepare("SELECT community_name, picture, members FROM communities");
+    $stmt->execute();
+    $stmt->store_result();
 
+    // Bind the result to variables
+    $stmt->bind_result($community_name, $picture, $members);
+    
+    while ($stmt->fetch()) { // Fetch all results
+        $members = json_decode($members, true); // Decode the members if it's a JSON array
+
+        if (in_array($user, $members)) {
+            $index = array_search($user, $members);
+            unset($members[$index]);
+            $members = json_encode(array_values($members)); // Encode the members array back to JSON
+
+            $updateStmt = $conn->prepare("UPDATE communities SET members = ? WHERE community_name = ?");
+            $updateStmt->bind_param("ss", $members, $community_name);
+            $updateStmt->execute();
+        }
+    }
+    
+    function updateUsernameInAllCommunities($conn, $oldUsername, $newUsername) {
+        // Get all communities
+        $stmt = $conn->prepare("SELECT community_name, members FROM communities");
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($community_name, $members);
+    
+        while ($stmt->fetch()) {
+            $membersArray = json_decode($members, true); // Decode JSON to PHP array
+    
+            if (!is_array($membersArray)) continue; // Just in case something is wrong with the JSON
+    
+            $updated = false;
+            foreach ($membersArray as $key => $member) {
+                if ($member === $oldUsername) {
+                    $membersArray[$key] = $newUsername;
+                    $updated = true;
+                }
+            }
+    
+            if ($updated) {
+                $updatedMembersJSON = json_encode(array_values($membersArray)); // Re-encode with updated username
+                $updateStmt = $conn->prepare("UPDATE communities SET members = ? WHERE community_name = ?");
+                $updateStmt->bind_param("ss", $updatedMembersJSON, $community_name);
+                $updateStmt->execute();
+            }
+        }
+    }
+}
 
 
 ?>

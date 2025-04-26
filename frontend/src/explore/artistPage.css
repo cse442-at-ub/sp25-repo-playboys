@@ -68,3 +68,17 @@
   font-size: 14px;
   color: #777;
 }
+
+.ap-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  font-size: 14px;
+}

@@ -17,6 +17,15 @@
     usort($events, function($date1, $date2) {
         return strtotime($date1["date"]) <=> strtotime($date2["date"]);
     });
+    //delete events that are in the past
+    foreach($events as  $e){
+        if(fulldatatime_checker($e["date"], $e["time"]) == false){
+            deleteEvent($conn, $e["id"]);
+        } else {
+            break;
+        }
+    }
+    //requery events but only the top 3
     $events = array_slice($events, 0, 3);
     foreach($events as &$e){
         $e["date"] = convertToShortDate($e["date"]);

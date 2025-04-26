@@ -90,13 +90,34 @@
         align-items: stretch; /* Make children stretch to the full width */
     }
 
-    .song-results,
-    .artist-results,
-    .community-results,
-    .event-results {
+    .song-results {
         width: 100%;
-        margin-right: 0;
-        overflow-x: hidden; /* Also prevent horizontal scroll on these sections */
+        margin-top: 0px;
+        padding: 10px;
+        position: relative;
+        top: -35px; /* Adjust as needed */
+    }
+    .artist-results {
+        width: 100%;
+        margin-top: 0px;
+        padding: 10px;
+        position: relative;
+        top: -40px; /* Adjust as needed */
+    }
+    .community-results {
+        width: 100%;
+        margin-top: 0px;
+        padding: 10px;
+        position: relative;
+        top: -40px; /* Adjust as needed */
+    }
+    .event-results {
+        display: block;
+        width: 100%;
+        margin-top: 0px;
+        padding: 10px;
+        position: relative;
+        top: -50px; /* Adjust as needed */
     }
 
     .search-bar-row {
@@ -139,7 +160,7 @@ body {
     padding: 5px;
     font-size: 16px;
     border-radius: 6px;
-    border: 1px dashed #000000;
+    border: 1px solid #000000;
 }
 
 

@@ -1,156 +1,93 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useCSRFToken } from '../csrfContent';
+import { useNavigate } from "react-router-dom";
 
-
-interface Artist {
-    followers :number,
-    genres: string[],
-    image_url: string,
-    name: string,
-    popularity: number, 
+interface Community {
+    name: string;
+    background_image: string;
 }
 
-const CommunityResults = ({ data }: {data: Artist[]}) => {
-
-    const artists: Artist[] = data;
-
+const CommunityResults = ({ query }: { query: string }) => {
+    const [communities, setCommunities] = React.useState<Community[]>([]);
+    const { csrfToken } = useCSRFToken();
+    const navigate = useNavigate();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const {csrfToken} = useCSRFToken();
 
-    const handleCommunityClick = async(community: Artist) => {
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/getProfile.php`, {
-            method: 'GET', // Or 'GET' depending on your API
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
-        });
-        var results = await response.json();
-        if (results["status"] === "success") {
-            var user = results["loggedInUser"];
-            console.log(`user: ${user}`);
+    // Levenshtein Distance Function
+    function levenshtein(a: string, b: string): number {
+        const dp = Array.from({ length: a.length + 1 }, () =>
+            new Array(b.length + 1).fill(0)
+        );
+
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                if (a[i - 1] === b[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(
+                        dp[i - 1][j],     // deletion
+                        dp[i][j - 1],     // insertion
+                        dp[i - 1][j - 1]  // substitution
+                    ) + 1;
+                }
+            }
+        }
+
+        return dp[a.length][b.length];
+    }
+
+    useEffect(() => {
+        const fetchCommunities = async () => {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/getAllcomms.php`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'CSRF-Token': csrfToken }
+            });
+
+            const data = await response.json();
+
+            // Filter communities based on Levenshtein similarity
+            const filtered = data
+                .map((community: any) => {
+                    const distance = levenshtein(query.toLowerCase(), community.community_name.toLowerCase());
+                    const maxLen = Math.max(query.length, community.community_name.length);
+                    const similarity = 1 - distance / maxLen;
+                    return { ...community, similarity };
+                })
+                .filter((c: any) => c.similarity >= 0.4) // adjust threshold as needed
+                .sort((a: any, b: any) => b.similarity - a.similarity);
+
+            console.log(filtered);
+            const formatted: Community[] = filtered.map((c: any) => ({
+                name: c.community_name,
+                background_image: c.picture
+            }));
+            console.log(formatted);
+            setCommunities(formatted);
+        };
+
+        if (query.trim() !== "") {
+            fetchCommunities();
         } else {
-            console.error("Error fetching profile:", results);
-        }
-        console.log(`Community clicked: ${community.name}`);
-        console.log("creating community");
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/create_comunity.php`, {
-            method: 'POST', // Or 'GET' depending on your API
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
-            body: JSON.stringify({
-                "name": community.name,
-                "image": community.image_url,
-                "user": user
-            })
-        }); 
-        var results = await response.json();
-        console.log(results)
-
-        console.log("checking if user is part of the commuitty");
-        var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/checkUser.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
-            body: JSON.stringify({
-                "name": community.name,
-                "image": community.image_url,
-                "user": user
-            })
-        }); 
-        var results = await response.json();
-        console.log(results)
-
-        // ADDDING
-        if (results === false) {
-            // add user to community
-            console.log("adding user to  community");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/join_community.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "image": community.image_url,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-            
-            // add community to user profile
-            console.log("adding community to profile");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/addcomtopfp.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "image": community.image_url,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
+            setCommunities([]);
         }
 
-        // REMOVING
-        if (results === true) {
-            // remove user to community
-            console.log("removing user to  community");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/leave_community.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "image": community.image_url,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-
-            // reove community from user profile
-            console.log("removing comm from pfp");
-            var response = await fetch(`${process.env.REACT_APP_API_URL}backend/communities_functions/removecomtopfp.php`, {
-                method: 'POST', // Or 'GET' depending on your API
-                headers: {
-                    'Content-Type': 'application/json',
-                    'CSRF-Token': csrfToken
-                },
-                body: JSON.stringify({
-                    "name": community.name,
-                    "image": community.image_url,
-                    "user": user
-                })
-            });
-            var results = await response.json();
-            console.log(results)
-        }
-    };
+    }, [query, csrfToken]);
 
     const handleScrollRight = () => {
         if (scrollContainerRef.current) {
-            const itemWidth = 140; // Width of each community item
+            const itemWidth = 140;
             scrollContainerRef.current.scrollBy({ left: itemWidth, behavior: 'smooth' });
         }
     };
 
     const handleScrollLeft = () => {
         if (scrollContainerRef.current) {
-            const itemWidth = 140; // Width of each community item
+            const itemWidth = 140;
             scrollContainerRef.current.scrollBy({ left: -itemWidth, behavior: 'smooth' });
         }
     };
@@ -162,23 +99,23 @@ const CommunityResults = ({ data }: {data: Artist[]}) => {
             onMouseLeave={() => setIsHovered(false)}
         >
             <h2 className="community-results-title">Community Results</h2>
-            {artists.length === 0 ? (
-                <p>No Communities were found</p>
+            {communities.length === 0 ? (
+                <div>
+                    <button onClick={() => navigate(`/create-community`)}>
+                        <p>No Communities were found, make your own</p>
+                    </button>
+                </div>
             ) : (
                 <>
                     <div className="community-results-horizontal-scroll" ref={scrollContainerRef}>
-                        {artists.map((artist, index) => (
-                            <CommunityItem key={index} community={artist} onClick={handleCommunityClick} />
+                        {communities.map((community, index) => (
+                            <CommunityItem key={index} community={community} onClick={() => navigate(`/community/${community.name}`)} />
                         ))}
                     </div>
                     {isHovered && (
                         <>
-                            <div className="scroll-arrow left" onClick={handleScrollLeft}>
-                                ←
-                            </div>
-                            <div className="scroll-arrow right" onClick={handleScrollRight}>
-                                →
-                            </div>
+                            <div className="scroll-arrow left" onClick={handleScrollLeft}>←</div>
+                            <div className="scroll-arrow right" onClick={handleScrollRight}>→</div>
                         </>
                     )}
                 </>
@@ -187,14 +124,14 @@ const CommunityResults = ({ data }: {data: Artist[]}) => {
     );
 };
 
-const CommunityItem = ({ community, onClick }: { community: Artist; onClick: (community: Artist) => void }) => {
+const CommunityItem = ({ community, onClick }: { community: Community; onClick: (community: Community) => void }) => {
     return (
         <button
             className="community-item-horizontal"
             onClick={() => onClick(community)}
         >
             <img
-                src={community.image_url}
+                src={community.background_image}
                 alt={`${community.name} image`}
                 className="community-image-horizontal"
             />

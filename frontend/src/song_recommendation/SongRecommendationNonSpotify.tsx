@@ -4,36 +4,30 @@ import { motion, useAnimation } from "framer-motion";
 import "./SongRecommendation.css";
 import Sidebar from "../user_profile/Sidebar";
 
-const mockSongs = [
-  { song_name: "Levitating", artist_name: "Dua Lipa", cover_url: "https://link-to-cover1.jpg" },
-  { song_name: "Blinding Lights", artist_name: "The Weeknd", cover_url: "https://link-to-cover2.jpg" },
-  { song_name: "Peaches", artist_name: "Justin Bieber", cover_url: "https://link-to-cover3.jpg" }
-];
-
 const SongRecommendationNonSpotify: React.FC = () => {
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [currentSong, setCurrentSong] = useState<any>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const controls = useAnimation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     loadSong();
-  }, [currentSongIndex]);
+  }, []);
 
   const loadSong = async () => {
-    const song = mockSongs[currentSongIndex % mockSongs.length];
-    setCurrentSong(song);
-    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/playSong.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ song_name: song.song_name, artist_name: song.artist_name }),
+    const res = await fetch(`${process.env.REACT_APP_API_URL}backend/getDeezerRecommendation.php`, {
+      method: "GET",
+      credentials: "include"
     });
     const data = await res.json();
+
     if (data.status === "success") {
+      setCurrentSong(data.song);
       setPreviewUrl(data.trackUrl);
+      setIsPlaying(true); // Reset play status for new song
     } else {
       setPreviewUrl(null);
     }
@@ -42,24 +36,45 @@ const SongRecommendationNonSpotify: React.FC = () => {
   const handleLike = async () => {
     setSwipeDirection("left");
     setLiked(true);
-
-    await fetch(`${process.env.REACT_APP_API_URL}backend/likeLocalSong.php`, {
+  
+    await fetch(`${process.env.REACT_APP_API_URL}backend/addToPlaylist.php`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(currentSong)
-    });
-
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        playlist: "Liked Songs",
+        song_title: currentSong.song_name,
+        artist_name: currentSong.artist_name
+      })
+    });    
+  
     await controls.start({ x: -300, opacity: 0, transition: { duration: 0.4 } });
-    resetState();
-    setCurrentSongIndex(prev => prev + 1);
+    await resetState();
+    loadSong();
   };
+  
 
   const handleSkip = async () => {
     setSwipeDirection("right");
     await controls.start({ x: 300, opacity: 0, transition: { duration: 0.4 } });
-    resetState();
-    setCurrentSongIndex(prev => prev + 1);
+    await resetState();
+    loadSong();
+  };
+
+  const handlePlay = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const handlePause = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
   };
 
   const resetState = async () => {
@@ -100,7 +115,13 @@ const SongRecommendationNonSpotify: React.FC = () => {
               <h2>{currentSong.song_name}</h2>
               <h2>{currentSong.artist_name}</h2>
               {previewUrl ? (
-                <audio ref={audioRef} src={previewUrl} controls autoPlay style={{ marginTop: "1rem" }} />
+                <audio
+                  ref={audioRef}
+                  src={previewUrl}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  style={{ display: "none" }}
+                />
               ) : (
                 <p style={{ color: "gray" }}>No preview available</p>
               )}
@@ -113,6 +134,17 @@ const SongRecommendationNonSpotify: React.FC = () => {
         <button className={`heart-btn ${liked ? "liked" : ""}`} onClick={handleLike}>
           <img src={liked ? "./static/HeartIconLike.png" : "./static/HeartIconUnlike.png"} alt="Like" />
         </button>
+
+        {isPlaying ? (
+          <button onClick={handlePause}>
+            <img src="./static/PauseButtonIcon.png" alt="Pause" />
+          </button>
+        ) : (
+          <button onClick={handlePlay}>
+            <img src="./static/PlayButtonIcon.png" alt="Play" />
+          </button>
+        )}
+
         <button className="skip-btn" onClick={handleSkip}>
           <img src="./static/SkipSong.png" alt="Skip" />
         </button>

@@ -1,6 +1,7 @@
 <?php
     require __DIR__ . "/headers.php";
-    require __DIR__ . "/mailer.php";
+    require __DIR__ . "/cookieAuthHeader.php";
+    require __DIR__ . '/config.php'; // Include your database connection file
 
     $data = json_decode(file_get_contents("php://input"), true); // Not sure of this, new to me
 

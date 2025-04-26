@@ -11,7 +11,12 @@
         echo json_encode(['error' => 'Missing eventId']);
         exit;
     }
-    //check if user already in event
+    //check if event is created by the user
+    if(eventCreatorFetch($conn, $id) == $login_username){
+        echo json_encode(["status" => "creator", "message" => "You are the creator of this event"]);
+        exit();
+    }
+    //check if user already in event 
     if(checkUserinEvents($conn, $login_username, $id)){
         echo json_encode(["status" => "joined", "message" => "Already joined the event"]);
         exit();
