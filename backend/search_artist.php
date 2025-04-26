@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . "/headers.php";
+require __DIR__ ."/userDatabaseGrabber.php";
 header('Content-Type: application/json');
 
 $config = include __DIR__ . '/config.php';
@@ -25,7 +26,8 @@ $token = json_decode($response)->access_token;
 $results = [
     'songs' => [],
     'albums' => [],
-    'artists' => []
+    'artists' => [],
+    'events' => [],
 ];
 
 if (isset($_GET['q'])) {
@@ -95,6 +97,34 @@ if (isset($_GET['q'])) {
         }
     }
 }
+
+    //Process events
+    if (isset($_GET['q'])) {
+        $event_q = trim($_GET['q']);
+        $searchPattern = '%' . $conn->real_escape_string($event_q) . '%';
+        $sql = "SELECT * 
+        FROM artist_events
+        WHERE title LIKE ? LIMIT 15";
+        $stmt = $conn->prepare($sql);
+        if($stmt){
+            $stmt->bind_param("s", $searchPattern);
+            $stmt->execute();
+            $event_result = $stmt->get_result();
+            $event_results = $event_result->fetch_all(MYSQLI_ASSOC);
+            foreach(array_reverse($event_results) as $row){
+                $results["events"][] = [
+                    "date" => formatDateToMDY($row["date"]),
+                    "time" => convertTo12Hour($row["time"]),
+                    "location" => $row["location"],
+                    "name" => $row["title"],
+                    "artist" => $row["creator"],
+                    "image" => $row["image_url"],
+                    "id" => $row["id"],
+                ];
+            }
+        }
+
+    }
 
 // Helper function to format duration
 function formatDuration($ms) {

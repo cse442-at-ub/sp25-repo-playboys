@@ -1,4 +1,5 @@
 <?php
+header("Content-Type: application/json");
 // Allow requests from any origin and check if user is logged in
 require __DIR__ . "/headers.php";
 require __DIR__ . "/cookieAuthHeader.php";
