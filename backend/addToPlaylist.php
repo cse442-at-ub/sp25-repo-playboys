@@ -109,7 +109,7 @@ if ($userHasPlaylist) {
     $upd->close();
 } else {
     $ins = $conn->prepare("INSERT INTO user_playlists (username, playlists) VALUES (?, ?)");
-    $ins->bind_param("ss", $username, $newPlayListsJSON);
+    $ins->bind_param("ss", $username, $newPlaylistsJSON);
     $ok = $ins->execute();
     $ins->close();
 }
